@@ -1,0 +1,32 @@
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 2vh 1vw;
+    margin-bottom: 2vh;
+    margin-top: 2vh;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+.cart-item .auction-image {
+    max-width: 150px;
+    max-height: 150px;
+    margin-right: 1vw;
+}
+.cart-item .auction-image img {
+    object-fit: contain;
+}
+.cart-item .auction-title a {
+    color: black;
+}
+.cart-item .price-info {
+    margin-left: auto;
+    display: flex;
+}
+.cart-item .price-info svg {
+    width: 10px;
+    margin-right: 5px;
+}
+.cart-item .price-info span {
+    font-weight: 500;
+    font-size: 18px;
+}

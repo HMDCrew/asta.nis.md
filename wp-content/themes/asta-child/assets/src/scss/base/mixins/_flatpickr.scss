@@ -1,0 +1,128 @@
+// ----------------------------------------------------------------------
+// Flatpickr color support
+// ----------------------------------------------------------------------
+
+// example: @include flatpickr_dark_support(#666666);
+
+@mixin flatpickr_dark_support($flatpickr-primary: #666666) {
+
+    .flatpickr-calendar {
+        background: $flatpickr-primary;
+        -webkit-box-shadow: unset;
+        box-shadow: unset;
+
+        .flatpickr-months {
+            .flatpickr-month {
+                border-radius: 5px;
+                background: $flatpickr-primary;
+
+                .flatpickr-current-month {
+                    .flatpickr-monthDropdown-months {
+                        background: $flatpickr-primary;
+
+                        .flatpickr-monthDropdown-month {
+                            background: $flatpickr-primary;
+                        }
+                    }
+                }
+            }
+        }
+
+        &.arrowTop:before,
+        &.arrowTop:after {
+            border-bottom-color: $flatpickr-primary;
+        }
+
+        &.arrowBottom:before,
+        &.arrowBottom:after {
+            border-top-color: $flatpickr-primary;
+        }
+
+        span.flatpickr-weekday {
+            background: $flatpickr-primary;
+        }
+
+
+        .flatpickr-day {
+            transition: color .3s;
+
+            &:focus,
+            &:hover {
+                background: #ffffff1a;
+                border-color: #ffffff00;
+            }
+
+            &.inRange,
+            &.prevMonthDay.inRange,
+            &.nextMonthDay.inRange,
+            &.today.inRange,
+            &.prevMonthDay.today.inRange,
+            &.nextMonthDay.today.inRange,
+            &.prevMonthDay:hover,
+            &.nextMonthDay:hover,
+            &.prevMonthDay:focus,
+            &.nextMonthDay:focus {
+                background: #ffffff;
+                border-color: #ffffff;
+                color: #000;
+            }
+
+            &.selected,
+            &.startRange,
+            &.endRange,
+            &.selected.inRange,
+            &.startRange.inRange,
+            &.endRange.inRange,
+            &.selected:focus,
+            &.startRange:focus,
+            &.endRange:focus,
+            &.selected:hover,
+            &.startRange:hover,
+            &.endRange:hover,
+            &.selected.prevMonthDay,
+            &.startRange.prevMonthDay,
+            &.endRange.prevMonthDay,
+            &.selected.nextMonthDay,
+            &.startRange.nextMonthDay,
+            &.endRange.nextMonthDay {
+                background: #ffffff;
+                color: #000;
+                border-color: #ffffff;
+            }
+
+            &.inRange {
+                -webkit-box-shadow: -5px 0 0 #ffffff, 5px 0 0 #ffffff;
+                box-shadow: -5px 0 0 #ffffff, 5px 0 0 #ffffff;
+            }
+
+            &.selected.startRange+.endRange:not(:nth-child(7n+1)),
+            &.startRange.startRange+.endRange:not(:nth-child(7n+1)),
+            &.endRange.startRange+.endRange:not(:nth-child(7n+1)) {
+                -webkit-box-shadow: -10px 0 0 #ffffff;
+                box-shadow: -10px 0 0 #ffffff;
+            }
+        }
+
+
+        .rangeMode {
+            .flatpickr-day {
+                transition: color .3s;
+
+                &.today:hover,
+                &.today:focus {
+                    color: #000000;
+                }
+            }
+        }
+
+        .flatpickr-day {
+            &.today:focus {
+
+                &:hover,
+                &:focus {
+                    color: white;
+                }
+            }
+        }
+    }
+}

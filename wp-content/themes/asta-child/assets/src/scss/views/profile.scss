@@ -1,0 +1,70 @@
+.page-template-profile {
+    form.user-profile {
+
+        .user-picture {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 4vh;
+            margin-bottom: 11vh;
+            position: relative;
+
+            .user-image {
+                position: relative;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    width: 150px;
+                    height: 150px;
+                    transition: opacity 0.3s;
+                    opacity: 0;
+                    left: 0;
+                }
+
+                img {
+                    display: inline-block;
+                    width: 150px;
+                    height: 150px;
+                    border-radius: 100px;
+                    border: 5px solid;
+                    object-fit: cover;
+                    transition: all .3s;
+                }
+            }
+
+            &.loading {
+                .user-image {
+                    &::after {
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='200px' height='200px' viewBox='0 0 100 100' preserveAspectRatio='xMidYMid'%3E%3Ccircle cx='50' cy='50' fill='none' stroke='%230a0a0a' stroke-width='10' r='35' stroke-dasharray='164.93361431346415 56.97787143782138'%3E%3CanimateTransform attributeName='transform' type='rotate' repeatCount='indefinite' dur='1s' values='0 50 50%3B360 50 50' keyTimes='0%3B1'%3E%3C/animateTransform%3E%3C/circle%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: 185px;
+                        transition: opacity 0.3s;
+                        opacity: 1;
+                    }
+
+                    img {
+                        opacity: .7;
+                    }
+                }
+            }
+
+            input[type="file"] {
+                position: absolute;
+                height: 100%;
+                opacity: 0;
+            }
+        }
+
+        .col-6 {
+            transition: all .3s;
+        }
+
+        @media screen and (max-width: 768px) {
+            .col-6 {
+                width: 100%;
+            }
+        }
+    }
+}

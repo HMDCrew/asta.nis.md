@@ -1,0 +1,106 @@
+.container-fluid {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background: #0c0c0c;
+    background: -webkit-linear-gradient(-135deg, #000000, #0c0c0c);
+    background: linear-gradient(-135deg, #000000, #0c0c0c);
+
+    .card {
+        width: 960px;
+        background: #fff;
+        border-radius: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: center;
+        height: 90vh;
+        overflow: auto;
+
+        .register-pic {
+            width: 316px;
+
+            img {
+                max-width: 100%;
+            }
+        }
+
+        .register-form {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            width: 290px;
+            max-width: 90%;
+
+            label,
+            .label {
+                font-size: 13px;
+                line-height: 1.5;
+                color: #999999;
+            }
+
+            .register-form-title {
+                font-family: Poppins-Bold;
+                font-size: 24px;
+                color: #333333;
+                line-height: 1.2;
+                text-align: center;
+                width: 100%;
+                display: block;
+                padding-bottom: 4vh;
+            }
+
+            .registered {
+                padding-top: 4vh;
+
+                .link {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 13px;
+                    line-height: 1.5;
+                    color: #666666;
+
+                    svg {
+                        width: 13px;
+                        height: 13px;
+                        margin-left: 5px;
+
+                        path {
+                            fill: #666666;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+@media (max-width: 992px) {
+    .card {
+        .register-pic {
+            width: 35%;
+        }
+
+        .register-form {
+            width: 50%;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .card {
+        .register-pic {
+            display: none;
+        }
+
+        .register-form {
+            width: 100%;
+        }
+    }
+}

@@ -1,0 +1,46 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a {
+    font-family: $bootstrapFonts;
+}
+
+h1 {
+    font-size: $title1;
+}
+
+h2 {
+    font-size: $title2;
+}
+
+h3 {
+    font-size: $title3;
+}
+
+h4 {
+    font-size: $title4;
+}
+
+h5 {
+    font-size: $title5;
+}
+
+h6 {
+    font-size: $title6;
+}
+
+p,
+p>a,
+li>a,
+div>a,
+b>a {
+    font-size: $regularSize;
+}
+
+a {
+    text-decoration: none;
+}
