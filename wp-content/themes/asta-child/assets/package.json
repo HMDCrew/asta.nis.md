@@ -38,6 +38,7 @@
     "@editorjs/header": "^2.7.0",
     "@editorjs/image": "^2.8.1",
     "@editorjs/list": "^1.8.0",
+    "@fancyapps/ui": "^5.0.24",
     "flatpickr": "^4.6.13",
     "fs": "^0.0.1-security",
     "lightgallery": "^2.7.1",
@@ -46,7 +47,7 @@
     "sass-loader": "^13.0.2",
     "strip-comments": "^2.0.1",
     "style-loader": "^3.3.1",
-    "swiper": "^9.2.4",
+    "swiper": "^10.3.1",
     "toolcool-range-slider": "^4.0.27",
     "vanilla-tilt": "^1.8.0"
   }

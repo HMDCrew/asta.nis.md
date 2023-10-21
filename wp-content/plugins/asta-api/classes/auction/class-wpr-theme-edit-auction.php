@@ -213,7 +213,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 */
 		private function add_image_auction_gallery( int $auction_id, string $url ) {
 
-			$gallery_meta   = apply_filters( 'wpr_get_auction_gallery', $auction_id );
+			$gallery_meta   = get_asta_gallery( $auction_id );
 			$gallery_meta[] = $url;
 
 			$this->update_auction_gallery( $auction_id, $gallery_meta );
@@ -240,7 +240,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 			$auction_id = (
 				! empty( $params['auction_id'] )
 					? $param_auction_id
-					: get_user_last_edited_auction( $attr['login_user_id'] )
+					: get_user_last_edited_post( $attr['login_user_id'] )
 			);
 
 			if ( $auction_id && (int) get_post_field( 'post_author', $auction_id ) === $attr['login_user_id'] ) {
@@ -307,7 +307,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 			if ( (int) get_post_field( 'post_author', $auction_id ) === $attr['login_user_id'] ) {
 
 				$img_path     = remove_multimple_slah( ABSPATH . parse_url( $image_url, PHP_URL_PATH ) );
-				$gallery_meta = apply_filters( 'wpr_get_auction_gallery', $auction_id );
+				$gallery_meta = get_asta_gallery( $auction_id );
 				$key          = array_search( $image_url, $gallery_meta, true );
 
 				unset( $gallery_meta[ $key ] );

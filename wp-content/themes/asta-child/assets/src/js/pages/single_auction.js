@@ -1,8 +1,11 @@
 import { sendHttpReq } from '../utils/api'
-import Swiper, { Navigation, Thumbs } from 'swiper';
+import { Fancybox } from '@fancyapps/ui'
+import Swiper from 'swiper'
+import { Thumbs } from 'swiper/modules'
 import { wpr_alert } from '../utils/helpers'
 import 'swiper/css';
 import 'swiper/css/navigation';
+import '@fancyapps/ui/dist/fancybox/fancybox.css'
 
 import '../../scss/views/single_auction.scss'
 
@@ -17,7 +20,7 @@ const last_price = document.querySelector('.wrap-input.last_price input')
 const auction_date = document.querySelector('.wrap-input.auction_date input')
 
 
-const swiper = new Swiper(".auction-thumbnail", {
+const swiper = new Swiper(".thumbnails", {
     loop: true,
     spaceBetween: 10,
     slidesPerView: 4,
@@ -25,14 +28,26 @@ const swiper = new Swiper(".auction-thumbnail", {
     watchSlidesProgress: true,
 });
 
+const next = document.querySelector('.auction-gallery .swiper-button-next')
+const prev = document.querySelector('.auction-gallery .swiper-button-prev')
 
 new Swiper(".auction-gallery", {
     loop: true,
-    modules: [Navigation, Thumbs],
+    modules: [Thumbs],
     spaceBetween: 10,
-    navigation: {
-        nextEl: ".swiper-button-next",
-        prevEl: ".swiper-button-prev",
+    on: {
+        init: (swipper) => {
+
+            Fancybox.bind('[data-fancybox="gallery"]')
+
+            if (swipper.slides.length > 0) {
+                next.addEventListener('click', ev => swipper.slideNext(), false)
+                prev.addEventListener('click', ev => swipper.slidePrev(), false)
+            } else {
+                prev.classList.add('swiper-button-disabled')
+                next.classList.add('swiper-button-disabled')
+            }
+        },
     },
     thumbs: {
         swiper: swiper,
@@ -41,7 +56,6 @@ new Swiper(".auction-gallery", {
 
 
 if (button_bid) {
-
 
     /**
      * The function formats a given date into a specific string format.

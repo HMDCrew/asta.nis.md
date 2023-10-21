@@ -70,7 +70,7 @@ if ( ! function_exists( 'asta_get_template_path' ) ) {
 	}
 }
 
-if ( ! function_exists( 'get_auction_gallery' ) ) {
+if ( ! function_exists( 'get_asta_gallery' ) ) {
 	/**
 	 * The function retrieves the gallery of images associated with a given auction ID.
 	 *
@@ -79,10 +79,10 @@ if ( ! function_exists( 'get_auction_gallery' ) ) {
 	 * @return array of the gallery images associated with the auction post identified by the
 	 *  parameter. If  is not provided or is falsy, an empty array is returned.
 	 */
-	function get_auction_gallery( $auction_id ) {
+	function get_asta_gallery( $auction_id ) {
 
 		if ( $auction_id ) {
-			$gallery = get_post_meta( $auction_id, 'auction_gallery', true );
+			$gallery = get_post_meta( $auction_id, 'asta_gallery', true );
 			return ! empty( $gallery ) ? $gallery : array();
 		}
 
@@ -90,7 +90,7 @@ if ( ! function_exists( 'get_auction_gallery' ) ) {
 	}
 }
 
-if ( ! function_exists( 'get_auction_thumbanil' ) ) {
+if ( ! function_exists( 'get_asta_thumbanil' ) ) {
 	/**
 	 * The function returns the first thumbnail image of an auction's gallery.
 	 *
@@ -99,14 +99,29 @@ if ( ! function_exists( 'get_auction_thumbanil' ) ) {
 	 *
 	 * @return string first image thumbnail from the gallery of a given auction ID.
 	 */
-	function get_auction_thumbanil( int $auction_id ) {
+	function get_asta_thumbanil( int $auction_id ) {
 
-		$gallery = get_auction_gallery( $auction_id );
+		$gallery = get_asta_gallery( $auction_id );
 
 		return (
 			! empty( $gallery )
 			? reset( $gallery )
 			: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg'
 		);
+	}
+}
+
+
+if ( ! function_exists( 'single_url_slash' ) ) {
+	/**
+	 * The function `single_url_slash` takes a string parameter `url` and replaces multiple consecutive
+	 * slashes with a single slash.
+	 *
+	 * @param string url The parameter "url" is a string that represents a URL.
+	 *
+	 * @return string modified version of the input URL string.
+	 */
+	function single_url_slash( string $url ) {
+		return preg_replace( '/([^:])(\/{2,})/', '$1/', $url );
 	}
 }

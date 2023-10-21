@@ -4,7 +4,7 @@ import 'flatpickr/dist/themes/dark.css'
 import 'toolcool-range-slider/dist/plugins/tcrs-binding-labels.min.js';
 import 'toolcool-range-slider';
 
-import '../../scss/views/archive_auctions.scss'
+import '../../scss/views/archive_shop.scss'
 import { sendHttpReq } from '../utils/api';
 import { render_card } from '../sections/auction_cord'
 

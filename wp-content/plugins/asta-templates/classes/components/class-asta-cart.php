@@ -49,7 +49,7 @@ if ( ! class_exists( 'ASTA_CART' ) ) :
 					: ''
 				),
 				'url'          => esc_url( get_permalink( $args['auction_id'] ) ),
-				'img'          => get_auction_thumbanil( $args['auction_id'] ),
+				'img'          => get_asta_thumbanil( $args['auction_id'] ),
 				'title'        => get_the_title( $args['auction_id'] ),
 			);
 

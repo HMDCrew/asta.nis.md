@@ -27,6 +27,7 @@ const entry = {
     auth_user: PAGES_DIR + '/auth_user.js',
     profile: PAGES_DIR + '/profile.js',
     new_auction: PAGES_DIR + '/new_auction.js',
+    new_product: PAGES_DIR + '/new_product.js',
     archive_auctions: PAGES_DIR + '/archive_auctions.js',
     archive_shop: PAGES_DIR + '/archive_shop.js',
     single_auction: PAGES_DIR + '/single_auction.js',

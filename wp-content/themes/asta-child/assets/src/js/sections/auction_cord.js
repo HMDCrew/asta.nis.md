@@ -146,7 +146,7 @@ export const render_card = (id, post_title, url, image, auction_date, auction_ty
 
     auction.innerHTML =
         `<a href="${url}" rel="bookmark">
-            <img class="auction-thumbnail" src="${image}">
+            <img class="thumbnail auction-thumbnail" src="${image}">
         </a>
         <div class="entry-content">
             <h2 class="entry-title"><a href="${url}" rel="bookmark">${post_title}</a></h2>

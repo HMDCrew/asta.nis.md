@@ -67,45 +67,6 @@ function get_picture_profile( int $user_id ) {
 }
 add_filter( 'wpr_get_picture_profile', 'get_picture_profile', 10 );
 
-if ( ! function_exists( 'get_auction_gallery' ) ) {
-	/**
-	 * The function retrieves the gallery of images associated with a given auction ID.
-	 *
-	 * @param int|false The ID of the auction post for which the gallery images are being retrieved.
-	 *
-	 * @return array of the gallery images associated with the auction post identified by the
-	 *  parameter. If  is not provided or is falsy, an empty array is returned.
-	 */
-	function get_auction_gallery( $auction_id ) {
-
-		if ( $auction_id ) {
-			$gallery = get_post_meta( $auction_id, 'auction_gallery', true );
-			return ! empty( $gallery ) ? $gallery : array();
-		}
-
-		return array();
-	}
-}
-add_filter( 'wpr_get_auction_gallery', 'get_auction_gallery', 10 );
-
-if ( ! function_exists( 'get_auction_thumbanil' ) ) {
-	/**
-	 * The function returns the first thumbnail image of an auction's gallery.
-	 *
-	 * @param int auction_id This is an integer variable that represents the ID of the auction for which we
-	 * want to retrieve the thumbnail image.
-	 *
-	 * @return string first image thumbnail from the gallery of a given auction ID.
-	 */
-	function get_auction_thumbanil( int $auction_id ) {
-
-		$gallery = apply_filters( 'wpr_get_auction_gallery', $auction_id );
-
-		return ! empty( $gallery ) ? reset( $gallery ) : 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg';
-	}
-}
-add_filter( 'wpr_get_thumbanil', 'get_auction_thumbanil', 10 );
-
 
 /**
  * The function retrieves the start and end dates of an auction and returns them in a formatted string.

@@ -19,7 +19,7 @@ $orders = WPR_THEME_ORDERS::get_user_orders( get_current_user_id() );
 		<?php if ( ! empty( $orders ) ) : ?>
 
 			<?php foreach ( $orders as $order ) : ?>
-				<?php get_template_part( 'template-parts/sections/order', 'item', (array) $order ); ?>
+				<?php do_action( 'asta_order_item', (array) $order ); ?>
 			<?php endforeach; ?>
 
 		<?php else : ?>

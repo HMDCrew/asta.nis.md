@@ -30,9 +30,9 @@ $bids = apply_filters( 'wpr_get_auction_bids', get_post_meta( get_the_ID(), 'auc
 		<div class="swiper auction-gallery">
 			<?php
 			do_action(
-				'gallery_auction_template',
+				'asta_gallery_template',
 				array(
-					'auction_id' => get_the_ID(),
+					'post_id' => get_the_ID(),
 				)
 			);
 			?>
@@ -40,12 +40,12 @@ $bids = apply_filters( 'wpr_get_auction_bids', get_post_meta( get_the_ID(), 'auc
 			<div class="swiper-button-prev"></div>
 		</div>
 
-		<div class="swiper auction-thumbnail">
+		<div class="swiper thumbnails">
 			<?php
 			do_action(
-				'gallery_thumbs_auction_template',
+				'asta_gallery_thumbs_template',
 				array(
-					'auction_id' => get_the_ID(),
+					'post_id' => get_the_ID(),
 				)
 			);
 			?>
@@ -130,7 +130,7 @@ $bids = apply_filters( 'wpr_get_auction_bids', get_post_meta( get_the_ID(), 'auc
 		<button type="button" class="btn btn-primary bid-now d-inline-flex"><?php echo __( 'Bid now', 'asta-child' ); ?><span class="separator">&nbsp-&nbsp</span><span class="last-price"><?php echo apply_filters( 'wpr_get_auction_last_price', get_the_ID() ) + $price_increment; ?></span></button>
 
 		<?php if ( (int) get_post_field( 'post_author', get_the_ID() ) === get_current_user_id() ) : ?>
-			<a href="/edit-auction/?auction_id=<?php echo get_the_ID(); ?>" class="btn btn-primary d-inline-flex edit-auction"><?php echo __( 'Edit', 'asta-child' ); ?></a>
+			<a href="/edit-auction/?auction_id=<?php echo get_the_ID(); ?>" class="btn btn-primary d-inline-flex edit"><?php echo __( 'Edit', 'asta-child' ); ?></a>
 		<?php endif; ?>
 
 	</div><!-- .sidebar -->

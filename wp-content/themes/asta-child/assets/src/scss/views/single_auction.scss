@@ -56,7 +56,7 @@
     }
 }
 
-.auction-thumbnail {
+.thumbnails {
     height: 100px;
     margin-top: 10px;
     box-sizing: border-box;
@@ -75,6 +75,7 @@
 
 .js-editor-content {
     margin-top: 5vh;
+    overflow-wrap: break-word;
 }
 
 .sidebar {

@@ -145,7 +145,7 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 
 			foreach ( $posts as $key => $post ) {
 
-				$posts[ $key ]['image']           = apply_filters( 'wpr_get_thumbanil', $post['ID'] );
+				$posts[ $key ]['image']           = get_asta_thumbanil( $post['ID'] );
 				$posts[ $key ]['author_name']     = get_the_author_meta( 'display_name', (int) $post['post_author'] );
 				$posts[ $key ]['author_url']      = get_author_posts_url( (int) $post['post_author'] );
 				$posts[ $key ]['auction_date']    = apply_filters( 'wpr_get_auction_date', $post['ID'] );

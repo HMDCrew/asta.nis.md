@@ -2,7 +2,8 @@ import EditorJS from '@editorjs/editorjs'
 import Header from '@editorjs/header'
 import List from '@editorjs/list'
 import ImageTool from '@editorjs/image'
-import Swiper, { Navigation, Thumbs, Manipulation } from 'swiper';
+import Swiper from 'swiper';
+import { Navigation, Manipulation, Thumbs } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import flatpickr from "flatpickr";
@@ -60,7 +61,7 @@ const init = (auction_id, auction_json) => {
      */
     const bind_new_image_actions = (gallery, thumbanils) => {
 
-        const new_slide = document.querySelector('.auction-thumbnail .new-content');
+        const new_slide = document.querySelector('.thumbnails .new-content');
         const slide_image = new_slide && new_slide.querySelector('input[name="slide-image"]');
 
         if (new_slide && slide_image) {
@@ -88,7 +89,7 @@ const init = (auction_id, auction_json) => {
             (res) => {
                 if ('success' === res.status) {
 
-                    const old_thumbnail_slide = document.querySelector(`.auction-thumbnail img[src="${image_url}"]`);
+                    const old_thumbnail_slide = document.querySelector(`.thumbnails img[src="${image_url}"]`);
                     const old_gallery_slide = document.querySelector(`.auction-gallery img[src="${image_url}"]`);
 
                     old_thumbnail_slide.parentNode.remove();
@@ -169,7 +170,7 @@ const init = (auction_id, auction_json) => {
     }
 
 
-    const swiper = new Swiper(".auction-thumbnail", {
+    const swiper = new Swiper(".thumbnails", {
         loop: true,
         modules: [Manipulation],
         spaceBetween: 10,
@@ -252,11 +253,11 @@ const init = (auction_id, auction_json) => {
         },
     })
 
-    const save_auction = document.querySelector('.save-auction')
+    const save_auction = document.querySelector('.sidebar .save')
 
-    const auction_title = document.querySelector('input[name="auction-title"]')
+    const auction_title = document.querySelector('input[name="asta-title"]')
     const auction_date = document.querySelector('input[name="auction-date"]')
-    const baze_price = document.querySelector('input[name="baze-price"]')
+    const baze_price = document.querySelector('input[name="price"]')
     const price_increment = document.querySelector('input[name="price-increment"]')
     const auction_type_select = document.querySelector('.wrap-input.select select[name="category"]')
     const aditional_info = document.querySelector('textarea[name="aditional-info"]')

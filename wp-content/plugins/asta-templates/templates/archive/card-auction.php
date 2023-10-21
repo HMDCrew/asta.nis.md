@@ -26,7 +26,7 @@ list(
 <article id="post-<?php echo $post_id; ?>" class="<?php echo $post_classes; ?>">
 
 	<a href="<?php echo $post_link; ?>" rel="bookmark">
-		<img class="auction-thumbnail" src="<?php echo $url_thumbnail; ?>" />
+		<img class="thumbnail auction-thumbnail" src="<?php echo $url_thumbnail; ?>" />
 	</a>
 
 	<div class="entry-content">
@@ -72,10 +72,10 @@ list(
 		<?php endif; ?>
 
 		<div class="actions <?php echo get_current_user_id() === $author_id ? 'd-flex' : ''; ?>">
-			<a href="<?php echo $post_link; ?>" class="btn btn-primary auction-details"><?php echo __( 'Details', 'asta-child' ); ?></a>
+			<a href="<?php echo $post_link; ?>" class="btn btn-primary details"><?php echo __( 'Details', 'asta-child' ); ?></a>
 
 			<?php if ( get_current_user_id() === $author_id ) : ?>
-				<a href="/edit-auction/?auction_id=<?php echo $post_id; ?>" class="btn btn-primary d-inline-flex edit-auction">
+				<a href="/edit-auction/?auction_id=<?php echo $post_id; ?>" class="btn btn-primary d-inline-flex edit">
 					<?php echo __( 'Edit', 'asta-child' ); ?>
 				</a>
 			<?php endif; ?>

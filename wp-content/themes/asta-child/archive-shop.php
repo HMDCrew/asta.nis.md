@@ -13,9 +13,21 @@ get_header();
 	<main id="primary" class="site-main">
 		<div class="container">
 
-			<?php do_action( 'asta_filter_bar', array() ); ?>
+			<?php
+			do_action(
+				'asta_filter_bar',
+				array(
+					'visibility' => array(
+						'search'   => true,
+						'category' => true,
+						'date'     => false,
+						'price'    => true,
+					),
+				),
+			);
+			?>
 
-			<div class="list-auction">
+			<div class="list-products">
 				<?php if ( have_posts() ) : ?>
 
 					<?php
@@ -28,7 +40,7 @@ get_header();
 						 * If you want to override this in a child theme, then include a file
 						 * called content-___.php (where ___ is the Post Type name) and that will be used instead.
 						 */
-						get_template_part( 'template-parts/card', 'shop' );
+						do_action( 'asta_card_shop', array() );
 
 					endwhile;
 

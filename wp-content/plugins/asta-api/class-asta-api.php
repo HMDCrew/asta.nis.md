@@ -27,7 +27,8 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 				self::$instance->constants();
 
 				// Plugin Setup
-				add_action( 'after_setup_theme', array( self::$instance, 'includes' ), 10, 0 );
+				// add_action( 'after_setup_theme', array( self::$instance, 'includes' ), 10, 0 );
+				add_action( 'setup_theme', array( self::$instance, 'includes' ), 10, 0 );
 			}
 
 			return self::$instance;
@@ -97,7 +98,7 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-wpr-editorjs-gutenberg.php';
 			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-sec.php';
 
-			// API ednpoints
+			// API ednpoints auction
 			require_once ASTA_API_PLUGIN_CLASSES . 'user/class-wpr-theme-auth.php';
 			require_once ASTA_API_PLUGIN_CLASSES . 'user/class-wpr-theme-profile.php';
 			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-wpr-theme-edit-auction.php';
@@ -105,6 +106,9 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-wpr-theme-bids.php';
 			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-wpr-theme-sold-process.php';
 			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-wpr-theme-chackout.php';
+
+			// API ednpoints shop
+			require_once ASTA_API_PLUGIN_CLASSES . 'shop/class-wpr-theme-edit-product.php';
 
 			// Dashboard
 			require_once ASTA_API_PLUGIN_CLASSES . 'dashboard/class-gateway-payments.php';
@@ -115,6 +119,7 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 			\WPR_THEME_AUTH::instance();
 			\WPR_THEME_PROFILE::instance();
 			\WPR_THEME_EDIT_AUCTION::instance();
+			\WPR_THEME_EDIT_PRODUCT::instance();
 			\WPR_THEME_GET_AUCTION::instance();
 			\WPR_THEME_BIDS::instance();
 			\WPR_THEME_CHACKOUT::instance();

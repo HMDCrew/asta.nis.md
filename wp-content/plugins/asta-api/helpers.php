@@ -45,31 +45,34 @@ if ( ! function_exists( 'sanitaiz_extension' ) ) {
 }
 
 
-if ( ! function_exists( 'get_user_last_edited_auction' ) ) {
+if ( ! function_exists( 'get_user_last_edited_post' ) ) {
 	/**
-	 * The function returns the ID of the most recently edited draft auction post by a given user.
+	 * The function `get_user_last_edited_post` retrieves the ID of the most recent draft post of a
+	 * specific post type that was last edited by a given user.
 	 *
-	 * @param int user_id The ID of the user whose last edited auction is being retrieved.
+	 * @param int user_id The user ID of the user whose last edited post you want to retrieve.
+	 * @param string post_type The post type of the posts you want to retrieve. By default, it is set to
+	 * 'auctions'.
 	 *
-	 * @return int|false ID of the most recently edited draft auction post by the specified user, or false if no
-	 * such post exists.
+	 * @return int|false ID of the last edited post by the specified user, with the specified post type (default
+	 * is 'auctions'). If there is no post found, it will return false.
 	 */
-	function get_user_last_edited_auction( int $user_id ) {
+	function get_user_last_edited_post( int $user_id, string $post_type = 'auctions' ) {
 
-		$auctions = get_posts(
+		$posts = get_posts(
 			array(
 				'fields'      => 'ids',
 				'numberposts' => 1,
 				'post_status' => 'draft',
 				'author'      => $user_id,
-				'post_type'   => 'auctions',
+				'post_type'   => $post_type,
 				'orderby'     => 'date',
 				'order'       => 'DESC',
 			)
 		);
 
-		if ( ! empty( $auctions ) ) {
-			return (int) reset( $auctions );
+		if ( ! empty( $posts ) ) {
+			return (int) reset( $posts );
 		}
 
 		return false;
@@ -235,6 +238,48 @@ if ( ! function_exists( 'adjust_image_size' ) ) {
 }
 
 
+if ( ! function_exists( 'get_asta_gallery' ) ) {
+	/**
+	 * The function retrieves the gallery of images associated with a given auction ID.
+	 *
+	 * @param int|false The ID of the auction post for which the gallery images are being retrieved.
+	 *
+	 * @return array of the gallery images associated with the auction post identified by the
+	 *  parameter. If  is not provided or is falsy, an empty array is returned.
+	 */
+	function get_asta_gallery( $auction_id ) {
+
+		if ( $auction_id ) {
+			$gallery = get_post_meta( $auction_id, 'asta_gallery', true );
+			return ! empty( $gallery ) ? $gallery : array();
+		}
+
+		return array();
+	}
+}
+
+if ( ! function_exists( 'get_asta_thumbanil' ) ) {
+	/**
+	 * The function returns the first thumbnail image of an auction's gallery.
+	 *
+	 * @param int auction_id This is an integer variable that represents the ID of the auction for which we
+	 * want to retrieve the thumbnail image.
+	 *
+	 * @return string first image thumbnail from the gallery of a given auction ID.
+	 */
+	function get_asta_thumbanil( int $auction_id ) {
+
+		$gallery = get_asta_gallery( $auction_id );
+
+		return (
+			! empty( $gallery )
+			? reset( $gallery )
+			: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg'
+		);
+	}
+}
+
+
 if ( ! function_exists( 'remove_multimple_slah' ) ) {
 	/**
 	 * The function removes multiple forward slashes from a given string.
@@ -317,5 +362,20 @@ if ( ! function_exists( 'wpr_asta_get_template_path' ) ) {
 		}
 
 		return $located;
+	}
+}
+
+
+if ( ! function_exists( 'single_url_slash' ) ) {
+	/**
+	 * The function `single_url_slash` takes a string parameter `url` and replaces multiple consecutive
+	 * slashes with a single slash.
+	 *
+	 * @param string url The parameter "url" is a string that represents a URL.
+	 *
+	 * @return string modified version of the input URL string.
+	 */
+	function single_url_slash( string $url ) {
+		return preg_replace( '/([^:])(\/{2,})/', '$1/', $url );
 	}
 }

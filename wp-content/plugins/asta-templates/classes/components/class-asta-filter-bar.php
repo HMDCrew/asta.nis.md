@@ -66,7 +66,7 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 		 * determined by querying the `auctions` post type and ordering the results by the `baze_price` meta
 		 * value in ascending or descending order. The function then caches the result using the `
 		 */
-		private function helper_price_range( string $max_or_min ) {
+		private function helper_price_range( string $max_or_min, string $post_type = 'auctions' ) {
 
 			$key = 'post_' . $max_or_min;
 
@@ -76,20 +76,26 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 				return $cached_posts;
 			}
 
-			$auctions = get_posts(
+			$posts = get_posts(
 				array(
 					'fields'      => 'ids',
 					'numberposts' => 1,
-					'post_type'   => 'auctions',
+					'post_type'   => $post_type,
 					'meta_key'    => 'baze_price',
 					'orderby'     => 'meta_value_num',
 					'order'       => ( 'min' === $max_or_min ? 'ASC' : 'DESC' ),
 				)
 			);
 
-			$auction = reset( $auctions );
+			$post = reset( $posts );
 
-			$value = floatval( get_post_meta( $auction, 'baze_price', true ) );
+			$value = floatval(
+				get_post_meta(
+					$post,
+					( 'auctions' === $post_type ? 'baze_price' : 'product_price' ),
+					true
+				)
+			);
 
 			wp_cache_set( $key, $value );
 
@@ -120,8 +126,8 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 
 			$defaults = array(
 				'categories'     => $this->get_auctions_categories(),
-				'slider_min'     => $this->helper_price_range( 'min' ),
-				'slider_max'     => $this->helper_price_range( 'max' ),
+				'slider_min'     => $this->helper_price_range( 'min', get_post_type() ),
+				'slider_max'     => $this->helper_price_range( 'max', get_post_type() ),
 				'visibility'     => array(
 					'search'   => true,
 					'category' => true,

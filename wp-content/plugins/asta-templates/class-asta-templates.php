@@ -27,7 +27,7 @@ if ( ! class_exists( 'ASTA_TEMPLATES' ) ) :
 				self::$instance->constants();
 
 				// Plugin Setup
-				add_action( 'setup_theme', array( self::$instance, 'includes' ), 10, 0 );
+				add_action( 'setup_theme', array( self::$instance, 'includes' ), 15, 0 );
 			}
 
 			return self::$instance;
@@ -81,6 +81,11 @@ if ( ! class_exists( 'ASTA_TEMPLATES' ) ) :
 			if ( ! defined( 'ASTA_TEMPLATES_PLUGIN_TEMPLATES' ) ) {
 				define( 'ASTA_TEMPLATES_PLUGIN_TEMPLATES', trailingslashit( ASTA_TEMPLATES_PLUGIN_DIR_PATH . 'templates' ) );
 			}
+
+			// Plugin directory vendor
+			if ( ! defined( 'ASTA_TEMPLATES_PLUGIN_COMPOSER' ) ) {
+				define( 'ASTA_TEMPLATES_PLUGIN_COMPOSER', trailingslashit( ASTA_TEMPLATES_PLUGIN_DIR_PATH . 'vendor' ) );
+			}
 		}
 
 		/**
@@ -88,17 +93,25 @@ if ( ! class_exists( 'ASTA_TEMPLATES' ) ) :
 		 */
 		public function includes() {
 
+			require_once ASTA_TEMPLATES_PLUGIN_COMPOSER . 'autoload.php';
+
 			// Helpers functions
 			require_once ASTA_TEMPLATES_PLUGIN_DIR_PATH . 'helpers.php';
 
 			// Components hooks
 			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-filter-bar.php';
 			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-card-auction.php';
+			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-card-shop.php';
 			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-cart.php';
+			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-order.php';
+			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-gallery.php';
 
 			\ASTA_FILTER_BAR::instance();
 			\ASTA_CARD_AUCTION::instance();
+			\ASTA_CARD_SHOP::instance();
 			\ASTA_CART::instance();
+			\ASTA_ORDER::instance();
+			\ASTA_GALLERY::instance();
 		}
 	}
 
