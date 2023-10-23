@@ -98,34 +98,38 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-wpr-editorjs-gutenberg.php';
 			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-sec.php';
 
+			// API cart
+			require_once ASTA_API_PLUGIN_CLASSES . 'cart/class-asta-theme-cart.php';
+
 			// API ednpoints auction
-			require_once ASTA_API_PLUGIN_CLASSES . 'user/class-wpr-theme-auth.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'user/class-wpr-theme-profile.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-wpr-theme-edit-auction.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-wpr-theme-get-auction.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-wpr-theme-bids.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-wpr-theme-sold-process.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-wpr-theme-chackout.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'user/class-asta-theme-auth.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'user/class-asta-theme-profile.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-asta-theme-edit-auction.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-asta-theme-get-auction.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-asta-theme-bids.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-asta-theme-sold-process.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'chackout/class-asta-theme-chackout.php';
 
 			// API ednpoints shop
-			require_once ASTA_API_PLUGIN_CLASSES . 'shop/class-wpr-theme-edit-product.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'shop/class-asta-theme-edit-product.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'shop/class-asta-theme-get-product.php';
 
 			// Dashboard
 			require_once ASTA_API_PLUGIN_CLASSES . 'dashboard/class-gateway-payments.php';
 			require_once ASTA_API_PLUGIN_CLASSES . 'orders/class-wpr-theme-orders.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-wpr-gutenberg-metaboxes.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-asta-gutenberg-metaboxes.php';
 
-			\WPR_THEME_SOLD_PROCESS::instance();
-			\WPR_THEME_AUTH::instance();
-			\WPR_THEME_PROFILE::instance();
-			\WPR_THEME_EDIT_AUCTION::instance();
-			\WPR_THEME_EDIT_PRODUCT::instance();
-			\WPR_THEME_GET_AUCTION::instance();
-			\WPR_THEME_BIDS::instance();
-			\WPR_THEME_CHACKOUT::instance();
+			\ASTA_THEME_SOLD_PROCESS::instance();
+			\ASTA_THEME_AUTH::instance();
+			\ASTA_THEME_PROFILE::instance();
+			\ASTA_THEME_EDIT_AUCTION::instance();
+			\ASTA_THEME_EDIT_PRODUCT::instance();
+			\ASTA_THEME_GET_AUCTION::instance();
+			\ASTA_THEME_BIDS::instance();
+			\ASTA_THEME_CHACKOUT::instance();
 			\Gateway_Payments::instance();
-			\WPR_THEME_ORDERS::instance();
-			\WPR_GUTENBERG_METABOXES::instance();
+			\ASTA_THEME_ORDERS::instance();
+			\ASTA_GUTENBERG_METABOXES::instance();
 		}
 	}
 

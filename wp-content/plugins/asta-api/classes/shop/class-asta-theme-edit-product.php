@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
-	class WPR_THEME_EDIT_PRODUCT {
+if ( ! class_exists( 'ASTA_THEME_EDIT_PRODUCT' ) ) :
+	class ASTA_THEME_EDIT_PRODUCT {
 
 
 		private static $instance;
@@ -14,8 +14,8 @@ if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
 
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_EDIT_PRODUCT ) ) {
-				self::$instance = new WPR_THEME_EDIT_PRODUCT;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_EDIT_PRODUCT ) ) {
+				self::$instance = new ASTA_THEME_EDIT_PRODUCT;
 				self::$instance->hooks();
 			}
 
@@ -27,14 +27,14 @@ if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
 		 * Action/filter hooks
 		 */
 		public function hooks() {
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 		/**
 		 * Registering a route for the REST API.
-		 * @param [type] $server
+		 * @param \WP_REST_Server $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			// Shop create draft
 			$server->register_route(
@@ -190,14 +190,14 @@ if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
 		 * @param int product_id An integer value representing the ID of the product post for which the gallery
 		 * needs to be updated.
 		 * @param array gallery An array of image URLs representing the gallery of images for the product. This
-		 * function updates the 'product_gallery' post meta for the given product ID with the new gallery
+		 * function updates the 'asta_gallery' post meta for the given product ID with the new gallery
 		 * array.
 		 *
 		 * @return int|bool result of the `update_post_meta()` function, which is a boolean value indicating whether
 		 * the update was successful or not.
 		 */
 		private function update_product_gallery( int $product_id, array $gallery ) {
-			return update_post_meta( $product_id, 'product_gallery', $gallery );
+			return update_post_meta( $product_id, 'asta_gallery', $gallery );
 		}
 
 
@@ -395,7 +395,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
 				) {
 
 					$product_meta = array(
-						'product_price'  => $price,
+						'price'          => $price,
 						'product_editor' => $product_content,
 					);
 
@@ -411,7 +411,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
 						)
 					);
 
-					wp_set_post_terms( $product_id, array( $category_id ), 'auction_category', false );
+					wp_set_post_terms( $product_id, array( $category_id ), 'asta_category', false );
 
 					wp_send_json(
 						array(
@@ -439,4 +439,4 @@ if ( ! class_exists( 'WPR_THEME_EDIT_PRODUCT' ) ) :
 	}
 endif;
 
-WPR_THEME_EDIT_PRODUCT::instance();
+ASTA_THEME_EDIT_PRODUCT::instance();

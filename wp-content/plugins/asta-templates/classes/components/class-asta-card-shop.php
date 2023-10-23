@@ -29,15 +29,15 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 
 
 		/**
-		 * The function "get_product_price" retrieves the price of a product based on its ID.
+		 * The function "get_price" retrieves the price of a product based on its ID.
 		 *
 		 * @param int product_id The product ID is an integer value that uniquely identifies a product in the
 		 * system. It is used to retrieve the price of a specific product.
 		 *
 		 * @return float product price as a float value.
 		 */
-		public function get_product_price( int $product_id ) {
-			return floatval( get_post_meta( $product_id, 'product_price', true ) );
+		public function get_price( int $product_id ) {
+			return floatval( get_post_meta( $product_id, 'price', true ) );
 		}
 
 
@@ -47,7 +47,7 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 
 			$defaults = array(
 				'product_id'    => $product_id,
-				'baze_price'    => $this->get_product_price( $product_id ),
+				'price'         => $this->get_price( $product_id ),
 				'post_excerpt'  => get_post_field( 'post_excerpt', $product_id ),
 				'post_classes'  => esc_attr( implode( ' ', get_post_class( 'card' ) ) ),
 				'product_url'   => esc_url( get_permalink() ),

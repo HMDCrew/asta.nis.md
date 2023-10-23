@@ -226,14 +226,14 @@ if ( ! function_exists( 'get_auctions_categories' ) ) {
 	 * result or not. If set to true, only categories with at least one auction item will be returned. If
 	 * set to false, all categories, including empty ones, will be returned.
 	 *
-	 * @return array of terms from the 'auction_category' taxonomy. The terms may be empty or not
+	 * @return array of terms from the 'asta_category' taxonomy. The terms may be empty or not
 	 * depending on the value of the  parameter. If the  array is not empty, it is
 	 * returned. Otherwise, an empty array is returned.
 	 */
 	function get_auctions_categories( $hide_empty = false ) {
 		$terms = get_terms(
 			array(
-				'taxonomy'   => 'auction_category',
+				'taxonomy'   => 'asta_category',
 				'hide_empty' => $hide_empty,
 			)
 		);

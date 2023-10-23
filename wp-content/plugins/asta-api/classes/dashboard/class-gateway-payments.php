@@ -92,9 +92,9 @@ if ( ! class_exists( 'Gateway_Payments' ) ) :
 		 */
 		public function includes() {
 
-			require_once ASTA_API_PLUGIN_CLASSES . 'dashboard/options/class-wpr-gateway-options.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'dashboard/options/class-asta-gateway-options.php';
 
-			\WPR_Gateway_Options::instance();
+			\ASTA_Gateway_Options::instance();
 		}
 
 

@@ -8,7 +8,7 @@ redirect_not_logged_user( '/login' );
 
 get_header();
 
-$orders = WPR_THEME_ORDERS::get_user_orders( get_current_user_id() );
+$orders = ASTA_THEME_ORDERS::get_user_orders( get_current_user_id() );
 ?>
 
 <main id="primary" class="site-main">

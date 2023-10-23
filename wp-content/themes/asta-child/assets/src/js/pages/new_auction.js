@@ -257,7 +257,7 @@ const init = (auction_id, auction_json) => {
 
     const auction_title = document.querySelector('input[name="asta-title"]')
     const auction_date = document.querySelector('input[name="auction-date"]')
-    const baze_price = document.querySelector('input[name="price"]')
+    const price = document.querySelector('input[name="price"]')
     const price_increment = document.querySelector('input[name="price-increment"]')
     const auction_type_select = document.querySelector('.wrap-input.select select[name="category"]')
     const aditional_info = document.querySelector('textarea[name="aditional-info"]')
@@ -272,7 +272,7 @@ const init = (auction_id, auction_json) => {
                 auction_id: auction_id,
                 auction_title: auction_title.value,
                 auction_date: auction_date.value,
-                baze_price: baze_price.value,
+                price: price.value,
                 price_increment: price_increment.value,
                 auction_type_select: type_select.value,
                 auction_type_select_id: type_select.getAttribute('content'),
@@ -302,7 +302,7 @@ const init = (auction_id, auction_json) => {
         });
     }
 
-    if (save_auction && auction_date && baze_price && price_increment && auction_type_select && aditional_info) {
+    if (save_auction && auction_date && price && price_increment && auction_type_select && aditional_info) {
         save_auction.addEventListener('click', ev => salve_auction_info(), false)
     }
 }

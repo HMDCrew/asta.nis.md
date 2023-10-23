@@ -5,14 +5,14 @@
 
 ! empty( $_GET['payment_intent'] ) || wp_redirect( get_site_url() ) && exit;
 
-$payment_intent = WPR_THEME_CHACKOUT::instance()->stripe_client->paymentIntents->retrieve( // phpcs:ignore
+$payment_intent = ASTA_THEME_CHACKOUT::instance()->stripe_client->paymentIntents->retrieve( // phpcs:ignore
 	preg_replace( '/[^a-zA-Z0-9\_\-]/i', '', $_GET['payment_intent'] ),
 );
 
-$order = WPR_THEME_ORDERS::get_order( $payment_intent->id );
+$order = ASTA_THEME_ORDERS::get_order( $payment_intent->id );
 ! empty( $order ) || wp_redirect( get_site_url() ) && exit;
 
-$order_details = WPR_THEME_ORDERS::get_meta( $order->ID, 'details' );
+$order_details = ASTA_THEME_ORDERS::get_meta( $order->ID, 'details' );
 $paid_status   = reset( $payment_intent->charges->data )->paid;
 
 get_header();
@@ -26,10 +26,10 @@ get_header();
 			<?php if ( $paid_status ) : ?>
 
 				<?php
-				WPR_THEME_ORDERS::set_order_status( $order->ID, 'paid' );
-				WPR_THEME_ORDERS::set_meta( $order->ID, 'oreder_link', preg_replace( '/[^a-zA-Z0-9\@\:\/\%\&\?\#\.\-\_\=]/i', '', $_SERVER['REQUEST_URI'] ) );
-				WPR_THEME_ORDERS::crons_after_payment_order_status( $order->ID );
-				WPR_THEME_CHACKOUT::remove_order_products_from_user_cart( get_current_user_id(), $order->ID );
+				ASTA_THEME_ORDERS::set_order_status( $order->ID, 'paid' );
+				ASTA_THEME_ORDERS::set_meta( $order->ID, 'oreder_link', preg_replace( '/[^a-zA-Z0-9\@\:\/\%\&\?\#\.\-\_\=]/i', '', $_SERVER['REQUEST_URI'] ) );
+				ASTA_THEME_ORDERS::crons_after_payment_order_status( $order->ID );
+				ASTA_THEME_CHACKOUT::clean_cart( $order->ID );
 				?>
 
 				<h2><?php echo __( 'Thank you for participating in the auctions on the platform!', 'asta-child' ); ?></h2>
@@ -52,18 +52,32 @@ get_header();
 		</div>
 
 		<div class="cart">
-			<?php foreach ( $order_details['cart'] as $auction_id => $cart_item ) : ?>
-				<?php
-				get_template_part(
-					'template-parts/sections/cart',
-					'item',
-					array(
-						'auction_id' => $auction_id,
-						'now_price'  => $cart_item['now_price'],
-					)
-				);
-				?>
-			<?php endforeach; ?>
+
+			<?php if ( ! empty( $order_details['cart']['auctions_cart'] ) ) : ?>
+
+				<h2><?php echo __( 'Auctions', 'asta-child' ); ?></h2>
+
+				<?php foreach ( $order_details['cart']['auctions_cart'] as $auction_id => $cart_item ) : ?>
+					<?php do_action( 'asta_cart_item', $cart_item ); ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
+
+			<?php if ( ! empty( $order_details['cart']['products_cart'] ) ) : ?>
+
+				<h2><?php echo __( 'Products', 'asta-child' ); ?></h2>
+
+				<?php foreach ( $order_details['cart']['products_cart'] as $product_id ) : ?>
+					<?php
+					do_action(
+						'asta_cart_item',
+						array(
+							'product_id' => $product_id,
+							'price'      => floatval( get_post_meta( $product_id, 'price', true ) ),
+						)
+					);
+					?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
 
 	</div><!-- .container -->

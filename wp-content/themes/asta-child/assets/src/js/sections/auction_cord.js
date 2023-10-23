@@ -8,7 +8,7 @@
  * empty string is returned.
  */
 const render_date = (date) => {
-    return ('' !== date.trim()
+    return (date && '' !== date.trim()
         ? `<div class="date">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192H400V448c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192z"/></svg>
                 ${date}
@@ -63,30 +63,30 @@ const render_excerpt = (post_excerpt) => {
 /**
  * The function `render_price` generates HTML code for displaying a base price and an optional price
  * increment.
- * @param baze_price - The base price of a product or service.
+ * @param price - The base price of a product or service.
  * @param price_increment - `price_increment` is a numeric value representing the amount by which the
  * base price is increased. It is used to display the increment value next to the base price in the
  * rendered HTML output.
  * @returns The function `render_price` returns a string of HTML markup that displays the base price
- * and an optional price increment. If the `baze_price` argument is not an empty string, the function
+ * and an optional price increment. If the `price` argument is not an empty string, the function
  * returns a div element with the class `price-info` that contains two child div elements with the
- * classes `baze_price` and `price_increment`, respectively. The `baze_price` div contains an
+ * classes `price` and `price_increment`, respectively. The `price` div contains an
  */
-const render_price = (baze_price, price_increment) => {
+const render_price = (price, price_increment) => {
 
-    const price =
-        `<div class="baze_price">
+    const price_dom =
+        `<div class="price">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path d="M160 0c17.7 0 32 14.3 32 32V67.7c1.6 .2 3.1 .4 4.7 .7c.4 .1 .7 .1 1.1 .2l48 8.8c17.4 3.2 28.9 19.9 25.7 37.2s-19.9 28.9-37.2 25.7l-47.5-8.7c-31.3-4.6-58.9-1.5-78.3 6.2s-27.2 18.3-29 28.1c-2 10.7-.5 16.7 1.2 20.4c1.8 3.9 5.5 8.3 12.8 13.2c16.3 10.7 41.3 17.7 73.7 26.3l2.9 .8c28.6 7.6 63.6 16.8 89.6 33.8c14.2 9.3 27.6 21.9 35.9 39.5c8.5 17.9 10.3 37.9 6.4 59.2c-6.9 38-33.1 63.4-65.6 76.7c-13.7 5.6-28.6 9.2-44.4 11V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V445.1c-.4-.1-.9-.1-1.3-.2l-.2 0 0 0c-24.4-3.8-64.5-14.3-91.5-26.3c-16.1-7.2-23.4-26.1-16.2-42.2s26.1-23.4 42.2-16.2c20.9 9.3 55.3 18.5 75.2 21.6c31.9 4.7 58.2 2 76-5.3c16.9-6.9 24.6-16.9 26.8-28.9c1.9-10.6 .4-16.7-1.3-20.4c-1.9-4-5.6-8.4-13-13.3c-16.4-10.7-41.5-17.7-74-26.3l-2.8-.7 0 0C119.4 279.3 84.4 270 58.4 253c-14.2-9.3-27.5-22-35.8-39.6c-8.4-17.9-10.1-37.9-6.1-59.2C23.7 116 52.3 91.2 84.8 78.3c13.3-5.3 27.9-8.9 43.2-11V32c0-17.7 14.3-32 32-32z"></path></svg>
-            ${baze_price}
+            ${price}
         </div>`;
 
     const increment = `<div class="price_increment">(+${price_increment})</div>`;
 
     return (
-        '' !== baze_price.toString().trim()
+        '' !== price.toString().trim()
             ? `<div class="price-info">
                 <div class="price-info-row">
-                    ${price}
+                    ${price_dom}
                     ${'' !== price_increment ? increment : ''}
                 </div>
             </div>`
@@ -109,7 +109,7 @@ const render_price = (baze_price, price_increment) => {
  * parameter is used as the text displayed on the button.
  */
 const render_edit_btn = (show_button, auction_id, label) => {
-    return show_button ? `<a href="/edit-auction/?auction_id=${auction_id}" class="btn btn-primary d-inline-flex edit-auction">${label}</a>` : '';
+    return show_button ? `<a href="/edit-auction/?auction_id=${auction_id}" class="btn btn-primary d-inline-flex edit">${label}</a>` : '';
 }
 
 
@@ -126,7 +126,7 @@ const render_edit_btn = (show_button, auction_id, label) => {
  * @param post_excerpt - post_excerpt is a string parameter that represents a short summary or
  * description of the auction post. It is used in the HTML template to render the excerpt section of
  * the post.
- * @param baze_price - The base price of the auction.
+ * @param price - The base price of the auction.
  * @param price_increment - price_increment is a numeric value representing the amount by which the
  * bidding price will increase in an auction.
  * @returns {HTMLElement} The function `render_card` is returning an HTML element (specifically, an `article`
@@ -134,11 +134,12 @@ const render_edit_btn = (show_button, auction_id, label) => {
  * date, type, excerpt, and price, as well as buttons for viewing the auction details and editing the
  * auction (if the user is the owner of the auction).
  */
-export const render_card = (id, post_title, url, image, auction_date, auction_type, post_excerpt, baze_price, price_increment, is_my_auction, labels) => {
+export const render_card = (id, post_title, url, image, auction_date, auction_type, post_excerpt, price, price_increment, is_my_auction, labels) => {
 
     const auction = document.createElement('article')
     auction.id = 'post-' + id
     auction.classList.add('post-' + id)
+    auction.classList.add('card')
     auction.classList.add('auctions')
     auction.classList.add('type-auctions')
     auction.classList.add('status-publish')
@@ -153,9 +154,9 @@ export const render_card = (id, post_title, url, image, auction_date, auction_ty
             ${render_date(auction_date)}
             ${render_type(auction_type)}
             ${render_excerpt(post_excerpt)}
-            ${render_price(baze_price, price_increment)}
+            ${render_price(price, price_increment)}
             <div class="actions ${is_my_auction ? 'd-flex' : ''}">
-                <a href="${url}" class="btn btn-primary auction-details">${labels['details']}</a>
+                <a href="${url}" class="btn btn-primary details">${labels['details']}</a>
                 ${render_edit_btn(is_my_auction, id, labels['edit'])}
             </div>
         </div>`;

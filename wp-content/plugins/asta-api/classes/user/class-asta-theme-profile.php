@@ -5,15 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_PROFILE' ) ) :
-	class WPR_THEME_PROFILE {
+if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
+	class ASTA_THEME_PROFILE {
 
 		private static $instance;
 		private $image_ext = array( 'jpg', 'png', 'jpeg' );
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_PROFILE ) ) {
-				self::$instance = new WPR_THEME_PROFILE;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_PROFILE ) ) {
+				self::$instance = new ASTA_THEME_PROFILE;
 				self::$instance->hooks();
 			}
 
@@ -25,7 +25,7 @@ if ( ! class_exists( 'WPR_THEME_PROFILE' ) ) :
 		 * Action/filter hooks
 		 */
 		public function hooks() {
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 
@@ -33,7 +33,7 @@ if ( ! class_exists( 'WPR_THEME_PROFILE' ) ) :
 		 * Registering a route for the REST API.
 		 * @param [type] $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			// Profile image
 			$server->register_route(
@@ -175,4 +175,4 @@ if ( ! class_exists( 'WPR_THEME_PROFILE' ) ) :
 	}
 endif;
 
-WPR_THEME_PROFILE::instance();
+ASTA_THEME_PROFILE::instance();

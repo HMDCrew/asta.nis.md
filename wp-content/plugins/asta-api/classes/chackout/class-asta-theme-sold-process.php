@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_SOLD_PROCESS' ) ) :
-	class WPR_THEME_SOLD_PROCESS {
+if ( ! class_exists( 'ASTA_THEME_SOLD_PROCESS' ) ) :
+	class ASTA_THEME_SOLD_PROCESS {
 
 		private static $instance;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_SOLD_PROCESS ) ) {
-				self::$instance = new WPR_THEME_SOLD_PROCESS;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_SOLD_PROCESS ) ) {
+				self::$instance = new ASTA_THEME_SOLD_PROCESS;
 				self::$instance->hooks();
 			}
 
@@ -100,4 +100,4 @@ if ( ! class_exists( 'WPR_THEME_SOLD_PROCESS' ) ) :
 
 endif;
 
-WPR_THEME_SOLD_PROCESS::instance();
+ASTA_THEME_SOLD_PROCESS::instance();

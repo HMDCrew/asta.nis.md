@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_ORDERS' ) ) :
-	class WPR_THEME_ORDERS extends SEC {
+if ( ! class_exists( 'ASTA_THEME_ORDERS' ) ) :
+	class ASTA_THEME_ORDERS extends SEC {
 
 		private static $instance;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_ORDERS ) ) {
-				self::$instance = new WPR_THEME_ORDERS;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_ORDERS ) ) {
+				self::$instance = new ASTA_THEME_ORDERS;
 				self::$instance->hooks();
 			}
 
@@ -26,7 +26,7 @@ if ( ! class_exists( 'WPR_THEME_ORDERS' ) ) :
 		public function hooks() {
 			add_action( 'add_meta_boxes', array( $this, 'order_metaboxes' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_order_metabox_style' ) );
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 			add_action( 'chack_order_payment_status', array( $this, 'chack_order_payment_status_after_payment' ), 10, 1 );
 		}
 
@@ -42,7 +42,7 @@ if ( ! class_exists( 'WPR_THEME_ORDERS' ) ) :
 
 			$payment_intent_id = get_post_meta( $order_id, 'payment_intent', true );
 
-			$payment_intent = WPR_THEME_CHACKOUT::instance()->stripe_client->paymentIntents->retrieve( // phpcs:ignore
+			$payment_intent = ASTA_THEME_CHACKOUT::instance()->stripe_client->paymentIntents->retrieve( // phpcs:ignore
 				$payment_intent_id,
 			);
 
@@ -81,13 +81,13 @@ if ( ! class_exists( 'WPR_THEME_ORDERS' ) ) :
 
 
 		/**
-		 * The function "wpr_rest_api" registers a route for the WordPress REST API that allows users to pay
+		 * The function "asta_rest_api" registers a route for the WordPress REST API that allows users to pay
 		 * for a forgotten order.
 		 *
-		 * @param server The  parameter is an instance of the WP_REST_Server class. It is used to
+		 * @param \WP_REST_Server The  parameter is an instance of the WP_REST_Server class. It is used to
 		 * register routes and handle REST API requests.
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			$server->register_route(
 				'rest-api-wordpress',
@@ -124,7 +124,7 @@ if ( ! class_exists( 'WPR_THEME_ORDERS' ) ) :
 						'status'        => 'success',
 						'message'       => 'payment intent ready',
 						'client_secret' => ! empty( $client_secret ) ? $this->decrypt( base64_decode( $client_secret ) ) : '',
-						'public_key'    => WPR_THEME_CHACKOUT::get_gateway_key( 'stripe', 'public_key' ),
+						'public_key'    => ASTA_THEME_CHACKOUT::get_gateway_key( 'stripe', 'public_key' ),
 					),
 				);
 			} else {
@@ -307,4 +307,4 @@ if ( ! class_exists( 'WPR_THEME_ORDERS' ) ) :
 
 endif;
 
-WPR_THEME_ORDERS::instance();
+ASTA_THEME_ORDERS::instance();

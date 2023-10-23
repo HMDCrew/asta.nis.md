@@ -2,9 +2,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( ! class_exists( 'WPR_Gateway_Options' ) ) :
+if ( ! class_exists( 'ASTA_Gateway_Options' ) ) :
 
-	class WPR_Gateway_Options extends SEC {
+	class ASTA_Gateway_Options extends SEC {
 
 		private static $instance;
 
@@ -13,11 +13,11 @@ if ( ! class_exists( 'WPR_Gateway_Options' ) ) :
 		/**
 		 * It creates a singleton instance of the class.
 		 *
-		 * @return WPR_Gateway_Options instance of the class.
+		 * @return ASTA_Gateway_Options instance of the class.
 		 */
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_Gateway_Options ) ) {
-				self::$instance = new WPR_Gateway_Options;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_Gateway_Options ) ) {
+				self::$instance = new ASTA_Gateway_Options;
 				self::$instance->set_up_class_variable();
 				self::$instance->hooks();
 			}
@@ -145,4 +145,4 @@ if ( ! class_exists( 'WPR_Gateway_Options' ) ) :
 
 endif;
 
-WPR_Gateway_Options::instance();
+ASTA_Gateway_Options::instance();

@@ -9,7 +9,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-list('start_date' => $start_date, 'end_date' => $end_date, 'gallery' => $gallery, 'auction_date' => $auction_date, 'baze_price' => $baze_price, 'price_increment' => $price_increment) = $args;
+list('start_date' => $start_date, 'end_date' => $end_date, 'gallery' => $gallery, 'auction_date' => $auction_date, 'price' => $price, 'price_increment' => $price_increment) = $args;
 ?>
 
 
@@ -30,7 +30,7 @@ list('start_date' => $start_date, 'end_date' => $end_date, 'gallery' => $gallery
 		</tr>
 		<tr>
 			<th><?php echo __( 'Baze price', 'asta-api' ); ?></th>
-			<td><input type="text" name="baze_price" value="<?php echo $baze_price; ?>" /></td>
+			<td><input type="text" name="price" value="<?php echo $price; ?>" /></td>
 		</tr>
 		<tr>
 			<th><?php echo __( 'Price increment', 'asta-api' ); ?></th>

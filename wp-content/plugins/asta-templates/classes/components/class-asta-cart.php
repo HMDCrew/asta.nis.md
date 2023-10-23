@@ -33,24 +33,34 @@ if ( ! class_exists( 'ASTA_CART' ) ) :
 		 *
 		 * @param array args An array of arguments that can be passed to customize the filter bar.
 		 * $defaults = array(
-		 *      'auction_id' => $args['auction_id'],
-		 *      'now_price'  => 0,
+		 *      'auction_id' => $args['auction_id'] || $args['product_id'],
+		 *      'price'  => 0,
 		 *      'date'       => date format( 'D, d M Y H:i:s O' ),
 		 *  );
 		 */
 		public function asta_cart( array $args = array() ) {
 
+			$post_id = ( ! empty( $args['auction_id'] ) ? $args['auction_id'] : $args['product_id'] );
+
 			$defaults = array(
-				'auction_id'   => $args['auction_id'],
-				'now_price'    => 0,
+				'post_id'      => $post_id,
+				'price'        => (
+					! empty( $args['now_price'] )
+					? $args['now_price']
+					: (
+						! empty( $args['price'] )
+						? $args['price']
+						: 0
+					)
+				),
 				'auction_date' => (
 					! empty( $args['date'] )
 					? DateTimeImmutable::createFromFormat( 'D, d M Y H:i:s O', $args['date'] )->format( 'd/m/Y' )
 					: ''
 				),
-				'url'          => esc_url( get_permalink( $args['auction_id'] ) ),
-				'img'          => get_asta_thumbanil( $args['auction_id'] ),
-				'title'        => get_the_title( $args['auction_id'] ),
+				'url'          => esc_url( get_permalink( $post_id ) ),
+				'img'          => get_asta_thumbanil( $post_id ),
+				'title'        => get_the_title( $post_id ),
 			);
 
 			$args = wp_parse_args( $args, $defaults );

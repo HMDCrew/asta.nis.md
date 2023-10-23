@@ -97,65 +97,6 @@ add_filter( 'wpr_get_auction_date', 'get_auction_date', 10 );
 
 
 /**
- * The function returns the value of a specified meta key for a given auction ID, with HTML characters
- * escaped.
- *
- * @param int auction_id An integer representing the ID of the auction post for which the meta value is
- * being retrieved.
- * @param string key The  parameter is a string that represents the name of the meta field to
- * retrieve the value from. It is used in conjunction with the  parameter to retrieve the
- * meta value associated with a specific auction post. The function then returns the escaped HTML value
- * of the meta field.
- *
- * @return string This function returns the value of a specific meta key for a given auction post ID, after
- * sanitizing it with `esc_html()`. If the auction ID is not provided or does not exist, an empty
- * string is returned.
- */
-function esc_auction_meta( int $auction_id, string $key ) {
-
-	if ( $auction_id ) {
-		return esc_html(
-			get_post_meta( $auction_id, $key, true )
-		);
-	}
-
-	return '';
-}
-add_filter( 'wpr_esc_auction_meta', 'esc_auction_meta', 10, 2 );
-
-
-/**
- * This PHP function retrieves the auction type (category) based on the provided auction ID.
- *
- * @param int auction_id This is an integer parameter representing the ID of the auction for which we
- * want to retrieve the auction type.
- *
- * @return array with the ID and name of the first category term associated with the given auction
- * ID. If the auction ID is not provided or no category term is found, an empty array is returned.
- */
-function get_auction_type( $auction_id ) {
-
-	if ( $auction_id ) {
-
-		$terms = get_the_terms( $auction_id, 'auction_category' );
-
-		if ( ! empty( $terms ) ) {
-
-			$term = reset( $terms );
-
-			return array(
-				'id'   => $term->term_id,
-				'name' => $term->name,
-			);
-		}
-	}
-
-	return array();
-}
-add_filter( 'wpr_get_auction_type', 'get_auction_type', 10 );
-
-
-/**
  * This function returns the users who have placed bids on an auction, with a limit of 10 bids if there
  * are more than 10.
  *

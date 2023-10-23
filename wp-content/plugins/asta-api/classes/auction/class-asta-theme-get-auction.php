@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
-	class WPR_THEME_GET_AUCTION {
+if ( ! class_exists( 'ASTA_THEME_GET_AUCTION' ) ) :
+	class ASTA_THEME_GET_AUCTION {
 
 		private static $instance;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_GET_AUCTION ) ) {
-				self::$instance = new WPR_THEME_GET_AUCTION;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_GET_AUCTION ) ) {
+				self::$instance = new ASTA_THEME_GET_AUCTION;
 				self::$instance->hooks();
 			}
 
@@ -24,15 +24,15 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 		 * Action/filter hooks
 		 */
 		public function hooks() {
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 
 		/**
 		 * Registering a route for the REST API.
-		 * @param [type] $server
+		 * @param \WP_REST_Server $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			// Get Auctions
 			$server->register_route(
@@ -40,7 +40,7 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 				'/api-get-auctions',
 				array(
 					'methods'       => 'GET',
-					'callback'      => array( $this, 'wpr_get_auctions' ),
+					'callback'      => array( $this, 'asta_get_auctions' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -107,7 +107,7 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 			if ( ! empty( $type ) ) {
 				$args['tax_query'] = array(
 					array(
-						'taxonomy' => 'auction_category',
+						'taxonomy' => 'asta_category',
 						'field'    => 'id',
 						'terms'    => $type,
 					),
@@ -149,13 +149,13 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 				$posts[ $key ]['author_name']     = get_the_author_meta( 'display_name', (int) $post['post_author'] );
 				$posts[ $key ]['author_url']      = get_author_posts_url( (int) $post['post_author'] );
 				$posts[ $key ]['auction_date']    = apply_filters( 'wpr_get_auction_date', $post['ID'] );
-				$posts[ $key ]['baze_price']      = apply_filters( 'wpr_get_auction_last_price', $post['ID'] );
+				$posts[ $key ]['price']           = apply_filters( 'wpr_get_auction_last_price', $post['ID'] );
 				$posts[ $key ]['price_increment'] = apply_filters( 'wpr_esc_auction_meta', $post['ID'], 'price_increment' );
 				$posts[ $key ]['post_excerpt']    = get_post_field( 'post_excerpt', $post['ID'] );
 				$posts[ $key ]['is_my_auction']   = $curent_user_id === (int) $post['post_author'] ? true : false;
 				$posts[ $key ]['guid']            = get_permalink( $post['ID'] );
 
-				$auction_type = apply_filters( 'wpr_get_auction_type', $post['ID'] );
+				$auction_type = get_asta_category( $post['ID'] );
 				if ( ! empty( $auction_type ) ) {
 
 					$auction_type['link']          = get_category_link( $auction_type['id'] );
@@ -226,7 +226,7 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 		 * @param \WP_REST_Request request A parameter of type \WP_REST_Request that represents the REST API
 		 * request being made.
 		 */
-		public function wpr_get_auctions( \WP_REST_Request $request ) {
+		public function asta_get_auctions( \WP_REST_Request $request ) {
 
 			$params   = $request->get_params();
 			$attr     = $request->get_attributes();
@@ -273,4 +273,4 @@ if ( ! class_exists( 'WPR_THEME_GET_AUCTION' ) ) :
 	}
 endif;
 
-WPR_THEME_GET_AUCTION::instance();
+ASTA_THEME_GET_AUCTION::instance();

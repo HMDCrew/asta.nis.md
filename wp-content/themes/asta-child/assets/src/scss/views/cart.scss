@@ -9,7 +9,7 @@
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
 
-    .auction-image {
+    &>.thumbnail {
         max-width: 150px;
         max-height: 150px;
         margin-right: 1vw;
@@ -19,7 +19,7 @@
         }
     }
 
-    .auction-title {
+    .title {
         a {
             color: $primary;
         }

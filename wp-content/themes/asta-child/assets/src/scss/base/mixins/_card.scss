@@ -68,7 +68,7 @@
 					padding: 6px;
 					border-radius: 4px;
 
-					.baze_price {
+					.price {
 						display: flex;
 						align-items: center;
 						padding-right: 5px;
@@ -86,10 +86,33 @@
 				}
 			}
 
+			.add-to-cart,
 			.edit,
 			.details {
 				margin: 1vh 0;
 				border-radius: 4px;
+			}
+
+			.add-to-cart {
+				margin-right: 15px;
+
+				svg {
+					margin: 0;
+					width: 17px;
+					height: 17px;
+
+					path {
+						fill: #ffffff;
+					}
+				}
+
+				&:hover {
+					svg {
+						path {
+							fill: #000000;
+						}
+					}
+				}
 			}
 		}
 	}

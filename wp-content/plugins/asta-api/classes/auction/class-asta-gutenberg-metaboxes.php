@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_GUTENBERG_METABOXES' ) ) :
-	class WPR_GUTENBERG_METABOXES {
+if ( ! class_exists( 'ASTA_GUTENBERG_METABOXES' ) ) :
+	class ASTA_GUTENBERG_METABOXES {
 
 		private static $instance;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_GUTENBERG_METABOXES ) ) {
-				self::$instance = new WPR_GUTENBERG_METABOXES;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_GUTENBERG_METABOXES ) ) {
+				self::$instance = new ASTA_GUTENBERG_METABOXES;
 				self::$instance->hooks();
 			}
 
@@ -68,7 +68,7 @@ if ( ! class_exists( 'WPR_GUTENBERG_METABOXES' ) ) :
 			$end_date        = get_post_meta( $auction->ID, 'end_date', true );
 			$gallery         = get_post_meta( $auction->ID, 'auction_gallery', true );
 			$auction_date    = apply_filters( 'wpr_get_auction_date', $auction->ID );
-			$baze_price      = apply_filters( 'wpr_esc_auction_meta', $auction->ID, 'baze_price' );
+			$price           = apply_filters( 'wpr_esc_auction_meta', $auction->ID, 'price' );
 			$price_increment = floatval( apply_filters( 'wpr_esc_auction_meta', $auction->ID, 'price_increment' ) );
 
 			wpr_asta_get_template_part(
@@ -79,7 +79,7 @@ if ( ! class_exists( 'WPR_GUTENBERG_METABOXES' ) ) :
 					'end_date'        => $end_date,
 					'gallery'         => $gallery,
 					'auction_date'    => $auction_date,
-					'baze_price'      => $baze_price,
+					'price'           => $price,
 					'price_increment' => $price_increment,
 				)
 			);
@@ -88,4 +88,4 @@ if ( ! class_exists( 'WPR_GUTENBERG_METABOXES' ) ) :
 
 endif;
 
-WPR_GUTENBERG_METABOXES::instance();
+ASTA_GUTENBERG_METABOXES::instance();

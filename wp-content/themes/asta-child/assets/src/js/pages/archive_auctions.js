@@ -33,7 +33,7 @@ const append_content = (json, cards_container, load_more_btn, curent_page, repla
 
     if ('success' === json.status && cards_container) {
 
-        json.message.forEach(el => cards_container.append(render_card(el.ID, el.post_title, el.guid, el.image, el.auction_date, el.auction_type, el.post_excerpt, el.baze_price, el.price_increment, el.is_my_auction, labels)));
+        json.message.forEach(el => cards_container.append(render_card(el.ID, el.post_title, el.guid, el.image, el.auction_date, el.auction_type, el.post_excerpt, el.price, el.price_increment, el.is_my_auction, labels)));
 
         curent_page++;
     }
@@ -114,7 +114,7 @@ const get_price_object = (dom_element) => {
  */
 const get_filter_data = (page = 1) => {
 
-    const search = filter_bar && filter_bar.querySelector('.search input[name="search-auctions"]')
+    const search = filter_bar && filter_bar.querySelector('.search input[name="search"]')
     const type = filter_bar && filter_bar.querySelector('.search .wrap-input input.select')
     const date_rage = filter_bar && filter_bar.querySelector('input[name="date-range"]')
     const price_range = filter_bar && filter_bar.querySelector('#price_range')
@@ -139,7 +139,7 @@ const get_filter_data = (page = 1) => {
 
 if (filter_bar) {
 
-    const search = filter_bar.querySelector('.search input[name="search-auctions"]')
+    const search = filter_bar.querySelector('.search input[name="search"]')
     const type = filter_bar.querySelector('.search .wrap-input input.select')
     const price_range = filter_bar.querySelector('#price_range')
 

@@ -12,10 +12,10 @@ $end_date   = new DateTimeImmutable( get_post_meta( get_the_ID(), 'end_date', tr
 
 $auction_date = apply_filters( 'wpr_get_auction_date', get_the_ID() );
 
-$baze_price      = apply_filters( 'wpr_esc_auction_meta', get_the_ID(), 'baze_price' );
-$price_increment = floatval( apply_filters( 'wpr_esc_auction_meta', get_the_ID(), 'price_increment' ) );
+$price           = esc_auction_meta( get_the_ID(), 'price' );
+$price_increment = floatval( esc_auction_meta( get_the_ID(), 'price_increment' ) );
 $last_price      = apply_filters( 'wpr_get_auction_last_price', get_the_ID() );
-$auction_type    = apply_filters( 'wpr_get_auction_type', get_the_ID() );
+$auction_type    = get_asta_category( get_the_ID() );
 $post_excerpt    = get_post_field( 'post_excerpt', get_the_ID() );
 
 $bids = apply_filters( 'wpr_get_auction_bids', get_post_meta( get_the_ID(), 'auction_bids', true ) );

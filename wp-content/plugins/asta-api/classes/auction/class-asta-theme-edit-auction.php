@@ -5,8 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
-	class WPR_THEME_EDIT_AUCTION {
+if ( ! class_exists( 'ASTA_THEME_EDIT_AUCTION' ) ) :
+	class ASTA_THEME_EDIT_AUCTION {
 
 
 		private static $instance;
@@ -14,8 +14,8 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_EDIT_AUCTION ) ) {
-				self::$instance = new WPR_THEME_EDIT_AUCTION;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_EDIT_AUCTION ) ) {
+				self::$instance = new ASTA_THEME_EDIT_AUCTION;
 				self::$instance->hooks();
 			}
 
@@ -27,14 +27,14 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 * Action/filter hooks
 		 */
 		public function hooks() {
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 		/**
 		 * Registering a route for the REST API.
-		 * @param [type] $server
+		 * @param \WP_REST_Server $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			// Auction create draft
 			$server->register_route(
@@ -42,7 +42,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 				'/api-new-auction',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_new_auction' ),
+					'callback'      => array( $this, 'asta_new_auction' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -53,7 +53,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 				'/api-edit-auction',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_edit_auction' ),
+					'callback'      => array( $this, 'asta_edit_auction' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -64,7 +64,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 				'/api-auction-upload-image',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_upload_auction_image' ),
+					'callback'      => array( $this, 'asta_upload_auction_image' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -75,7 +75,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 				'/api-auction-remove-image',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_remove_auction_image' ),
+					'callback'      => array( $this, 'asta_remove_auction_image' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -86,7 +86,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 				'/api-save-auction',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_save_auction_info' ),
+					'callback'      => array( $this, 'asta_save_auction_info' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -101,7 +101,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 * class, which is used to handle REST API requests in WordPress. It contains information about the
 		 * request, such as the HTTP method, headers, and query parameters.
 		 */
-		public function wpr_new_auction( \WP_REST_Request $request ) {
+		public function asta_new_auction( \WP_REST_Request $request ) {
 
 			$attr = $request->get_attributes();
 
@@ -153,7 +153,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 * class, which represents a REST API request. It contains information about the request, such as the
 		 * HTTP method, headers, and parameters.
 		 */
-		public function wpr_edit_auction( \WP_REST_Request $request ) {
+		public function asta_edit_auction( \WP_REST_Request $request ) {
 
 			$params = $request->get_params();
 			$attr   = $request->get_attributes();
@@ -229,7 +229,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 * class, which represents a REST API request. It contains information about the request, such as the
 		 * HTTP method, headers, and parameters.
 		 */
-		public function wpr_upload_auction_image( \WP_REST_Request $request ) {
+		public function asta_upload_auction_image( \WP_REST_Request $request ) {
 
 			$params = $request->get_params();
 			$attr   = $request->get_attributes();
@@ -296,7 +296,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 * class, which is used to handle REST API requests in WordPress. It contains information about the
 		 * request, such as the HTTP method, headers, and parameters.
 		 */
-		public function wpr_remove_auction_image( \WP_REST_Request $request ) {
+		public function asta_remove_auction_image( \WP_REST_Request $request ) {
 
 			$params = $request->get_params();
 			$attr   = $request->get_attributes();
@@ -368,7 +368,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 		 * @param \WP_REST_Request request The  parameter is an instance of the WP_REST_Request
 		 * class, which contains information about the REST API request being made.
 		 */
-		public function wpr_save_auction_info( \WP_REST_Request $request ) {
+		public function asta_save_auction_info( \WP_REST_Request $request ) {
 
 			$params = $request->get_params();
 			$attr   = $request->get_attributes();
@@ -376,7 +376,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 			$auction_id      = ( ! empty( $params['auction_id'] ) ? preg_replace( '/[^0-9]/i', '', $params['auction_id'] ) : '' );
 			$auction_title   = ( ! empty( $params['auction_title'] ) ? preg_replace( '/[^a-zA-Z0-9\s\@\!\?\,\.\-\_]/i', '', $params['auction_title'] ) : '' );
 			$auction_date    = ( ! empty( $params['auction_date'] ) ? preg_replace( '/[^to0-9\s\/]/i', '', $params['auction_date'] ) : '' );
-			$baze_price      = ( ! empty( $params['baze_price'] ) ? preg_replace( '/[^0-9]/i', '', $params['baze_price'] ) : '' );
+			$price           = ( ! empty( $params['price'] ) ? preg_replace( '/[^0-9]/i', '', $params['price'] ) : '' );
 			$price_increment = ( ! empty( $params['price_increment'] ) ? preg_replace( '/[^0-9]/i', '', $params['price_increment'] ) : '' );
 			$auction_type_id = ( ! empty( $params['auction_type_select_id'] ) ? preg_replace( '/[^0-9]/i', '', $params['auction_type_select_id'] ) : '' );
 			$aditional_info  = ( ! empty( $params['aditional_info'] ) ? preg_replace( '/[^a-zA-Z0-9\s\@\!\?\,\.\-\_\n\t\#\:\/\&]/i', '', $params['aditional_info'] ) : '' );
@@ -394,13 +394,13 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 				if (
 					! empty( $auction_title ) &&
 					! empty( $auction_date ) &&
-					! empty( $baze_price ) &&
+					! empty( $price ) &&
 					! empty( $price_increment ) &&
 					! empty( $auction_type_id ) ) {
 
 					$auction_meta = array(
-						'auction_price'   => $baze_price,
-						'baze_price'      => $baze_price,
+						'auction_price'   => $price,
+						'price'           => $price,
 						'price_increment' => $price_increment,
 						'auction_editor'  => $auction_content,
 					);
@@ -423,7 +423,7 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 						)
 					);
 
-					wp_set_post_terms( $auction_id, array( $auction_type_id ), 'auction_category', false );
+					wp_set_post_terms( $auction_id, array( $auction_type_id ), 'asta_category', false );
 
 					// remove olds crons
 					if ( wp_next_scheduled( 'chack_auction_status_for_cart', array( 'auction_id' => $auction_id ) ) ) {
@@ -460,4 +460,4 @@ if ( ! class_exists( 'WPR_THEME_EDIT_AUCTION' ) ) :
 	}
 endif;
 
-WPR_THEME_EDIT_AUCTION::instance();
+ASTA_THEME_EDIT_AUCTION::instance();

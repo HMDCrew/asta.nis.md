@@ -44,7 +44,7 @@ if ( ! class_exists( 'ASTA_ORDER' ) ) :
 				'title'          => explode( ', ', $args['post_title'] )[0],
 				'details'        => get_post_meta( $args['ID'], 'details', true ),
 				'payment_status' => get_post_meta( $args['ID'], 'payment_status', true ),
-				'oreder_link'    => WPR_THEME_ORDERS::get_meta( $args['ID'], 'oreder_link' ),
+				'oreder_link'    => ASTA_THEME_ORDERS::get_meta( $args['ID'], 'oreder_link' ),
 				'date'           => get_the_date( 'd/m/Y', $args['ID'] ),
 				'pay_label'      => __( 'Pay', 'asta-child' ),
 				'pay_now_label'  => __( 'Pay now', 'asta-child' ),

@@ -36,14 +36,14 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 		 * result or not. If set to true, only categories with at least one auction item will be returned. If
 		 * set to false, all categories, including empty ones, will be returned.
 		 *
-		 * @return array of terms from the 'auction_category' taxonomy. The terms may be empty or not
+		 * @return array of terms from the 'asta_category' taxonomy. The terms may be empty or not
 		 * depending on the value of the  parameter. If the  array is not empty, it is
 		 * returned. Otherwise, an empty array is returned.
 		 */
-		private function get_auctions_categories( $hide_empty = false ) {
+		private function get_categories( $hide_empty = false ) {
 			$terms = get_terms(
 				array(
-					'taxonomy'   => 'auction_category',
+					'taxonomy'   => 'asta_category',
 					'hide_empty' => $hide_empty,
 				)
 			);
@@ -63,7 +63,7 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 		 *
 		 * @return float cached posts if they exist, or the minimum or maximum price of an auction post
 		 * depending on the argument passed to the function (``). The minimum or maximum price is
-		 * determined by querying the `auctions` post type and ordering the results by the `baze_price` meta
+		 * determined by querying the `auctions` post type and ordering the results by the `price` meta
 		 * value in ascending or descending order. The function then caches the result using the `
 		 */
 		private function helper_price_range( string $max_or_min, string $post_type = 'auctions' ) {
@@ -81,7 +81,7 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 					'fields'      => 'ids',
 					'numberposts' => 1,
 					'post_type'   => $post_type,
-					'meta_key'    => 'baze_price',
+					'meta_key'    => 'price',
 					'orderby'     => 'meta_value_num',
 					'order'       => ( 'min' === $max_or_min ? 'ASC' : 'DESC' ),
 				)
@@ -90,11 +90,7 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 			$post = reset( $posts );
 
 			$value = floatval(
-				get_post_meta(
-					$post,
-					( 'auctions' === $post_type ? 'baze_price' : 'product_price' ),
-					true
-				)
+				get_post_meta( $post, 'price', true )
 			);
 
 			wp_cache_set( $key, $value );
@@ -124,8 +120,10 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 		 */
 		public function asta_filter_bar( array $args = array() ) {
 
+			$archive = get_queried_object();
+
 			$defaults = array(
-				'categories'     => $this->get_auctions_categories(),
+				'categories'     => $this->get_categories(),
 				'slider_min'     => $this->helper_price_range( 'min', get_post_type() ),
 				'slider_max'     => $this->helper_price_range( 'max', get_post_type() ),
 				'visibility'     => array(
@@ -135,7 +133,7 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 					'price'    => true,
 				),
 				'search_label'   => __( 'Search', 'asta-template' ),
-				'category_label' => __( 'Auction type', 'asta-template' ),
+				'category_label' => __( 'Type of thing', 'asta-template' ),
 				'date_label'     => __( 'Period date', 'asta-template' ),
 			);
 

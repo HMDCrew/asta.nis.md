@@ -15,6 +15,43 @@ let curent_page = 1;
 const filter_bar = document.querySelector('.filter-bar')
 const load_more = document.querySelector('.load-more-auctions')
 
+const cart = document.querySelector('.cart-menu')
+const add_to_cart = document.querySelectorAll('.add-to-cart')
+
+const handle_add_to_cart = (btn) => {
+
+    const product_id = btn.getAttribute('product_id')
+
+    sendHttpReq({
+        url: json_url + 'api-add-to-cart',
+        data: {
+            product_id
+        },
+        headers: { 'X-WP-Nonce': nonce },
+        method: 'POST'
+    }).then(res => {
+
+        res = JSON.parse(res)
+
+        const n_products = cart.querySelector('.n_products')
+        n_products.classList.remove('hide')
+
+        n_products.textContent = res.n_products
+
+        console.log(res)
+        // is_first_request = false;
+        // curent_page = 1;
+
+        // append_content(JSON.parse(res), cards_container, load_more, 0, true);
+
+        // load_more && load_more.classList.remove('loading');
+
+    }).catch(e => {
+        console.log(e)
+    });
+}
+
+add_to_cart.forEach(async btn => btn.addEventListener('click', ev => handle_add_to_cart(btn), false))
 
 /**
  * It takes the response from the server, parses it, and then appends the content to the page
@@ -33,7 +70,7 @@ const append_content = (json, cards_container, load_more_btn, curent_page, repla
 
     if ('success' === json.status && cards_container) {
 
-        json.message.forEach(el => cards_container.append(render_card(el.ID, el.post_title, el.guid, el.image, el.auction_date, el.auction_type, el.post_excerpt, el.baze_price, el.price_increment, el.is_my_auction, labels)));
+        json.message.forEach(el => cards_container.append(render_card(el.ID, el.post_title, el.guid, el.image, el.auction_date, el.category, el.post_excerpt, el.price, el.price_increment, el.is_my_product, labels)));
 
         curent_page++;
     }
@@ -57,27 +94,6 @@ const append_content = (json, cards_container, load_more_btn, curent_page, repla
     }
 
     return curent_page;
-}
-
-
-/**
- * The function takes a string value and returns an object with a minimum and maximum value if the
- * string is not empty, otherwise it returns false for both values.
- * @param value - The `value` parameter is a string that represents a date range in the format of
- * "start date to end date".
- * @returns The function `get_date_object` returns an object with two properties: `min` and `max`.
- * If the input `value` is not an empty string, it splits the string into an array using the
- * separator " to " and assigns the first element to `min` and the second element to `max`. If the
- * input `value` is an empty string, it returns an object with both
- */
-const get_date_object = (value) => {
-
-    if ('' !== value.trim()) {
-        const range = value.split(' to ')
-        return [range[0], range[1]]
-    }
-
-    return [false, false]
 }
 
 
@@ -114,23 +130,21 @@ const get_price_object = (dom_element) => {
  */
 const get_filter_data = (page = 1) => {
 
-    const search = filter_bar && filter_bar.querySelector('.search input[name="search-auctions"]')
+    const search = filter_bar && filter_bar.querySelector('.search input[name="search"]')
     const type = filter_bar && filter_bar.querySelector('.search .wrap-input input.select')
-    const date_rage = filter_bar && filter_bar.querySelector('input[name="date-range"]')
     const price_range = filter_bar && filter_bar.querySelector('#price_range')
     const category = type && type.getAttribute('content')
 
-    let data = search && type && date_rage && price_range
+    let data = search && type && price_range
         ? {
             search: search ? search.value : '',
             type: category ? category : false,
-            date_rage: get_date_object(date_rage.value),
             price_range: get_price_object(price_range),
             page: page,
         }
         : { page: page }
 
-    if (document.body.classList.contains('page-template-my-auctions')) {
+    if (document.body.classList.contains('page-template-my-products')) {
         data['user_id'] = user_id
     }
 
@@ -139,7 +153,7 @@ const get_filter_data = (page = 1) => {
 
 if (filter_bar) {
 
-    const search = filter_bar.querySelector('.search input[name="search-auctions"]')
+    const search = filter_bar.querySelector('.search input[name="search"]')
     const type = filter_bar.querySelector('.search .wrap-input input.select')
     const price_range = filter_bar.querySelector('#price_range')
 
@@ -163,19 +177,18 @@ if (filter_bar) {
                 (
                     '' !== data.search.trim() ||
                     data.type ||
-                    (data.date_rage[0] && data.date_rage[1]) ||
                     data.price_range[0].toString() !== price_range.getAttribute('min') ||
                     data.price_range[1].toString() !== price_range.getAttribute('max')
                 ) ||
                 !is_first_request
             ) {
 
-                const cards_container = document.querySelector('.list-auction');
+                const cards_container = document.querySelector('.list-products');
                 cards_container.classList.add('loading')
                 cards_container.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><style>.spinner_aj0A{transform-origin:center;animation:spinner_KYSC .75s infinite linear}@keyframes spinner_KYSC{100%{transform:rotate(360deg)}}</style><path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z" class="spinner_aj0A"/></svg>';
 
                 sendHttpReq({
-                    url: json_url + 'api-get-shop',
+                    url: json_url + 'api-get-products',
                     data: data,
                     headers: { 'X-WP-Nonce': nonce }
                 }).then(res => {
@@ -222,14 +235,14 @@ const load_auctions = (ev) => {
     load_more && load_more.classList.add('loading');
 
     sendHttpReq({
-        url: json_url + 'api-get-shop',
+        url: json_url + 'api-get-products',
         data: get_filter_data(curent_page + 1),
         headers: { 'X-WP-Nonce': nonce }
     }).then(res => {
 
         curent_page = append_content(
             JSON.parse(res),
-            document.querySelector('.list-auction'),
+            document.querySelector('.list-products'),
             load_more,
             curent_page
         );

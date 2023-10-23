@@ -233,21 +233,21 @@ const init = (product_id, product_json) => {
                     defaultStyle: 'unordered'
                 }
             },
-            // image: {
-            //     class: ImageTool,
-            //     config: {
-            //         endpoints: {
-            //             byFile: json_url + 'api-auction-upload-image',
-            //         }
-            //     }
-            // },
+            image: {
+                class: ImageTool,
+                config: {
+                    endpoints: {
+                        byFile: json_url + 'api-auction-upload-image',
+                    }
+                }
+            },
         },
     })
 
     const save_product = document.querySelector('.sidebar .save')
 
     const asta_title = document.querySelector('input[name="asta-title"]')
-    const baze_price = document.querySelector('input[name="price"]')
+    const price = document.querySelector('input[name="price"]')
     const aditional_info = document.querySelector('textarea[name="aditional-info"]')
 
     const salve_auction_info = () => {
@@ -257,7 +257,7 @@ const init = (product_id, product_json) => {
             const data = {
                 product_id: product_id,
                 product_title: asta_title.value,
-                price: baze_price.value,
+                price: price.value,
                 aditional_info: aditional_info.value,
                 product_content: editor_data.blocks
             };
@@ -270,7 +270,7 @@ const init = (product_id, product_json) => {
                         wpr_alert([res.message], 'success')
 
                         if (!document.body.classList.contains('page-template-edit-product')) {
-                            window.location.replace(`/edit-product/?product_id=${product_id}`)
+                            window.location.replace(`/edit-shop/?product_id=${product_id}`)
                         }
                     } else {
                         wpr_alert([res.message])
@@ -284,7 +284,7 @@ const init = (product_id, product_json) => {
         });
     }
 
-    if (save_product && baze_price && aditional_info) {
+    if (save_product && price && aditional_info) {
         save_product.addEventListener('click', ev => salve_auction_info(), false)
     }
 }

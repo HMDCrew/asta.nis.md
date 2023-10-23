@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
-	class WPR_THEME_BIDS {
+if ( ! class_exists( 'ASTA_THEME_BIDS' ) ) :
+	class ASTA_THEME_BIDS {
 
 		private static $instance;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_BIDS ) ) {
-				self::$instance = new WPR_THEME_BIDS;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_BIDS ) ) {
+				self::$instance = new ASTA_THEME_BIDS;
 				self::$instance->hooks();
 			}
 
@@ -24,22 +24,22 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 		 * Action/filter hooks
 		 */
 		public function hooks() {
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 
 		/**
 		 * Registering a route for the REST API.
-		 * @param [type] $server
+		 * @param \WP_REST_Server $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			$server->register_route(
 				'rest-api-wordpress',
 				'/api-auction-new-bid',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_auction_new_bid' ),
+					'callback'      => array( $this, 'asta_auction_new_bid' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -49,7 +49,7 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 				'/api-auction-bids',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_auction_bids' ),
+					'callback'      => array( $this, 'asta_auction_bids' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -67,7 +67,7 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 		 */
 		private function add_new_bid( int $auction_id, int $user_id, DateTime $date ) {
 
-			$price_increment = apply_filters( 'wpr_esc_auction_meta', $auction_id, 'price_increment' );
+			$price_increment = esc_auction_meta( $auction_id, 'price_increment' );
 			$auction_bids    = get_post_meta( $auction_id, 'auction_bids', true );
 			$status          = 'success';
 			$message         = __( 'bid added with success', 'asta-api' );
@@ -97,8 +97,8 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 			} else {
 
 				$auction_bids = array();
-				$baze_price   = apply_filters( 'wpr_esc_auction_meta', $auction_id, 'baze_price' );
-				$price        = ! empty( $baze_price ) && $baze_price ? $baze_price : 0;
+				$price        = esc_auction_meta( $auction_id, 'price' );
+				$price        = ! empty( $price ) && $price ? $price : 0;
 
 				$last_price               = floatval( $price ) + floatval( $price_increment );
 				$new_element['now_price'] = $last_price;
@@ -123,7 +123,7 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 		 * @param \WP_REST_Request request An object of the WP_REST_Request class, which is used to handle
 		 * REST API requests in WordPress.
 		 */
-		public function wpr_auction_new_bid( \WP_REST_Request $request ) {
+		public function asta_auction_new_bid( \WP_REST_Request $request ) {
 
 			$attr       = $request->get_attributes();
 			$params     = $request->get_params();
@@ -172,7 +172,7 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 		 * @param \WP_REST_Request request The  parameter is an instance of the WP_REST_Request
 		 * class, which represents a REST API request made to the WordPress site.
 		 */
-		public function wpr_auction_bids( \WP_REST_Request $request ) {
+		public function asta_auction_bids( \WP_REST_Request $request ) {
 
 			$attr       = $request->get_attributes();
 			$params     = $request->get_params();
@@ -201,4 +201,4 @@ if ( ! class_exists( 'WPR_THEME_BIDS' ) ) :
 	}
 endif;
 
-WPR_THEME_BIDS::instance();
+ASTA_THEME_BIDS::instance();

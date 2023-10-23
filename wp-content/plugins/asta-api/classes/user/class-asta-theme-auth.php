@@ -5,14 +5,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'WPR_THEME_AUTH' ) ) :
-	class WPR_THEME_AUTH {
+if ( ! class_exists( 'ASTA_THEME_AUTH' ) ) :
+	class ASTA_THEME_AUTH {
 
 		private static $instance;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_AUTH ) ) {
-				self::$instance = new WPR_THEME_AUTH;
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_AUTH ) ) {
+				self::$instance = new ASTA_THEME_AUTH;
 				self::$instance->hooks();
 			}
 
@@ -27,7 +27,7 @@ if ( ! class_exists( 'WPR_THEME_AUTH' ) ) :
 			add_action( 'init', array( $this, 'user_activation_routes' ) );
 			add_action( 'template_include', array( $this, 'user_activation_template_include' ) );
 
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 
@@ -74,7 +74,7 @@ if ( ! class_exists( 'WPR_THEME_AUTH' ) ) :
 		 * Registering a route for the REST API.
 		 * @param [type] $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			// Login
 			$server->register_route(
@@ -212,4 +212,4 @@ if ( ! class_exists( 'WPR_THEME_AUTH' ) ) :
 	}
 endif;
 
-WPR_THEME_AUTH::instance();
+ASTA_THEME_AUTH::instance();

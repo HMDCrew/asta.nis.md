@@ -69,33 +69,6 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 
 
 		/**
-		 * The function returns the value of a specified meta key for a given auction ID, with HTML characters
-		 * escaped.
-		 *
-		 * @param int auction_id An integer representing the ID of the auction post for which the meta value is
-		 * being retrieved.
-		 * @param string key The  parameter is a string that represents the name of the meta field to
-		 * retrieve the value from. It is used in conjunction with the  parameter to retrieve the
-		 * meta value associated with a specific auction post. The function then returns the escaped HTML value
-		 * of the meta field.
-		 *
-		 * @return string This function returns the value of a specific meta key for a given auction post ID, after
-		 * sanitizing it with `esc_html()`. If the auction ID is not provided or does not exist, an empty
-		 * string is returned.
-		 */
-		private function esc_auction_meta( int $auction_id, string $key ) {
-
-			if ( $auction_id ) {
-				return esc_html(
-					get_post_meta( $auction_id, $key, true )
-				);
-			}
-
-			return '';
-		}
-
-
-		/**
 		 * This PHP function retrieves the auction type (category) based on the provided auction ID.
 		 *
 		 * @param int auction_id This is an integer parameter representing the ID of the auction for which we
@@ -108,7 +81,7 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 
 			if ( $auction_id && 0 !== $auction_id ) {
 
-				$terms = get_the_terms( $auction_id, 'auction_category' );
+				$terms = get_the_terms( $auction_id, 'asta_category' );
 
 				if ( ! empty( $terms ) ) {
 
@@ -139,8 +112,8 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 			$defaults = array(
 				'post_id'         => get_the_ID(),
 				'auction_date'    => $this->get_auction_date( get_the_ID() ),
-				'baze_price'      => $this->get_auction_last_price( get_the_ID() ),
-				'price_increment' => $this->esc_auction_meta( get_the_ID(), 'price_increment' ),
+				'price'           => $this->get_auction_last_price( get_the_ID() ),
+				'price_increment' => esc_auction_meta( get_the_ID(), 'price_increment' ),
 				'auction_type'    => $auction_type,
 				'post_excerpt'    => get_post_field( 'post_excerpt', get_the_ID() ),
 				'post_classes'    => esc_attr( implode( ' ', get_post_class( 'card' ) ) ),

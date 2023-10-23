@@ -123,6 +123,27 @@
                     width: 20px;
                 }
             }
+
+            .cart-menu {
+                position: relative;
+
+                .n_products {
+                    background: white;
+                    color: black;
+                    border: 1px solid #fafafa;
+                    position: absolute;
+                    width: 16px;
+                    height: 16px;
+                    top: -9px;
+                    right: 4px;
+                    font-size: 10px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+                }
+            }
         }
 
 

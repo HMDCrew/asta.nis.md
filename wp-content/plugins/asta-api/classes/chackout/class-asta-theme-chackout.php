@@ -6,15 +6,15 @@ use Stripe\StripeClient;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Webhook;
 
-if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
-	class WPR_THEME_CHACKOUT extends SEC {
+if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
+	class ASTA_THEME_CHACKOUT extends SEC {
 
 		private static $instance;
 		public $stripe_client;
 
 		public static function instance() {
-			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof WPR_THEME_CHACKOUT ) ) {
-				self::$instance = new WPR_THEME_CHACKOUT();
+			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_CHACKOUT ) ) {
+				self::$instance = new ASTA_THEME_CHACKOUT();
 				self::$instance->set_up_class_variable();
 				self::$instance->hooks();
 			}
@@ -38,23 +38,23 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 		 * Action/filter hooks
 		 */
 		public function hooks() {
-			add_action( 'rest_api_init', array( $this, 'wpr_rest_api' ), 10 );
+			add_action( 'rest_api_init', array( $this, 'asta_rest_api' ), 10 );
 		}
 
 
 		/**
 		 * Registering a route for the REST API.
 		 *
-		 * @param [type] $server
+		 * @param \WP_REST_Server $server
 		 */
-		public function wpr_rest_api( $server ) {
+		public function asta_rest_api( \WP_REST_Server $server ) {
 
 			$server->register_route(
 				'rest-api-wordpress',
 				'/api-cart-chackout',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_cart_chackout' ),
+					'callback'      => array( $this, 'asta_cart_chackout' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -64,7 +64,7 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 				'/api-cart-webhook',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'wpr_cart_webhook' ),
+					'callback'      => array( $this, 'asta_cart_webhook' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -108,34 +108,19 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 			return $gateway_keys[ $key ];
 		}
 
-		/**
-		 * The function removes order products from a user's cart and updates the user's cart meta data.
-		 *
-		 * @param int user_id The user ID of the user whose cart needs to be updated.
-		 * @param int order_id The order_id parameter is an integer that represents the ID of the order from
-		 * which you want to remove products.
-		 */
-		public static function remove_order_products_from_user_cart( int $user_id, int $order_id ) {
 
-			delete_user_meta( $user_id, 'last_intent_pay' );
-			$user_cart     = get_user_meta( $user_id, 'user_cart', true );
-			$order_details = WPR_THEME_ORDERS::get_meta( $order_id, 'details' );
+		public static function clean_cart( int $order_id ) {
 
-			update_user_meta( $user_id, 'user_cart', array_diff( $user_cart, $order_details['cart'] ) );
+			$user_id = get_current_user_id();
+
+			setcookie( 'asta_cart', '', -1, '/' );
+
+			if ( $user_id ) {
+				delete_user_meta( $user_id, 'last_intent_pay' );
+				update_user_meta( $user_id, 'user_cart', array() );
+			}
 		}
 
-		/**
-		 * This is a PHP function that retrieves a user's cart from their user meta data.
-		 *
-		 * @param int user_id The user ID is an integer value that uniquely identifies a user in the system.
-		 * It is used to retrieve the user's cart information from the user meta data.
-		 *
-		 * @return array function `get_user_cart` is returning the value of the user meta field with the key
-		 * 'user_cart' for the given user ID.
-		 */
-		private function get_user_cart( int $user_id ) {
-			return get_user_meta( $user_id, 'user_cart', true );
-		}
 
 		/**
 		 * The function calculates the total price of items in a shopping cart.
@@ -149,25 +134,30 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 		 * each item in the cart array. If the cart is empty, the function returns 0.
 		 */
 		private function get_cart_total( array $cart ) {
+
+			$products_prices = (
+				! empty( $cart['products_cart'] )
+				? array_map(
+					function ( $product_id ) {
+						return floatval( get_post_meta( $product_id, 'price', true ) );
+					},
+					$cart['products_cart']
+				)
+				: array()
+			);
+
 			return (
-				! empty( $cart )
-					? array_sum( array_column( $cart, 'now_price' ) )
-					: 0
+				! empty( $cart['auctions_cart'] ) || ! empty( $cart['products_cart'] )
+				? array_sum(
+					array_merge(
+						array_column( $cart['auctions_cart'], 'now_price' ),
+						$products_prices
+					)
+				)
+				: 0
 			);
 		}
 
-		/**
-		 * The function "get_last_order" retrieves the last intent pay value from the user meta data for a
-		 * given user ID.
-		 *
-		 * @param int user_id The user ID is an integer that represents the unique identifier of a user in
-		 * the system. It is used to retrieve the last order associated with a specific user.
-		 *
-		 * @return mixed value of the 'last_intent_pay' user meta for the given user ID.
-		 */
-		private function get_last_order( int $user_id ) {
-			return get_user_meta( $user_id, 'last_intent_pay', true );
-		}
 
 		/**
 		 * The function "build_order" creates a new order post in WordPress with the provided user ID,
@@ -185,22 +175,26 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 		 * @return int|WP_Error post ID of the newly inserted order post.
 		 */
 		private function build_order( int $user_id, Stripe\PaymentIntent $payment_intent, array $cart ) {
-			return wp_insert_post(
-				array(
-					'post_type'   => 'orders',
-					'post_author' => $user_id,
-					'meta_input'  => array(
-						'payment_status' => 'pending',
-						'payment_intent' => $payment_intent->id,
-						'details'        => array(
-							'buyer'    => $user_id,
-							'amount'   => $payment_intent->amount,
-							'currency' => $payment_intent->currency,
-							'cart'     => $cart,
-						),
+
+			$args = array(
+				'post_type'  => 'orders',
+				'meta_input' => array(
+					'payment_status' => 'pending',
+					'payment_intent' => $payment_intent->id,
+					'details'        => array(
+						'amount'   => $payment_intent->amount,
+						'currency' => $payment_intent->currency,
+						'cart'     => $cart,
 					),
-				)
+				),
 			);
+
+			if ( $user_id ) {
+				$args['post_author']                    = $user_id;
+				$args['meta_input']['details']['buyer'] = $user_id;
+			}
+
+			return wp_insert_post( $args );
 		}
 
 		/**
@@ -215,15 +209,19 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 		 * the auction IDs in the `` array. If the `` array is empty, it returns an empty string.
 		 */
 		private function get_cart_titles( array $cart ) {
+
+			$auctions_ids = ! empty( $cart['auctions_cart'] ) ? array_column( $cart['auctions_cart'], 'auction_id' ) : array();
+			$products_ids = ! empty( $cart['products_cart'] ) ? $cart['products_cart'] : array();
+
 			return (
-				! empty( $cart )
-					? array_map(
-						function ( $auction_id ) {
-							return get_the_title( $auction_id );
-						},
-						array_column( $cart, 'auction_id' )
-					)
-					: ''
+				! empty( $auctions_ids ) || ! empty( $products_ids )
+				? array_map(
+					function ( $auction_id ) {
+						return get_the_title( $auction_id );
+					},
+					array_merge( $auctions_ids, $products_ids )
+				)
+				: ''
 			);
 		}
 
@@ -254,7 +252,7 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 				);
 
 				$order_id  = $this->build_order( $user_id, $payment_intent, $args['cart'] );
-				$user_info = get_userdata( $user_id );
+				$user_info = $user_id ? get_userdata( $user_id ) : '';
 
 				$this->stripe_client->paymentIntents->update( // phpcs:ignore
 					$payment_intent->id,
@@ -268,14 +266,20 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 					array(
 						'ID'          => $order_id,
 						'post_status' => 'publish',
-						'post_title'  => sprintf( 'Order #%d from %s, total: %2.F', $order_id, $user_info->user_email, $total ),
+						'post_title'  => (
+							! empty( $user_info )
+							? sprintf( 'Order #%d from %s, total: %2.F', $order_id, $user_info->user_email, $total )
+							: sprintf( 'Order #%d from non auth user, total: %2.F', $order_id, $total )
+						),
 						'meta_input'  => array(
 							'client_secret' => base64_encode( $this->encrypt( $payment_intent->client_secret ) ),
 						),
 					)
 				);
 
-				update_user_meta( $user_id, 'last_intent_pay', $order_id );
+				if ( $user_id ) {
+					update_user_meta( $user_id, 'last_intent_pay', $order_id );
+				}
 
 				return array(
 					'status'        => 'success',
@@ -305,102 +309,6 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 			}
 		}
 
-		/**
-		 * The function checks if two arrays are identical by comparing their elements.
-		 *
-		 * @param array array1 The first array to compare.
-		 * @param array array2 The above code defines a private function named "are_arrays_identical" that
-		 * takes two array parameters:  and .
-		 *
-		 * @return boolean value. It returns true if the two arrays are identical (i.e., they have the same
-		 * elements in the same order), and false otherwise.
-		 */
-		private function are_arrays_identical( array $array1, array $array2 ) {
-
-			if ( is_array( $array1 ) && is_array( $array2 ) ) {
-
-				$diff1 = array_diff( $array1, $array2 );
-				$diff2 = array_diff( $array2, $array1 );
-
-				return empty( $diff1 ) && empty( $diff2 );
-			}
-
-			return false;
-		}
-
-		/**
-		 * The function "get_existing_payment_intent" retrieves the existing payment intent for a given order
-		 * ID and returns it along with other relevant information.
-		 *
-		 * @param int order_id The order_id parameter is an integer that represents the ID of the order for
-		 * which we want to retrieve the existing payment intent.
-		 * @param array args  is an array that contains the following parameters:
-		 *
-		 * @return array with the following keys and values:
-		 */
-		private function get_existing_payment_intent_updated( int $order_id, array $args ) {
-
-			$client_secret  = get_post_meta( $order_id, 'client_secret', true );
-			$order_details  = get_post_meta( $order_id, 'details', true );
-			$payment_intent = get_post_meta( $order_id, 'payment_intent', true );
-
-			if (
-				! empty( $order_details['cart'] ) && is_array( $order_details['cart'] ) &&
-				! empty( $args['cart'] ) && is_array( $args['cart'] ) &&
-				$this->are_arrays_identical( $args['cart'], $order_details['cart'] )
-			) {
-
-				// Update last payment intent from user cart
-				$this->stripe_client->paymentIntents->update( // phpcs:ignore
-					$payment_intent,
-					array(
-						'amount'      => $this->get_cart_total( $args['cart'] ) * 100,
-						'currency'    => 'usd',
-						'description' => implode( ', ', $this->get_cart_titles( $args['cart'] ) ),
-					)
-				);
-
-				// update cart in order
-				$order_details['cart'] = $args['cart'];
-				update_post_meta( $order_id, 'details', $order_details );
-			}
-
-			return array(
-				'status'        => 'success',
-				'message'       => 'last payment intent ready',
-				'client_secret' => ! empty( $client_secret ) ? $this->decrypt( base64_decode( $client_secret ) ) : '',
-				'public_key'    => $args['public_key'],
-				'order_id'      => $order_id,
-			);
-		}
-
-
-		/**
-		 * The function `intent_payment` checks if there is an existing order for a user and creates or
-		 * retrieves a payment intent accordingly.
-		 *
-		 * @param int user_id The user ID is an integer that represents the unique identifier of the user for
-		 * whom the payment intent is being created or retrieved.
-		 *
-		 * @return array payment intent.
-		 */
-		private function intent_payment( int $user_id ) {
-
-			$order_id = $this->get_last_order( $user_id );
-			$keys     = $this->get_gateway_keys( 'stripe' );
-			$cart     = (array) $this->get_user_cart( $user_id );
-
-			$args = array(
-				'cart'       => $cart,
-				'public_key' => $keys['public_key'],
-			);
-
-			return (
-				! $order_id
-				? $this->create_payment_intent( $user_id, $args )
-				: $this->get_existing_payment_intent_updated( $order_id, $args )
-			);
-		}
 
 		/**
 		 * This function creates a payment intent using Stripe API for a logged in user's cart total.
@@ -409,22 +317,19 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 		 * class, which is used to handle REST API requests in WordPress. It contains information about the
 		 * request, such as the HTTP method, headers, and query parameters.
 		 */
-		public function wpr_cart_chackout( \WP_REST_Request $request ) {
+		public function asta_cart_chackout( \WP_REST_Request $request ) {
 
 			$attr = $request->get_attributes();
 
-			if ( ! empty( $attr['login_user_id'] ) ) {
+			$keys = $this->get_gateway_keys( 'stripe' );
+			$cart = ASTA_THEME_CART::get_cart();
 
-				wp_send_json( $this->intent_payment( $attr['login_user_id'] ) );
+			$args = array(
+				'cart'       => $cart,
+				'public_key' => $keys['public_key'],
+			);
 
-			} else {
-				wp_send_json(
-					array(
-						'status'  => 'error',
-						'message' => 'Authentication required',
-					),
-				);
-			}
+			wp_send_json( $this->create_payment_intent( $attr['login_user_id'], $args ) );
 		}
 
 
@@ -436,7 +341,7 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 		 * to handle REST API requests in WordPress. It contains information about the request, such as the
 		 * request method, headers, and body.
 		 */
-		public function wpr_cart_webhook( \WP_REST_Request $request ) {
+		public function asta_cart_webhook( \WP_REST_Request $request ) {
 
 			$keys = $this->get_gateway_keys( 'stripe' );
 
@@ -466,7 +371,7 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 				$order_id = $event?->data?->object?->metadata?->order_id;
 
 				if ( $order_id ) {
-					WPR_THEME_ORDERS::set_order_status( $order_id, 'pending' );
+					ASTA_THEME_ORDERS::set_order_status( $order_id, 'pending' );
 				}
 
 				error_log(
@@ -488,4 +393,4 @@ if ( ! class_exists( 'WPR_THEME_CHACKOUT' ) ) :
 
 endif;
 
-WPR_THEME_CHACKOUT::instance();
+ASTA_THEME_CHACKOUT::instance();
