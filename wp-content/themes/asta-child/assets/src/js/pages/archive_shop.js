@@ -23,14 +23,14 @@ import( /* webpackChunkName: "components/filter-bar" */ '../components/filter-ba
     const LoadMore = module.LoadMore
 
     new FilterBar(
-        json_url + 'api-get-auctions',
+        json_url + 'api-get-products',
         handle_add_to_cart,
-        auctions_data
+        shop_data
     )
 
     new LoadMore(
-        json_url + 'api-get-auctions',
+        json_url + 'api-get-products',
         handle_add_to_cart,
-        auctions_data
+        shop_data
     )
 })
