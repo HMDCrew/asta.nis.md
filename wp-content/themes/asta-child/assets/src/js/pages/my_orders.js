@@ -1,6 +1,6 @@
 import '../../scss/views/my_orders.scss'
-import { sendHttpReq } from '../utils/api'
-import { wpr_alert } from '../utils/helpers'
+import { sendHttpReq } from '../utils/api/http'
+import { asta_alert } from '../utils/asta_alert'
 
 const { nonce, json_url } = auctions_data
 const pay_now = document.querySelectorAll('.pay-now-order')
@@ -31,7 +31,7 @@ const on_submint = async (e, stripe, pay_submit) => {
     })
 
     if (error) {
-        wpr_alert([error.message])
+        asta_alert([error.message])
         console.log(error.message)
         pay_submit.disabled = false
     }
@@ -94,7 +94,7 @@ const chackout_process = (e, btn) => {
         if ('error' !== res.status) {
             await build_chackout(res.client_secret, res.public_key, payment_form, order_id)
         } else {
-            wpr_alert([res.message])
+            asta_alert([res.message])
         }
 
     }).catch(e => {

@@ -54,8 +54,8 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 				'product_name'  => get_the_title(),
 				'thumbnail'     => get_asta_thumbanil( $product_id ),
 				'author_id'     => (int) get_post_field( 'post_author', $product_id ),
-				'details_label' => __( 'Details', 'asta-child' ),
-				'edit_label'    => __( 'Edit', 'asta-child' ),
+				'details_label' => __( 'Details', 'asta-template' ),
+				'edit_label'    => __( 'Edit', 'asta-template' ),
 			);
 
 			$args = wp_parse_args( $args, $defaults );

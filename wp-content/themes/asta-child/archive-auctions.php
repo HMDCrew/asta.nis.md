@@ -15,7 +15,7 @@ get_header();
 
 			<?php do_action( 'asta_filter_bar', array() ); ?>
 
-			<div class="list-auction">
+			<div class="list-content list-auction">
 				<?php if ( have_posts() ) : ?>
 
 					<?php

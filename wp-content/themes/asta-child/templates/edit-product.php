@@ -19,7 +19,7 @@ get_header();
 			<div class="row">
 
 				<div class="col-8 auction-content-col">
-					<div class="swiper auction-gallery">
+					<div class="swiper gallery">
 						<?php
 						do_action(
 							'asta_gallery_template',

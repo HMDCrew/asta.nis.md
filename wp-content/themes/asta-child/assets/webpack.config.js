@@ -31,6 +31,7 @@ const entry = {
     archive_auctions: PAGES_DIR + '/archive_auctions.js',
     archive_shop: PAGES_DIR + '/archive_shop.js',
     single_auction: PAGES_DIR + '/single_auction.js',
+    single_shop: PAGES_DIR + '/single_shop.js',
     cart: PAGES_DIR + '/cart.js',
     my_orders: PAGES_DIR + '/my_orders.js',
 };

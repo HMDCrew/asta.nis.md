@@ -1,7 +1,7 @@
 import '../../scss/views/login.scss'
 import 'vanilla-tilt'
-import { sendHttpReq } from '../utils/api';
-import { wpr_alert } from '../utils/helpers';
+import { sendHttpReq } from '../utils/api/http';
+import { asta_alert } from '../utils/asta_alert';
 
 const tilt_img = document.querySelector(".js-tilt img")
 const form = document.querySelector('.login-form')
@@ -49,7 +49,7 @@ if (form && submit_btn) {
             if ('success' === res.status) {
                 window.location.replace(redirect_to.value)
             } else {
-                wpr_alert([res.message])
+                asta_alert([res.message])
             }
 
         }).catch(e => {

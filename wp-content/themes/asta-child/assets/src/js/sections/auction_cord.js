@@ -114,7 +114,7 @@ const render_edit_btn = (show_button, auction_id, label) => {
 
 
 /**
- * The function `render_card` creates an HTML element for an auction post with various properties such
+ * The function `render_auction_card` creates an HTML element for an auction post with various properties such
  * as title, image, date, type, excerpt, and price.
  * @param id - The unique identifier for the auction post.
  * @param post_title - The title of the post/auction.
@@ -129,12 +129,12 @@ const render_edit_btn = (show_button, auction_id, label) => {
  * @param price - The base price of the auction.
  * @param price_increment - price_increment is a numeric value representing the amount by which the
  * bidding price will increase in an auction.
- * @returns {HTMLElement} The function `render_card` is returning an HTML element (specifically, an `article`
+ * @returns {HTMLElement} The function `render_auction_card` is returning an HTML element (specifically, an `article`
  * element) that contains various pieces of information about an auction, including its title, image,
  * date, type, excerpt, and price, as well as buttons for viewing the auction details and editing the
  * auction (if the user is the owner of the auction).
  */
-export const render_card = (id, post_title, url, image, auction_date, auction_type, post_excerpt, price, price_increment, is_my_auction, labels) => {
+export const render_auction_card = (id, post_title, url, image, auction_date, auction_type, post_excerpt, price, price_increment, is_my_auction, labels) => {
 
     const auction = document.createElement('article')
     auction.id = 'post-' + id

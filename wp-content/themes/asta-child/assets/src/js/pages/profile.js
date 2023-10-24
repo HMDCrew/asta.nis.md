@@ -1,7 +1,8 @@
 import '../../scss/views/profile.scss'
-import { sendHttpReq, sendHttpForm } from '../utils/api';
+import { sendHttpReq } from '../utils/api/http'
+import { sendHttpForm } from '../utils/api/form'
 import { check_pwd_validity } from '../utils/passwords';
-import { wpr_alert } from '../utils/helpers';
+import { asta_alert } from '../utils/asta_alert'
 
 const profile_form = document.querySelector('.user-profile')
 
@@ -118,9 +119,9 @@ if (profile_form) {
             res = JSON.parse(res)
 
             if ('success' === res.status) {
-                wpr_alert([res.message], 'success')
+                asta_alert([res.message], 'success')
             } else {
-                wpr_alert([res.message])
+                asta_alert([res.message])
             }
 
         }).catch(e => {

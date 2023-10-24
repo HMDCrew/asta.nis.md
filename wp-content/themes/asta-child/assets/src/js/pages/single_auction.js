@@ -1,8 +1,5 @@
-import { sendHttpReq } from '../utils/api'
-import { Fancybox } from '@fancyapps/ui'
-import Swiper from 'swiper'
-import { Thumbs } from 'swiper/modules'
-import { wpr_alert } from '../utils/helpers'
+import { sendHttpReq } from '../utils/api/http'
+import { asta_alert } from '../utils/asta_alert'
 import 'swiper/css';
 import 'swiper/css/navigation';
 import '@fancyapps/ui/dist/fancybox/fancybox.css'
@@ -19,41 +16,12 @@ const button_bid = document.querySelector('.bid-now')
 const last_price = document.querySelector('.wrap-input.last_price input')
 const auction_date = document.querySelector('.wrap-input.auction_date input')
 
+import( /* webpackChunkName: "components/gallery" */ '../components/gallery').then(module => {
 
-const swiper = new Swiper(".thumbnails", {
-    loop: true,
-    spaceBetween: 10,
-    slidesPerView: 4,
-    freeMode: true,
-    watchSlidesProgress: true,
-});
+    const Gallery = module.Gallery
 
-const next = document.querySelector('.auction-gallery .swiper-button-next')
-const prev = document.querySelector('.auction-gallery .swiper-button-prev')
-
-new Swiper(".auction-gallery", {
-    loop: true,
-    modules: [Thumbs],
-    spaceBetween: 10,
-    on: {
-        init: (swipper) => {
-
-            Fancybox.bind('[data-fancybox="gallery"]')
-
-            if (swipper.slides.length > 0) {
-                next.addEventListener('click', ev => swipper.slideNext(), false)
-                prev.addEventListener('click', ev => swipper.slidePrev(), false)
-            } else {
-                prev.classList.add('swiper-button-disabled')
-                next.classList.add('swiper-button-disabled')
-            }
-        },
-    },
-    thumbs: {
-        swiper: swiper,
-    },
-});
-
+    new Gallery()
+})
 
 if (button_bid) {
 
@@ -158,11 +126,11 @@ if (button_bid) {
                 break;
 
             case 'worring':
-                wpr_alert([res.message], 'worring')
+                asta_alert([res.message], 'worring')
                 break;
 
             default:
-                wpr_alert([res.message])
+                asta_alert([res.message])
                 window.location.replace('/login')
                 break;
         }
@@ -209,7 +177,7 @@ if (button_bid) {
 
             }).catch(e => { console.log(e) });
         } else {
-            wpr_alert(['Auction isn\'t start'], 'worring')
+            asta_alert(['Auction isn\'t start'], 'worring')
         }
     }
     button_bid && button_bid.addEventListener('click', (ev) => new_bid(), false)

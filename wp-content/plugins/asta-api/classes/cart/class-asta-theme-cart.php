@@ -34,13 +34,24 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 		 */
 		public function asta_rest_api( \WP_REST_Server $server ) {
 
-			// Get Auctions
+			// Product add to cart
 			$server->register_route(
 				'rest-api-wordpress',
 				'/api-add-to-cart',
 				array(
 					'methods'       => 'POST',
 					'callback'      => array( $this, 'asta_add_to_cart' ),
+					'login_user_id' => get_current_user_id(),
+				)
+			);
+
+			// Product update qty
+			$server->register_route(
+				'rest-api-wordpress',
+				'/api-qty-update',
+				array(
+					'methods'       => 'POST',
+					'callback'      => array( $this, 'asta_update_qty' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -63,16 +74,27 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 
 			if ( ! empty( $product_id ) ) {
 
+				$qty_updated   = false;
 				$cart          = self::get_cart();
-				$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^A-Z0-9\%\,\[\]]/i', '', $_COOKIE['asta_cart'] ) : '';
+				$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^a-zA-Z0-9\%\,\[\]\{\}\:\"\'\_\-]/i', '', $_COOKIE['asta_cart'] ) : '';
 				$products_cart = (
 					! empty( $products_cart )
 					? json_decode( $products_cart, true )
 					: array()
 				);
 
-				$products_cart[]       = $product_id;
-				$products_cart         = array_unique( $products_cart );
+				$key = array_search( $product_id, array_column( $products_cart, 'product_id' ), true );
+
+				if ( false !== $key ) {
+					$qty_updated                   = true;
+					$products_cart[ $key ]['qty'] += 1;
+				} else {
+					$products_cart[] = array(
+						'product_id' => $product_id,
+						'qty'        => 1,
+					);
+				}
+
 				$cart['products_cart'] = $products_cart;
 
 				setcookie( 'asta_cart', json_encode( $cart['products_cart'] ), time() + 3600 * 24 * 30 * 12, '/' );
@@ -80,7 +102,11 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 				wp_send_json(
 					array(
 						'status'     => 'success',
-						'message'    => $cart,
+						'message'    => (
+							$qty_updated
+							? __( 'Product amount updated', 'asta-api' )
+							: __( 'Product added to cart', 'asta-api' )
+						),
 						'n_products' => (int) count( $cart['products_cart'] ) + count( $cart['auctions_cart'] ),
 					)
 				);
@@ -94,6 +120,9 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 			);
 		}
 
+		public static function clean_zero_qty( array $porduct_cart ) {
+			return array_filter( $porduct_cart, fn( $item) => $item['qty'] > 0 );
+		}
 
 		/**
 		 * The function `get_cart()` retrieves the user's cart information, including products and auctions,
@@ -112,12 +141,12 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 				$auctions_cart = get_user_meta( get_current_user_id(), 'user_cart', true );
 			}
 
-			$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^A-Z0-9\%\,\[\]]/i', '', $_COOKIE['asta_cart'] ) : '';
+			$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^a-zA-Z0-9\%\,\[\]\{\}\:\"\'\_\-]/i', '', $_COOKIE['asta_cart'] ) : '';
 
 			return array(
 				'products_cart' => (
 					! empty( $products_cart )
-					? json_decode( $products_cart, true )
+					? self::clean_zero_qty( json_decode( $products_cart, true ) )
 					: array()
 				),
 				'auctions_cart' => (
@@ -139,6 +168,60 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 			$cart = self::get_cart();
 
 			return (int) count( $cart['products_cart'] ) + count( $cart['auctions_cart'] );
+		}
+
+
+		public function asta_update_qty( \WP_REST_Request $request ) {
+
+			$params = $request->get_params();
+
+			$product_id = ( ! empty( $params['product_id'] ) ? (int) preg_replace( '/[^0-9]/i', '', $params['product_id'] ) : '' );
+			$qty        = ( ! empty( $params['qty'] ) ? (int) preg_replace( '/[^0-9]/i', '', $params['qty'] ) : 0 );
+
+			if ( ! empty( $product_id ) ) {
+
+				$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^a-zA-Z0-9\%\,\[\]\{\}\:\"\'\_\-]/i', '', $_COOKIE['asta_cart'] ) : '';
+				$products_cart = (
+					! empty( $products_cart )
+					? json_decode( $products_cart, true )
+					: array()
+				);
+
+				$key = array_search( $product_id, array_column( $products_cart, 'product_id' ), true );
+
+				if ( false !== $key ) {
+
+					$products_cart[ $key ]['qty'] = $qty;
+					setcookie( 'asta_cart', json_encode( $products_cart ), time() + 3600 * 24 * 30 * 12, '/' );
+
+					$price = floatval( get_post_meta( $product_id, 'price', true ) );
+
+					wp_send_json(
+						array(
+							'status'       => 'success',
+							'message'      => __( 'product qty is updates', 'asta-api' ),
+							'cart_product' => array(
+								'product' => $products_cart[ $key ],
+								'price'   => $price * $qty,
+							),
+						)
+					);
+				}
+
+				wp_send_json(
+					array(
+						'status'  => 'error',
+						'message' => __( 'product is not in cart', 'asta-api' ),
+					)
+				);
+			}
+
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => __( 'missing product id', 'asta-api' ),
+				)
+			);
 		}
 	}
 endif;

@@ -23,6 +23,9 @@ get_header();
 	<div class="container">
 
 		<div class="payment-status">
+
+			<h2><?php echo __( 'Thank you for participating in purchases on the platform!', 'asta-child' ); ?></h2>
+
 			<?php if ( $paid_status ) : ?>
 
 				<?php
@@ -32,8 +35,7 @@ get_header();
 				ASTA_THEME_CHACKOUT::clean_cart( $order->ID );
 				?>
 
-				<h2><?php echo __( 'Thank you for participating in the auctions on the platform!', 'asta-child' ); ?></h2>
-				<p><?php echo __( 'We are pleased to inform you that we have received your payment for the auctions you participated in. We would like to express our gratitude for your support and for making our auctions a success.', 'asta-child' ); ?></p>
+				<p><?php echo __( 'We are pleased to inform you that we have received your payment. We would like to express our gratitude for your support and for making our site a success.', 'asta-child' ); ?></p>
 				<div class="totals">
 					<strong>
 						<span class="label"><?php echo __( 'Total', 'asta-child' ); ?>: </span>
@@ -45,8 +47,7 @@ get_header();
 				</div>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"/></svg>
 			<?php else : ?>
-				<h2><?php echo __( 'Thank you for participating in the auctions on the platform!', 'asta-child' ); ?></h2>
-				<p><?php echo __( 'We would like to express our gratitude for your support and for making our auctions a success. However, we regret to inform you that we have not yet received your payment for the auctions you participated in.', 'asta-child' ); ?></p>
+				<p><?php echo __( 'We would like to express our gratitude for your support and for making our site a success. However, we regret to inform you that we have not yet received payment for your purchased purchases.', 'asta-child' ); ?></p>
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM175 175c9.4-9.4 24.6-9.4 33.9 0l47 47 47-47c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9l-47 47 47 47c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-47-47-47 47c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l47-47-47-47c-9.4-9.4-9.4-24.6 0-33.9z"/></svg>				
 			<?php endif; ?>
 		</div>
@@ -66,13 +67,14 @@ get_header();
 
 				<h2><?php echo __( 'Products', 'asta-child' ); ?></h2>
 
-				<?php foreach ( $order_details['cart']['products_cart'] as $product_id ) : ?>
+				<?php foreach ( $order_details['cart']['products_cart'] as $cart_item ) : ?>
 					<?php
 					do_action(
 						'asta_cart_item',
 						array(
-							'product_id' => $product_id,
-							'price'      => floatval( get_post_meta( $product_id, 'price', true ) ),
+							'product_id' => $cart_item['product_id'],
+							'price'      => floatval( get_post_meta( $cart_item['product_id'], 'price', true ) ),
+							'qty'        => $cart_item['qty'],
 						)
 					);
 					?>

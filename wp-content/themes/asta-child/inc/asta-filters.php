@@ -148,10 +148,10 @@ add_filter( 'wpr_get_auction_last_price', 'get_auction_last_price', 10 );
  * class attribute to add the classes "btn" and "btn
  *
  * @return string containing HTML attributes for a link element. Specifically, it is returning a
- * class attribute with the value "btn btn-primary load-more-auctions".
+ * class attribute with the value "btn btn-primary load-more".
  */
 function wpr_nav_posts_link_attributes( $val ) {
-	return 'class="btn btn-primary load-more-auctions"';
+	return 'class="btn btn-primary load-more"';
 }
 add_filter( 'next_posts_link_attributes', 'wpr_nav_posts_link_attributes', 10 );
 add_filter( 'previous_posts_link_attributes', 'wpr_nav_posts_link_attributes', 10 );

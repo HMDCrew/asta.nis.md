@@ -27,7 +27,7 @@ get_header();
 			);
 			?>
 
-			<div class="list-products">
+			<div class="list-content list-products">
 				<?php if ( have_posts() ) : ?>
 
 					<?php

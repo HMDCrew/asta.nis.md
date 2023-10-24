@@ -34,13 +34,14 @@ get_header();
 
 				<h2><?php echo __( 'Products', 'asta-child' ); ?></h2>
 
-				<?php foreach ( $cart['products_cart'] as $product_id ) : ?>
+				<?php foreach ( $cart['products_cart'] as $cart_item ) : ?>
 					<?php
 					do_action(
 						'asta_cart_item',
 						array(
-							'product_id' => $product_id,
-							'price'      => floatval( get_post_meta( $product_id, 'price', true ) ),
+							'product_id' => $cart_item['product_id'],
+							'price'      => floatval( get_post_meta( $cart_item['product_id'], 'price', true ) ),
+							'qty'        => $cart_item['qty'],
 						)
 					);
 					?>

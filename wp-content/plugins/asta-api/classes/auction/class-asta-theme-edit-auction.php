@@ -406,9 +406,11 @@ if ( ! class_exists( 'ASTA_THEME_EDIT_AUCTION' ) ) :
 					);
 
 					$auction_date = explode( 'to', $auction_date );
-					if ( ! empty( $auction_date ) ) {
+					if ( ! empty( $auction_date ) && count( $auction_date ) > 1 ) {
 						$auction_meta['start_date'] = DateTimeImmutable::createFromFormat( 'd/m/Y', trim( $auction_date[0] ) )->format( 'c' );
 						$auction_meta['end_date']   = DateTimeImmutable::createFromFormat( 'd/m/Y', trim( $auction_date[1] ) )->format( 'c' );
+					} else {
+						$auction_meta['end_date'] = DateTimeImmutable::createFromFormat( 'd/m/Y', trim( $auction_date[0] ) )->format( 'c' );
 					}
 
 					$translations = new WPR_EditorJS_Gutenberg( $auction_content );
@@ -431,7 +433,7 @@ if ( ! class_exists( 'ASTA_THEME_EDIT_AUCTION' ) ) :
 					}
 
 					// schedule cron to end auction
-					$end_epoch = DateTimeImmutable::createFromFormat( 'd/m/Y', trim( $auction_date[1] ) )->format( 'U' );
+					$end_epoch = DateTimeImmutable::createFromFormat( 'd/m/Y', trim( end( $auction_date ) ) )->format( 'U' );
 					wp_schedule_single_event( $end_epoch, 'chack_auction_status_for_cart', array( 'auction_id' => $auction_id ) );
 
 					wp_send_json(

@@ -46,8 +46,8 @@ if ( ! class_exists( 'ASTA_ORDER' ) ) :
 				'payment_status' => get_post_meta( $args['ID'], 'payment_status', true ),
 				'oreder_link'    => ASTA_THEME_ORDERS::get_meta( $args['ID'], 'oreder_link' ),
 				'date'           => get_the_date( 'd/m/Y', $args['ID'] ),
-				'pay_label'      => __( 'Pay', 'asta-child' ),
-				'pay_now_label'  => __( 'Pay now', 'asta-child' ),
+				'pay_label'      => __( 'Pay', 'asta-template' ),
+				'pay_now_label'  => __( 'Pay now', 'asta-template' ),
 			);
 
 			$args = wp_parse_args( $args, $defaults );

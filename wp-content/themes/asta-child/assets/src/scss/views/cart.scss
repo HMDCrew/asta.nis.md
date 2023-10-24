@@ -8,35 +8,87 @@
     margin-top: 2vh;
     border: 1px solid rgba(0, 0, 0, 0.125);
     border-radius: 0.25rem;
+    position: relative;
+
+    &.loading {
+        &:after {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+    }
 
     &>.thumbnail {
         max-width: 150px;
         max-height: 150px;
         margin-right: 1vw;
 
-        img {
-            object-fit: contain;
+        a {
+            display: block;
+
+            img {
+                display: block;
+                height: 100%;
+                object-fit: contain;
+            }
         }
     }
 
     .title {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
         a {
             color: $primary;
         }
     }
 
-    .price-info {
-        margin-left: auto;
+    .actions {
         display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: auto;
+        min-width: 60px;
 
-        svg {
-            width: 10px;
-            margin-right: 5px;
+        .price-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.625rem;
+
+            svg {
+                width: 10px;
+                margin-right: 5px;
+            }
+
+            span {
+                font-weight: 500;
+                font-size: 18px;
+            }
         }
 
-        span {
-            font-weight: 500;
-            font-size: 18px;
+        .qty-actions {
+            display: flex;
+            justify-content: space-around;
+
+            button {
+                margin: 0;
+                padding: 0 7px;
+                height: 26px;
+
+                svg {
+                    width: 10px;
+                    height: 100%;
+                    margin: 0;
+                    fill: white;
+                }
+
+                &:hover {
+                    svg {
+                        fill: black;
+                    }
+                }
+            }
         }
     }
 }
@@ -73,7 +125,19 @@
     }
 
     .totals {
-        
+
         margin-bottom: 3vh;
+    }
+}
+
+body {
+    &.page-template-thankyou {
+        .cart-item {
+            .actions {
+                .price-info {
+                    margin-bottom: 0
+                }
+            }
+        }
     }
 }

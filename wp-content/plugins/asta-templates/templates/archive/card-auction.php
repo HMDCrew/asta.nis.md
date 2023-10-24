@@ -72,11 +72,11 @@ list(
 		<?php endif; ?>
 
 		<div class="actions <?php echo get_current_user_id() === $author_id ? 'd-flex' : ''; ?>">
-			<a href="<?php echo $post_link; ?>" class="btn btn-primary details"><?php echo __( 'Details', 'asta-child' ); ?></a>
+			<a href="<?php echo $post_link; ?>" class="btn btn-primary details"><?php echo __( 'Details', 'asta-template' ); ?></a>
 
 			<?php if ( get_current_user_id() === $author_id ) : ?>
 				<a href="/edit-auction/?auction_id=<?php echo $post_id; ?>" class="btn btn-primary d-inline-flex edit">
-					<?php echo __( 'Edit', 'asta-child' ); ?>
+					<?php echo __( 'Edit', 'asta-template' ); ?>
 				</a>
 			<?php endif; ?>
 		</div>

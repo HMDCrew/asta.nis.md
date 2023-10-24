@@ -1,6 +1,6 @@
 @import "../base/variables";
 
-.auction-title {
+.title {
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen-Sans, Ubuntu, Cantarell, Helvetica Neue, sans-serif;
     font-size: 36px;
     font-weight: 700;
@@ -14,7 +14,7 @@
 
 @media (max-width: ($tabletStart + px)) {
     .sidebar,
-    .auction-content-col {
+    .product-content-col {
         width: 100%;
     }
 }

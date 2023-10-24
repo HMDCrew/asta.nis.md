@@ -69,10 +69,14 @@ function manage_js_front_end( $tag ) {
 		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/home.bundle.js' ) ||
 		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/login.bundle.js' ) ||
 		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/register.bundle.js' ) ||
-		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/auth_user.bundle.js' ) ||
+		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/profile.bundle.js' ) ||
 		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/new_auction.bundle.js' ) ||
+		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/new_product.bundle.js' ) ||
 		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/archive_auctions.bundle.js' ) ||
-		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/single_auction.bundle.js' )
+		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/archive_shop.bundle.js' ) ||
+		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/single_auction.bundle.js' ) ||
+		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/single_shop.bundle.js' ) ||
+		str_contains( $src, get_stylesheet_directory_uri() . '/assets/dist/js/auth_user.bundle.js' )
 	) {
 		$src = wpr_async_js( $tag );
 	}
@@ -259,6 +263,19 @@ function assets_js_front_end() {
 		);
 	}
 
+	if ( is_single() && 'shop' === get_post_type( get_the_ID() ) ) {
+		wp_enqueue_script( 'asta-shop', get_stylesheet_directory_uri() . '/assets/dist/js/single_shop.bundle.js', array(), false, true );
+		wp_localize_script(
+			'asta-shop',
+			'shop_data',
+			array(
+				'product_id' => get_the_ID(),
+				'json_url'   => get_rest_url(),
+				'nonce'      => wp_create_nonce( 'wp_rest' ),
+			)
+		);
+	}
+
 	if ( is_user_logged_in() ) {
 		wp_enqueue_script( 'asta-auth', get_stylesheet_directory_uri() . '/assets/dist/js/auth_user.bundle.js', array(), false, true );
 	}
@@ -307,6 +324,10 @@ function assets_css_front_end() {
 
 	if ( is_single() && 'auctions' === get_post_type( get_the_ID() ) ) {
 		wp_enqueue_style( 'asta-auction', get_stylesheet_directory_uri() . '/assets/dist/css/single_auction.bundle.css' );
+	}
+
+	if ( is_single() && 'shop' === get_post_type( get_the_ID() ) ) {
+		wp_enqueue_style( 'asta-shop', get_stylesheet_directory_uri() . '/assets/dist/css/single_shop.bundle.css' );
 	}
 
 	if ( is_user_logged_in() ) {

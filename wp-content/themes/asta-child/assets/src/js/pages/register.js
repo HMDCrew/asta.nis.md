@@ -1,7 +1,7 @@
 import '../../scss/views/register.scss'
 import 'vanilla-tilt'
-import { sendHttpReq } from '../utils/api';
-import { wpr_alert } from '../utils/helpers';
+import { sendHttpReq } from '../utils/api/http'
+import { asta_alert } from '../utils/asta_alert'
 import { check_pwd_validity } from '../utils/passwords';
 
 const tilt_img = document.querySelector(".js-tilt img")
@@ -77,10 +77,10 @@ if (form && submit_btn) {
                 res = JSON.parse(res)
 
                 if ('success' === res.status) {
-                    wpr_alert(['Register gistration complete'], 'success')
+                    asta_alert(['Register gistration complete'], 'success')
                     window.location = '/login'
                 } else {
-                    wpr_alert([res.message])
+                    asta_alert([res.message])
                 }
 
             }).catch(e => {
@@ -88,7 +88,7 @@ if (form && submit_btn) {
             });
 
         } else {
-            wpr_alert(['<strong>Error:</strong> check fields.'])
+            asta_alert(['<strong>Error:</strong> check fields.'])
         }
 
     }

@@ -1,13 +1,59 @@
 
 import '../../scss/views/cart.scss'
-import { sendHttpReq } from '../utils/api'
-import { wpr_alert } from '../utils/helpers'
+import { sendHttpReq } from '../utils/api/http'
+import { asta_alert } from '../utils/asta_alert'
 
 const { nonce, json_url } = auctions_data
 const chackout = document.querySelector('.chackout-btn')
 const payment_form = document.querySelector('#payment-form')
 const pay_submit = payment_form?.querySelector('#submit')
 
+
+const plus_qty_btns = document.querySelectorAll('.plus_qty')
+const minus_qty_btns = document.querySelectorAll('.minus_qty')
+
+let timeout_id;
+const handle_qty = (btn, qty_fn) => {
+
+    const constainer = btn.closest('.cart-item')
+    const product_id = constainer.getAttribute('post_id')
+    const container_qty = constainer.querySelector('.title sub.qty span')
+    const price_info = constainer.querySelector('.price-info')
+    const qty = parseInt(container_qty.textContent)
+    const qty_fn_val = qty_fn(qty)
+
+    container_qty.textContent = qty_fn_val > 0 ? qty_fn_val : 0
+
+    constainer.classList.add('loading')
+    clearTimeout(timeout_id);
+    timeout_id = setTimeout(() => {
+
+        sendHttpReq({
+            url: json_url + 'api-qty-update',
+            data: {
+                product_id,
+                qty: qty_fn_val > 0 ? qty_fn_val : 0
+            },
+            headers: { 'X-WP-Nonce': nonce },
+            method: 'POST'
+        }).then(res => {
+
+            res = JSON.parse(res)
+            
+            const price = price_info.querySelector('span')
+            price.textContent = res.cart_product.price
+
+            constainer.classList.remove('loading')
+        }).catch(e => {
+            console.log(e);
+            constainer.classList.remove('loading')
+        });
+
+    }, 1000);
+}
+
+plus_qty_btns.forEach(btn => btn.addEventListener('click', ev => handle_qty(btn, (qty) => qty + 1), false))
+minus_qty_btns.forEach(btn => btn.addEventListener('click', ev => handle_qty(btn, (qty) => qty - 1), false))
 
 /**
  * The function `on_submit` is an asynchronous function that handles the submission of a payment form
@@ -34,7 +80,7 @@ const on_submint = async (e, stripe, elements) => {
     })
 
     if (error) {
-        wpr_alert([error.message])
+        asta_alert([error.message])
         console.log(error.message)
         pay_submit.disabled = false
     }
@@ -86,7 +132,7 @@ const chackout_process = (e) => {
         if ('error' !== res.status) {
             await build_chackout(res.client_secret, res.public_key)
         } else {
-            wpr_alert([res.message])
+            asta_alert([res.message])
         }
 
     }).catch(e => {

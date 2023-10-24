@@ -138,9 +138,7 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 			$products_prices = (
 				! empty( $cart['products_cart'] )
 				? array_map(
-					function ( $product_id ) {
-						return floatval( get_post_meta( $product_id, 'price', true ) );
-					},
+					fn( $cart_item ) => floatval( get_post_meta( $cart_item['product_id'], 'price', true ) ) * $cart_item['qty'],
 					$cart['products_cart']
 				)
 				: array()
@@ -205,23 +203,23 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 		 * user's shopping cart. Each item in the cart is represented as an array with keys such as
 		 * `auction_id`, `quantity`, etc.
 		 *
-		 * @return string `get_cart_titles()` function is returning an array of auction titles corresponding to
-		 * the auction IDs in the `` array. If the `` array is empty, it returns an empty string.
+		 * @return array `get_cart_titles()` function is returning an array of auction titles corresponding to
+		 * the auction IDs in the `` array. If the `` array is empty, it returns an empty array.
 		 */
 		private function get_cart_titles( array $cart ) {
 
 			$auctions_ids = ! empty( $cart['auctions_cart'] ) ? array_column( $cart['auctions_cart'], 'auction_id' ) : array();
-			$products_ids = ! empty( $cart['products_cart'] ) ? $cart['products_cart'] : array();
+			$products_ids = ! empty( $cart['products_cart'] ) ? array_column( $cart['products_cart'], 'product_id' ) : array();
 
 			return (
 				! empty( $auctions_ids ) || ! empty( $products_ids )
 				? array_map(
-					function ( $auction_id ) {
-						return get_the_title( $auction_id );
+					function ( $post_id ) {
+						return get_the_title( $post_id );
 					},
 					array_merge( $auctions_ids, $products_ids )
 				)
-				: ''
+				: array()
 			);
 		}
 
