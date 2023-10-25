@@ -68,10 +68,11 @@ if ( ! class_exists( 'ASTA_GUTENBERG_METABOXES' ) ) :
 			$end_date        = get_post_meta( $auction->ID, 'end_date', true );
 			$gallery         = get_post_meta( $auction->ID, 'auction_gallery', true );
 			$auction_date    = apply_filters( 'wpr_get_auction_date', $auction->ID );
-			$price           = apply_filters( 'wpr_esc_auction_meta', $auction->ID, 'price' );
-			$price_increment = floatval( apply_filters( 'wpr_esc_auction_meta', $auction->ID, 'price_increment' ) );
+			$price           = esc_auction_meta( $auction->ID, 'price' );
+			$price_increment = floatval( esc_auction_meta( $auction->ID, 'price_increment' ) );
 
-			wpr_asta_get_template_part(
+			asta_plugin_get_template_part(
+				ASTA_API_PLUGIN_TEMPLATES,
 				'auctions/auction',
 				'metabox',
 				array(

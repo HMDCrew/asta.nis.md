@@ -20,7 +20,7 @@ list('last_slide' => $last_slide, 'urls' => $urls, 'slide_before' => $slide_befo
 
 			<a class="swiper-slide" href="<?php echo esc_url( $url ); ?>" data-fancybox="gallery">
 				<?php echo $slide_before; ?>
-				<img src="<?php echo esc_url( single_url_slash( $url ) ); ?>" />
+				<img src="<?php echo esc_url( remove_multimple_slah( $url ) ); ?>" />
 				<?php echo $slide_after; ?>
 			</a>
 

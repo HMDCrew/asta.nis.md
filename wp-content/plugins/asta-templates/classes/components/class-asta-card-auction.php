@@ -69,36 +69,6 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 
 
 		/**
-		 * This PHP function retrieves the auction type (category) based on the provided auction ID.
-		 *
-		 * @param int auction_id This is an integer parameter representing the ID of the auction for which we
-		 * want to retrieve the auction type.
-		 *
-		 * @return array with the ID and name of the first category term associated with the given auction
-		 * ID. If the auction ID is not provided or no category term is found, an empty array is returned.
-		 */
-		private function get_auction_type( int $auction_id ) {
-
-			if ( $auction_id && 0 !== $auction_id ) {
-
-				$terms = get_the_terms( $auction_id, 'asta_category' );
-
-				if ( ! empty( $terms ) ) {
-
-					$term = reset( $terms );
-
-					return array(
-						'id'   => $term->term_id,
-						'name' => $term->name,
-					);
-				}
-			}
-
-			return array();
-		}
-
-
-		/**
 		 * The function `asta_card_auction` is used to display a card for an auction with various details and
 		 * options.
 		 *
@@ -107,7 +77,7 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 		 */
 		public function asta_card_auction( array $args = array() ) {
 
-			$auction_type = $this->get_auction_type( get_the_ID() );
+			$auction_type = get_asta_category( get_the_ID() );
 
 			$defaults = array(
 				'post_id'         => get_the_ID(),
@@ -115,18 +85,23 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 				'price'           => $this->get_auction_last_price( get_the_ID() ),
 				'price_increment' => esc_auction_meta( get_the_ID(), 'price_increment' ),
 				'auction_type'    => $auction_type,
+				'category_link'   => ! empty( $auction_type['id'] ) ? get_category_link( $auction_type['id'] ) : '#',
 				'post_excerpt'    => get_post_field( 'post_excerpt', get_the_ID() ),
 				'post_classes'    => esc_attr( implode( ' ', get_post_class( 'card' ) ) ),
 				'post_link'       => esc_url( get_permalink() ),
 				'url_thumbnail'   => get_asta_thumbanil( get_the_ID() ),
 				'title'           => get_the_title(),
-				'category_link'   => get_category_link( $auction_type['id'] ),
 				'author_id'       => (int) get_post_field( 'post_author', get_the_ID() ),
 			);
 
 			$args = wp_parse_args( $args, $defaults );
 
-			asta_get_template_part( 'archive/card', 'auction', $args );
+			asta_plugin_get_template_part(
+				ASTA_TEMPLATES_PLUGIN_TEMPLATES,
+				'archive/card',
+				'auction',
+				$args
+			);
 		}
 	}
 

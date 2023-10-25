@@ -175,7 +175,8 @@ if ( ! class_exists( 'ASTA_THEME_ORDERS' ) ) :
 
 			$details = get_post_meta( $order->ID, 'details', true );
 
-			wpr_asta_get_template_part(
+			asta_plugin_get_template_part(
+				ASTA_API_PLUGIN_TEMPLATES,
 				'orders/order',
 				'metabox',
 				array(

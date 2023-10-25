@@ -150,7 +150,7 @@ if ( ! class_exists( 'ASTA_THEME_GET_AUCTION' ) ) :
 				$posts[ $key ]['author_url']      = get_author_posts_url( (int) $post['post_author'] );
 				$posts[ $key ]['auction_date']    = apply_filters( 'wpr_get_auction_date', $post['ID'] );
 				$posts[ $key ]['price']           = apply_filters( 'wpr_get_auction_last_price', $post['ID'] );
-				$posts[ $key ]['price_increment'] = apply_filters( 'wpr_esc_auction_meta', $post['ID'], 'price_increment' );
+				$posts[ $key ]['price_increment'] = esc_auction_meta( $post['ID'], 'price_increment' );
 				$posts[ $key ]['post_excerpt']    = get_post_field( 'post_excerpt', $post['ID'] );
 				$posts[ $key ]['is_my_auction']   = $curent_user_id === (int) $post['post_author'] ? true : false;
 				$posts[ $key ]['guid']            = get_permalink( $post['ID'] );

@@ -139,7 +139,12 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 
 			$args = wp_parse_args( $args, $defaults );
 
-			asta_get_template_part( 'archive/filter', 'bar', $args );
+			asta_plugin_get_template_part(
+				ASTA_TEMPLATES_PLUGIN_TEMPLATES,
+				'archive/filter',
+				'bar',
+				$args
+			);
 		}
 	}
 

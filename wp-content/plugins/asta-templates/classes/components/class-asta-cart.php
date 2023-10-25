@@ -88,7 +88,12 @@ if ( ! class_exists( 'ASTA_CART' ) ) :
 				: ''
 			);
 
-			asta_get_template_part( 'cart/cart', 'item', $args );
+			asta_plugin_get_template_part(
+				ASTA_TEMPLATES_PLUGIN_TEMPLATES,
+				'cart/cart',
+				'item',
+				$args
+			);
 		}
 	}
 

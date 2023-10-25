@@ -119,7 +119,11 @@ if ( ! class_exists( 'Gateway_Payments' ) ) :
 				wp_die( __( 'You do not have sufficient permissions to access this page.', 'asta-api' ) );
 			}
 
-			wpr_asta_get_template_part( 'asta', 'dashboard' );
+			asta_plugin_get_template_part(
+				ASTA_API_PLUGIN_TEMPLATES,
+				'asta',
+				'dashboard'
+			);
 		}
 	}
 

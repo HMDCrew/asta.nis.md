@@ -41,9 +41,11 @@ add_filter( 'upload_mimes', 'theme_restrict_mime_types' );
  * returns the URL. The function also accepts optional parameters for adding CSS classes
  */
 function wpr_get_image_by_id( int $id, string $size = 'full', bool $tag = false, string $classes = '' ) {
-	return $tag
+	return (
+		$tag
 		? wp_get_attachment_image( $id, $size, false, $classes )
-		: wp_get_attachment_image_url( $id, $size );
+		: wp_get_attachment_image_url( $id, $size )
+	);
 }
 add_filter( 'wpr_get_image_by_id', 'wpr_get_image_by_id', 3 );
 

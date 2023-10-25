@@ -9,7 +9,7 @@
 
 list(
 	'product_id'    => $product_id,
-	'price'    => $price,
+	'price'         => $price,
 	'post_excerpt'  => $post_excerpt,
 	'post_classes'  => $post_classes,
 	'product_url'   => $product_url,
@@ -18,6 +18,8 @@ list(
 	'author_id'     => $author_id,
 	'details_label' => $details_label,
 	'edit_label'    => $edit_label,
+	'product_type'  => $product_type,
+	'category_link' => $category_link
 ) = $args;
 ?>
 
@@ -30,6 +32,13 @@ list(
 	<div class="entry-content">
 
 		<h2 class="entry-title"><a href="<?php echo $product_url; ?>" rel="bookmark"><?php echo $product_name; ?></a></h2>
+
+		<?php if ( ! empty( $product_type ) ) : ?>
+		<div class="auction_type">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M0 96C0 60.7 28.7 32 64 32H512c35.3 0 64 28.7 64 64V416c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V96zM128 288a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm32-128a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM128 384a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm96-248c-13.3 0-24 10.7-24 24s10.7 24 24 24H448c13.3 0 24-10.7 24-24s-10.7-24-24-24H224zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24H448c13.3 0 24-10.7 24-24s-10.7-24-24-24H224zm0 96c-13.3 0-24 10.7-24 24s10.7 24 24 24H448c13.3 0 24-10.7 24-24s-10.7-24-24-24H224z"/></svg>
+			<a href="<?php echo $category_link; ?>"><?php echo $product_type['name']; ?></a>
+		</div>
+		<?php endif; ?>
 
 		<?php if ( ! empty( $post_excerpt ) ) : ?>
 		<div class="post_excerpt"><?php echo $post_excerpt; ?></div>

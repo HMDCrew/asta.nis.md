@@ -11,23 +11,23 @@ export class FilterBar {
 
     constructor(endpoint, handle_add_to_cart, args) {
         if (filter_bar) {
-
+            
             this.endpoint = endpoint
             this.handle_add_to_cart = handle_add_to_cart
-
+            
             this.nonce = args.nonce
             this.labels = args.labels
             this.user_id = args.user_id
-
+            
             this.search = filter_bar.querySelector('.search input[name="search"]')
             this.type = filter_bar.querySelector('.search .wrap-input input.select')
             this.price_range = filter_bar.querySelector('#price_range')
-
+            
             this.mobile_filter_btn = document.querySelector('.mobile-filter-btn')
-
+            
             this.timeout_id = null
             this.is_first_request = true
-
+            
             this.setup_price_range()
             this.setup_date_range()
 

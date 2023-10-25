@@ -82,7 +82,8 @@ if ( ! class_exists( 'ASTA_Gateway_Options' ) ) :
 		 * This PHP function renders a payment gateway section with stored options.
 		 */
 		public function render_section_gateways() {
-			wpr_asta_get_template_part(
+			asta_plugin_get_template_part(
+				ASTA_API_PLUGIN_TEMPLATES,
 				'payments/gateway',
 				'options',
 				array(
@@ -96,7 +97,8 @@ if ( ! class_exists( 'ASTA_Gateway_Options' ) ) :
 		 * This PHP function renders a Stripe payment section using stored options.
 		 */
 		public function render_section_stripe() {
-			wpr_asta_get_template_part(
+			asta_plugin_get_template_part(
+				ASTA_API_PLUGIN_TEMPLATES,
 				'payments/payment',
 				'stripe',
 				array(
@@ -110,7 +112,8 @@ if ( ! class_exists( 'ASTA_Gateway_Options' ) ) :
 		 * This PHP function renders a payment section for Revolut with stored options.
 		 */
 		public function render_section_revolut() {
-			wpr_asta_get_template_part(
+			asta_plugin_get_template_part(
+				ASTA_API_PLUGIN_TEMPLATES,
 				'payments/payment',
 				'revolut',
 				array(

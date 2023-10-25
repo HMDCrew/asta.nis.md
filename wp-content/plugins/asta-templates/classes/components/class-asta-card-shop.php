@@ -43,7 +43,8 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 
 		public function asta_card_shop( array $args = array() ) {
 
-			$product_id = get_the_ID();
+			$product_id   = get_the_ID();
+			$product_type = get_asta_category( $product_id );
 
 			$defaults = array(
 				'product_id'    => $product_id,
@@ -52,6 +53,8 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 				'post_classes'  => esc_attr( implode( ' ', get_post_class( 'card' ) ) ),
 				'product_url'   => esc_url( get_permalink() ),
 				'product_name'  => get_the_title(),
+				'product_type'  => $product_type,
+				'category_link' => ! empty( $product_type['id'] ) ? get_category_link( $product_type['id'] ) : '#',
 				'thumbnail'     => get_asta_thumbanil( $product_id ),
 				'author_id'     => (int) get_post_field( 'post_author', $product_id ),
 				'details_label' => __( 'Details', 'asta-template' ),
@@ -60,7 +63,12 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 
 			$args = wp_parse_args( $args, $defaults );
 
-			asta_get_template_part( 'archive/card', 'shop', $args );
+			asta_plugin_get_template_part(
+				ASTA_TEMPLATES_PLUGIN_TEMPLATES,
+				'archive/card',
+				'shop',
+				$args
+			);
 		}
 	}
 

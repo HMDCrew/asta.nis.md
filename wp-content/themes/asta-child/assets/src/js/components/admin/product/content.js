@@ -8,6 +8,7 @@ const save_product = document.querySelector('.sidebar .save')
 
 const asta_title = document.querySelector('input[name="asta-title"]')
 const price = document.querySelector('input[name="price"]')
+const category = document.querySelector('.wrap-input.select select[name="category"]')
 const aditional_info = document.querySelector('textarea[name="aditional-info"]')
 
 export class Content {
@@ -23,7 +24,7 @@ export class Content {
         this.editor = this.editor_setup()
         
         if (save_product && price && aditional_info) {
-            save_product.addEventListener('click', ev => salve_product_info(), false)
+            save_product.addEventListener('click', ev => this.salve_product_info(), false)
         }
     }
 
@@ -70,11 +71,16 @@ export class Content {
 
     salve_product_info() {
 
+        const category_id = category.parentNode.querySelector('input.select');
+
+        console.log(category_id)
+
         this.editor.save().then((editor_data) => {
 
             const data = {
                 product_id: this.product_id,
                 product_title: asta_title.value,
+                category_id: category_id.getAttribute('content'),
                 price: price.value,
                 aditional_info: aditional_info.value,
                 product_content: editor_data.blocks
