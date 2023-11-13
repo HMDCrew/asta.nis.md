@@ -86,7 +86,7 @@ export class Gallery {
 
             let formData = new FormData();
             formData.append("file", image.files[0]);
-            formData.append("product_id", product_id);
+            formData.append("product_id", this.product_id);
 
             sendHttpForm({
                 url: this.json_url + 'api-product-upload-image',
