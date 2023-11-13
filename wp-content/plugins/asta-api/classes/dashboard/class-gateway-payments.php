@@ -17,7 +17,7 @@ if ( ! class_exists( 'Gateway_Payments' ) ) :
 		 */
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Gateway_Payments ) ) {
-				self::$instance = new Gateway_Payments;
+				self::$instance = new Gateway_Payments();
 				self::$instance->hooks();
 				self::$instance->includes();
 			}
@@ -47,8 +47,7 @@ if ( ! class_exists( 'Gateway_Payments' ) ) :
 			$menu_url = menu_page_url( 'panasonic', false );
 
 			if ( ! $menu_url ) {
-				echo
-				'<style>
+				echo '<style>
 					.toplevel_page_asta .wp-menu-image.dashicons-before img { max-width: 20px }
 					.toplevel_page_asta .wp-first-item { display: none }
 				</style>';

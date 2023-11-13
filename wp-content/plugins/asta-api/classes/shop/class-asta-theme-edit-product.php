@@ -15,7 +15,7 @@ if ( ! class_exists( 'ASTA_THEME_EDIT_PRODUCT' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_EDIT_PRODUCT ) ) {
-				self::$instance = new ASTA_THEME_EDIT_PRODUCT;
+				self::$instance = new ASTA_THEME_EDIT_PRODUCT();
 				self::$instance->hooks();
 			}
 
@@ -340,10 +340,10 @@ if ( ! class_exists( 'ASTA_THEME_EDIT_PRODUCT' ) ) :
 		 *
 		 * @return array of cleaned data.
 		 */
-		private function regex_applied_array( string $regex_val, array $array ) {
+		private function regex_applied_array( string $regex_val, array $callback ) {
 
 			$cleaned = array();
-			foreach ( $array as $key => $value ) {
+			foreach ( $callback as $key => $value ) {
 
 				$clean_key = preg_replace( '/[^0-9a-zA-Z\-\_]/i', '', $key );
 				if ( ! is_array( $value ) ) {

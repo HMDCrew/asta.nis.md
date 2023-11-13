@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_THEME_SOLD_PROCESS' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_SOLD_PROCESS ) ) {
-				self::$instance = new ASTA_THEME_SOLD_PROCESS;
+				self::$instance = new ASTA_THEME_SOLD_PROCESS();
 				self::$instance->hooks();
 			}
 

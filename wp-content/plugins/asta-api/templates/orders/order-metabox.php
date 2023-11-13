@@ -9,7 +9,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-list('payment_status' => $payment_status, 'payment_intent' => $payment_intent, 'buyer' => $buyer, 'amount' => $amount, 'currency' => $currency, 'cart' => $cart) = $args;
+list(
+	'payment_status' => $payment_status,
+	'payment_intent' => $payment_intent,
+	'buyer' => $buyer,
+	'amount' => $amount,
+	'currency' => $currency,
+	'cart' => $cart
+) = $args;
 
 ?>
 
@@ -35,16 +42,33 @@ list('payment_status' => $payment_status, 'payment_intent' => $payment_intent, '
 </table>
 
 <div class="cart">
-	<?php foreach ( $cart as $auction_id => $cart_item ) : ?>
-		<?php
-		get_template_part(
-			'template-parts/sections/cart',
-			'item',
-			array(
-				'auction_id' => $auction_id,
-				'now_price'  => $cart_item['now_price'],
-			)
-		);
-		?>
-	<?php endforeach; ?>
+
+	<?php if ( ! empty( $cart['auctions_cart'] ) ) : ?>
+
+		<h2><?php echo __( 'Auctions', 'asta-child' ); ?></h2>
+
+		<?php foreach ( $cart['auctions_cart'] as $cart_item ) : ?>
+			<?php do_action( 'asta_cart_item', $cart_item ); ?>
+		<?php endforeach; ?>
+
+	<?php endif; ?>
+
+	<?php if ( ! empty( $cart['products_cart'] ) ) : ?>
+
+		<h2><?php echo __( 'Products', 'asta-child' ); ?></h2>
+
+		<?php foreach ( $cart['products_cart'] as $cart_item ) : ?>
+			<?php
+			do_action(
+				'asta_cart_item',
+				array(
+					'product_id' => $cart_item['product_id'],
+					'price'      => floatval( get_post_meta( $cart_item['product_id'], 'price', true ) ),
+					'qty'        => $cart_item['qty'],
+				)
+			);
+			?>
+		<?php endforeach; ?>
+	<?php endif; ?>
+
 </div>

@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_ORDER' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_ORDER ) ) {
-				self::$instance = new ASTA_ORDER;
+				self::$instance = new ASTA_ORDER();
 				self::$instance->hooks();
 			}
 

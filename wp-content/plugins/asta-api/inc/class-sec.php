@@ -106,11 +106,11 @@ class SEC {
 	 *
 	 * @return array of cleaned data.
 	 */
-	private function regex_applied_array( string $regex_val, array $array ) {
+	private function regex_applied_array( string $regex_val, array $callback ) {
 
 		$cleaned = array();
 
-		foreach ( $array as $key => $value ) {
+		foreach ( $callback as $key => $value ) {
 
 			$clean_key = preg_replace( '/[^0-9a-zA-Z\-\_]/i', '', $key );
 
@@ -160,8 +160,8 @@ class SEC {
 	 *
 	 * @return string base64 encoded cripted array.
 	 */
-	public function array_option_enc( array $array ) {
-		return base64_encode( $this->encrypt( json_encode( $array ) ) );
+	public function array_option_enc( array $array_content ) {
+		return base64_encode( $this->encrypt( json_encode( $array_content ) ) );
 	}
 
 
@@ -185,11 +185,11 @@ class SEC {
 	 *
 	 * @return array cleared.
 	 */
-	public function clean_array_key_val( array $array ) {
+	public function clean_array_key_val( array $array_content ) {
 
 		return $this->regex_applied_array(
 			'/[^0-9a-zA-Z\-\_\.\/\:\%]/i',
-			$array
+			$array_content
 		);
 	}
 
@@ -205,7 +205,7 @@ class SEC {
 	 * regular expression used in the function removes all characters except alphanumeric characters,
 	 * whitespace, and some special characters including some non-ASCII characters.
 	 */
-	public function clean_array_key_val_soft( array $array ) {
+	public function clean_array_key_val_soft( array $array_content ) {
 
 		// RU special chars
 		// А Б В Г Д Е Ё Ж З И Й К М Л Н О П Р С Т У Ф Х Ч Ц Ш Щ Ъ Ы Ь Э Ю Я
@@ -213,7 +213,7 @@ class SEC {
 
 		return $this->regex_applied_array(
 			'/[^0-9a-zA-Z\s\Ă\ă\Â\â\Î\î\Ș\ș\Ț\А\Б\В\Г\Д\Е\Ё\Ж\З\И\Й\К\М\Л\Н\О\П\Р\С\Т\У\Ф\Х\Ч\Ц\Ш\Щ\Ъ\Ы\Ь\Э\Ю\Я\а\б\в\г\д\е\ё\ж\з\и\й\к\м\л\н\о\п\р\с\т\у\ф\х\ч\ц\ш\щ\ъ\ы\ь\э\ю\я\?\!\'\"\$\€\%\&\(\)\=\[\]\\\@\#\*\-\_\;\:\.\,]/i',
-			$array
+			$array_content
 		);
 	}
 }

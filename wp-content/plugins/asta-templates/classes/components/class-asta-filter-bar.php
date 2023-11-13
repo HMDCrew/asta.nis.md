@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_FILTER_BAR ) ) {
-				self::$instance = new ASTA_FILTER_BAR;
+				self::$instance = new ASTA_FILTER_BAR();
 				self::$instance->hooks();
 			}
 
@@ -120,12 +120,12 @@ if ( ! class_exists( 'ASTA_FILTER_BAR' ) ) :
 		 */
 		public function asta_filter_bar( array $args = array() ) {
 
-			$archive = get_queried_object();
+			$post_type = ! empty( $args['post_type'] ) ? $args['post_type'] : get_post_type();
 
 			$defaults = array(
 				'categories'     => $this->get_categories(),
-				'slider_min'     => $this->helper_price_range( 'min', get_post_type() ),
-				'slider_max'     => $this->helper_price_range( 'max', get_post_type() ),
+				'slider_min'     => $this->helper_price_range( 'min', $post_type ),
+				'slider_max'     => $this->helper_price_range( 'max', $post_type ),
 				'visibility'     => array(
 					'search'   => true,
 					'category' => true,

@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_CARD_SHOP' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_CARD_SHOP ) ) {
-				self::$instance = new ASTA_CARD_SHOP;
+				self::$instance = new ASTA_CARD_SHOP();
 				self::$instance->hooks();
 			}
 

@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_GET_PRODUCT ) ) {
-				self::$instance = new ASTA_THEME_GET_PRODUCT;
+				self::$instance = new ASTA_THEME_GET_PRODUCT();
 				self::$instance->hooks();
 			}
 
@@ -124,7 +124,7 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 				$posts[ $key ]['image']         = get_asta_thumbanil( $post['ID'] );
 				$posts[ $key ]['author_name']   = get_the_author_meta( 'display_name', (int) $post['post_author'] );
 				$posts[ $key ]['author_url']    = get_author_posts_url( (int) $post['post_author'] );
-				$posts[ $key ]['price']         = esc_auction_meta( $post['ID'], 'price' );
+				$posts[ $key ]['price']         = asta_esc_meta( $post['ID'], 'price' );
 				$posts[ $key ]['post_excerpt']  = get_post_field( 'post_excerpt', $post['ID'] );
 				$posts[ $key ]['is_my_product'] = $curent_user_id === (int) $post['post_author'] ? true : false;
 				$posts[ $key ]['guid']          = get_permalink( $post['ID'] );

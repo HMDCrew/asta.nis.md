@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_CART ) ) {
-				self::$instance = new ASTA_THEME_CART;
+				self::$instance = new ASTA_THEME_CART();
 				self::$instance->hooks();
 			}
 
@@ -121,7 +121,7 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 		}
 
 		public static function clean_zero_qty( array $porduct_cart ) {
-			return array_filter( $porduct_cart, fn( $item) => $item['qty'] > 0 );
+			return array_filter( $porduct_cart, fn( $item ) => $item['qty'] > 0 );
 		}
 
 		/**

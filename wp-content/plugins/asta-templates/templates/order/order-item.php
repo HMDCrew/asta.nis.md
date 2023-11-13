@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 
 list(
 	'order_id'       => $order_id,
-	'title'          => $post_title,
+	'title'          => $title,
 	'details'        => $details,
 	'payment_status' => $payment_status,
 	'oreder_link'    => $oreder_link,

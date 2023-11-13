@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_GALLERY' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_GALLERY ) ) {
-				self::$instance = new ASTA_GALLERY;
+				self::$instance = new ASTA_GALLERY();
 				self::$instance->hooks();
 			}
 
@@ -42,7 +42,7 @@ if ( ! class_exists( 'ASTA_GALLERY' ) ) :
 		 *      'slide_before' => string,
 		 *  );
 		 */
-		function asta_gallery_template( array $args = array() ) {
+		public function asta_gallery_template( array $args = array() ) {
 
 			$defaults = array(
 				'urls'         => (

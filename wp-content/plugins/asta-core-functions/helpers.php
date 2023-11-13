@@ -80,24 +80,6 @@ if ( ! function_exists( 'get_user_last_edited_post' ) ) {
 }
 
 
-if ( ! function_exists( 'generate_activation_code' ) ) {
-	/**
-	 * The function generates a random activation code of a specified length using PHP's random_bytes and
-	 * bin2hex functions.
-	 *
-	 * @param int length The "length" parameter is an optional integer value that specifies the length of
-	 * the activation code to be generated. If no value is provided, the default length of 16 characters
-	 * will be used.
-	 *
-	 * @return string randomly generated activation code in hexadecimal format with a default length of 16
-	 * characters.
-	 */
-	function generate_activation_code( int $length = 16 ) {
-		return preg_replace( '/[^a-zA-Z0-9\.\_\-]/i', '', bin2hex( random_bytes( $length ) ) );
-	}
-}
-
-
 if ( ! function_exists( 'file_destination_helper' ) ) {
 	/**
 	 * The function generates a new file name with a unique activation code and returns the file location
@@ -116,7 +98,7 @@ if ( ! function_exists( 'file_destination_helper' ) ) {
 		$file_extension = pathinfo( $filename, PATHINFO_EXTENSION );
 		$file_extension = strtolower( $file_extension );
 
-		$new_image_name = generate_activation_code( 25 ) . '.' . $file_extension;
+		$new_image_name = ASTA_USER::generate_activation_code( 25 ) . '.' . $file_extension;
 
 		$bazedir = str_replace( '//', '/', sprintf( '%s/%s/', $upload['basedir'], $upload_path ) );
 		mmkdir( $bazedir );
@@ -297,7 +279,7 @@ if ( ! function_exists( 'remove_multimple_slah' ) ) {
 	 * slashes (//) are replaced with a single forward slash (/).
 	 */
 	function remove_multimple_slah( string $url ) {
-		return preg_replace( '/(\/+)/', '/', $url );
+		return preg_replace( '/([^:])(\/{2,})/', '$1/', $url );
 	}
 }
 
@@ -356,7 +338,7 @@ if ( ! function_exists( 'asta_plugin_get_template_path' ) ) {
 	 *
 	 * @return string path of the located template file.
 	 */
-	function asta_plugin_get_template_path( string $plugin_template_path, array $template_names, array $args, bool $load = false, bool $require_once = true ) {
+	function asta_plugin_get_template_path( string $plugin_template_path, array $template_names, array $args, bool $load = false, bool $is_require_once = true ) {
 		$located = '';
 		foreach ( (array) $template_names as $template_name ) {
 			if ( ! $template_name ) {
@@ -371,7 +353,7 @@ if ( ! function_exists( 'asta_plugin_get_template_path' ) ) {
 		}
 
 		if ( $load && '' !== $located ) {
-			load_template( $located, $require_once, $args );
+			load_template( $located, $is_require_once, $args );
 		}
 
 		return $located;
@@ -379,7 +361,7 @@ if ( ! function_exists( 'asta_plugin_get_template_path' ) ) {
 }
 
 
-if ( ! function_exists( 'esc_auction_meta' ) ) {
+if ( ! function_exists( 'asta_esc_meta' ) ) {
 	/**
 	 * The function returns the value of a specified meta key for a given auction ID, with HTML characters
 	 * escaped.
@@ -395,7 +377,7 @@ if ( ! function_exists( 'esc_auction_meta' ) ) {
 	 * sanitizing it with `esc_html()`. If the auction ID is not provided or does not exist, an empty
 	 * string is returned.
 	 */
-	function esc_auction_meta( int $auction_id, string $key ) {
+	function asta_esc_meta( int $auction_id, string $key ) {
 
 		if ( $auction_id ) {
 			return esc_html(
@@ -440,5 +422,31 @@ if ( ! function_exists( 'get_asta_category' ) ) {
 		}
 
 		return array();
+	}
+}
+
+if ( ! function_exists( 'get_asta_categories' ) ) {
+	/**
+	 * The function "get_asta_categories" retrieves the terms from the "asta_category" taxonomy in
+	 * WordPress, optionally hiding empty terms.
+	 *
+	 * @param bool hide_empty The "hide_empty" parameter is used to determine whether or not to include
+	 * categories that have no posts assigned to them. If set to true, empty categories will be excluded
+	 * from the results. If set to false, all categories will be included, regardless of whether they have
+	 * posts assigned to them or not
+	 *
+	 * @return array of terms from the 'asta_category' taxonomy. If the  parameter is set to
+	 * true, it will only return terms that have posts associated with them. If  is set to
+	 * false, it will return all terms, regardless of whether they have posts associated with them or not.
+	 */
+	function get_asta_categories( bool $hide_empty = false ) {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => 'asta_category',
+				'hide_empty' => $hide_empty,
+			)
+		);
+
+		return is_array( $terms ) ? $terms : array();
 	}
 }

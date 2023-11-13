@@ -17,7 +17,7 @@ if ( ! class_exists( 'ASTA_Gateway_Options' ) ) :
 		 */
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_Gateway_Options ) ) {
-				self::$instance = new ASTA_Gateway_Options;
+				self::$instance = new ASTA_Gateway_Options();
 				self::$instance->set_up_class_variable();
 				self::$instance->hooks();
 			}

@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_THEME_BIDS' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_BIDS ) ) {
-				self::$instance = new ASTA_THEME_BIDS;
+				self::$instance = new ASTA_THEME_BIDS();
 				self::$instance->hooks();
 			}
 
@@ -67,7 +67,7 @@ if ( ! class_exists( 'ASTA_THEME_BIDS' ) ) :
 		 */
 		private function add_new_bid( int $auction_id, int $user_id, DateTime $date ) {
 
-			$price_increment = esc_auction_meta( $auction_id, 'price_increment' );
+			$price_increment = asta_esc_meta( $auction_id, 'price_increment' );
 			$auction_bids    = get_post_meta( $auction_id, 'auction_bids', true );
 			$status          = 'success';
 			$message         = __( 'bid added with success', 'asta-api' );
@@ -97,7 +97,7 @@ if ( ! class_exists( 'ASTA_THEME_BIDS' ) ) :
 			} else {
 
 				$auction_bids = array();
-				$price        = esc_auction_meta( $auction_id, 'price' );
+				$price        = asta_esc_meta( $auction_id, 'price' );
 				$price        = ! empty( $price ) && $price ? $price : 0;
 
 				$last_price               = floatval( $price ) + floatval( $price_increment );
@@ -151,7 +151,7 @@ if ( ! class_exists( 'ASTA_THEME_BIDS' ) ) :
 					array(
 						'status'  => $bids['status'],
 						'message' => $bids['message'],
-						'bids'    => apply_filters( 'wpr_get_auction_bids', $bids['bids'] ),
+						'bids'    => ASTA_AUCTION::get_auction_bids( $bids['bids'] ),
 					),
 				);
 			}
@@ -184,7 +184,9 @@ if ( ! class_exists( 'ASTA_THEME_BIDS' ) ) :
 					array(
 						'status'      => 'success',
 						'message'     => __( 'list bids', 'asta-api' ),
-						'bids'        => apply_filters( 'wpr_get_auction_bids', get_post_meta( $auction_id, 'auction_bids', true ) ),
+						'bids'        => ASTA_AUCTION::get_auction_bids(
+							get_post_meta( $auction_id, 'auction_bids', true )
+						),
 						'invok_nexts' => true,
 					),
 				);

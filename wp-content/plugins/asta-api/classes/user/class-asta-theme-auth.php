@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_THEME_AUTH' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_AUTH ) ) {
-				self::$instance = new ASTA_THEME_AUTH;
+				self::$instance = new ASTA_THEME_AUTH();
 				self::$instance->hooks();
 			}
 
@@ -188,7 +188,7 @@ if ( ! class_exists( 'ASTA_THEME_AUTH' ) ) :
 					$user = new WP_User( $user_id );
 					$user->add_role( 'pending' );
 
-					$activation_code = generate_activation_code();
+					$activation_code = ASTA_USER::generate_activation_code();
 					update_user_meta( $user_id, 'activation_code', $activation_code );
 
 					$this->user_confirmation_email( $user_email, $activation_code );

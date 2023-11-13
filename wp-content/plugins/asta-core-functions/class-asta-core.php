@@ -23,7 +23,7 @@ if ( ! class_exists( 'ASTA_CORE' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_CORE ) ) {
-				self::$instance = new ASTA_CORE;
+				self::$instance = new ASTA_CORE();
 				self::$instance->constants();
 
 				// Plugin Setup
@@ -71,6 +71,11 @@ if ( ! class_exists( 'ASTA_CORE' ) ) :
 			if ( ! defined( 'ASTA_CORE_PLUGIN_SHOP' ) ) {
 				define( 'ASTA_CORE_PLUGIN_SHOP', trailingslashit( ASTA_CORE_PLUGIN_DIR_PATH . 'shop' ) );
 			}
+
+			// Plugin directory user
+			if ( ! defined( 'ASTA_CORE_PLUGIN_USER' ) ) {
+				define( 'ASTA_CORE_PLUGIN_USER', trailingslashit( ASTA_CORE_PLUGIN_DIR_PATH . 'user' ) );
+			}
 		}
 
 		/**
@@ -78,9 +83,12 @@ if ( ! class_exists( 'ASTA_CORE' ) ) :
 		 */
 		public function includes() {
 
+			require_once ASTA_CORE_PLUGIN_AUCTIONS . 'class-asta-auction.php';
+
+			require_once ASTA_CORE_PLUGIN_USER . 'class-asta-user.php';
+
 			// Helpers functions
 			require_once ASTA_CORE_PLUGIN_DIR_PATH . 'helpers.php';
-
 		}
 	}
 

@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_GUTENBERG_METABOXES' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_GUTENBERG_METABOXES ) ) {
-				self::$instance = new ASTA_GUTENBERG_METABOXES;
+				self::$instance = new ASTA_GUTENBERG_METABOXES();
 				self::$instance->hooks();
 			}
 
@@ -67,9 +67,9 @@ if ( ! class_exists( 'ASTA_GUTENBERG_METABOXES' ) ) :
 			$start_date      = get_post_meta( $auction->ID, 'start_date', true );
 			$end_date        = get_post_meta( $auction->ID, 'end_date', true );
 			$gallery         = get_post_meta( $auction->ID, 'auction_gallery', true );
-			$auction_date    = apply_filters( 'wpr_get_auction_date', $auction->ID );
-			$price           = esc_auction_meta( $auction->ID, 'price' );
-			$price_increment = floatval( esc_auction_meta( $auction->ID, 'price_increment' ) );
+			$auction_date    = ASTA_AUCTION::get_auction_date( $auction->ID );
+			$price           = asta_esc_meta( $auction->ID, 'price' );
+			$price_increment = floatval( asta_esc_meta( $auction->ID, 'price_increment' ) );
 
 			asta_plugin_get_template_part(
 				ASTA_API_PLUGIN_TEMPLATES,

@@ -13,7 +13,7 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_PROFILE ) ) {
-				self::$instance = new ASTA_THEME_PROFILE;
+				self::$instance = new ASTA_THEME_PROFILE();
 				self::$instance->hooks();
 			}
 

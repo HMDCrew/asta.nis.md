@@ -23,7 +23,7 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_API ) ) {
-				self::$instance = new ASTA_API;
+				self::$instance = new ASTA_API();
 				self::$instance->constants();
 
 				// Plugin Setup
@@ -116,7 +116,7 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 
 			// Dashboard
 			require_once ASTA_API_PLUGIN_CLASSES . 'dashboard/class-gateway-payments.php';
-			require_once ASTA_API_PLUGIN_CLASSES . 'orders/class-wpr-theme-orders.php';
+			require_once ASTA_API_PLUGIN_CLASSES . 'orders/class-asta-theme-orders.php';
 			require_once ASTA_API_PLUGIN_CLASSES . 'auction/class-asta-gutenberg-metaboxes.php';
 
 			\ASTA_THEME_SOLD_PROCESS::instance();

@@ -23,7 +23,7 @@ if ( ! class_exists( 'ASTA_TEMPLATES' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_TEMPLATES ) ) {
-				self::$instance = new ASTA_TEMPLATES;
+				self::$instance = new ASTA_TEMPLATES();
 				self::$instance->constants();
 
 				// Plugin Setup

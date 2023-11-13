@@ -12,7 +12,7 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_CARD_AUCTION ) ) {
-				self::$instance = new ASTA_CARD_AUCTION;
+				self::$instance = new ASTA_CARD_AUCTION();
 				self::$instance->hooks();
 			}
 
@@ -29,46 +29,6 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 
 
 		/**
-		 * The function retrieves the start and end dates of an auction and returns them in a formatted string.
-		 *
-		 * @param int auction_id The ID of the auction post for which the start and end dates are being retrieved.
-		 *
-		 * @return string formatted string that includes the start and end dates of an auction, based on the
-		 * provided auction ID. If no auction ID is provided, an empty string is returned.
-		 */
-		private function get_auction_date( int $auction_id ) {
-
-			if ( $auction_id ) {
-
-				$start_date = get_post_meta( $auction_id, 'start_date', true );
-				$end_date   = get_post_meta( $auction_id, 'end_date', true );
-
-				if ( '' !== $start_date && '' !== $end_date ) {
-					$start_date = new DateTimeImmutable( $start_date );
-					$end_date   = new DateTimeImmutable( $end_date );
-
-					return esc_html( sprintf( '%s to %s', $start_date->format( 'd/m/Y' ), $end_date->format( 'd/m/Y' ) ) );
-				}
-			}
-
-			return '';
-		}
-
-
-		/**
-		 * The function retrieves the last price of an auction as a float value.
-		 *
-		 * @param int auction_id The ID of the auction post for which we want to retrieve the last price.
-		 *
-		 * @return float last price of an auction as a float value. It retrieves the value from the
-		 * 'auction_price' meta field of the post with the given .
-		 */
-		private function get_auction_last_price( int $auction_id ) {
-			return floatval( get_post_meta( $auction_id, 'auction_price', true ) );
-		}
-
-
-		/**
 		 * The function `asta_card_auction` is used to display a card for an auction with various details and
 		 * options.
 		 *
@@ -81,9 +41,9 @@ if ( ! class_exists( 'ASTA_CARD_AUCTION' ) ) :
 
 			$defaults = array(
 				'post_id'         => get_the_ID(),
-				'auction_date'    => $this->get_auction_date( get_the_ID() ),
-				'price'           => $this->get_auction_last_price( get_the_ID() ),
-				'price_increment' => esc_auction_meta( get_the_ID(), 'price_increment' ),
+				'auction_date'    => ASTA_AUCTION::get_auction_date( get_the_ID() ),
+				'price'           => ASTA_AUCTION::get_auction_last_price( get_the_ID() ),
+				'price_increment' => asta_esc_meta( get_the_ID(), 'price_increment' ),
 				'auction_type'    => $auction_type,
 				'category_link'   => ! empty( $auction_type['id'] ) ? get_category_link( $auction_type['id'] ) : '#',
 				'post_excerpt'    => get_post_field( 'post_excerpt', get_the_ID() ),
