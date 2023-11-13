@@ -4,7 +4,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-redirect_not_logged_user( '/login' );
+ASTA_USER::redirect_not_logged_user( '/login' );
 
 get_header();
 

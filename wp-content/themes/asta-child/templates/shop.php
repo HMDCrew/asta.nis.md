@@ -4,7 +4,7 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-redirect_not_logged_user( '/login' );
+ASTA_USER::redirect_not_logged_user( '/login' );
 
 $cart = get_user_meta( get_current_user_id(), 'user_cart', true );
 

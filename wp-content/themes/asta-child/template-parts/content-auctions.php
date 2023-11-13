@@ -10,15 +10,17 @@
 $start_date = new DateTimeImmutable( get_post_meta( get_the_ID(), 'start_date', true ) );
 $end_date   = new DateTimeImmutable( get_post_meta( get_the_ID(), 'end_date', true ) );
 
-$auction_date = apply_filters( 'wpr_get_auction_date', get_the_ID() );
+$auction_date = ASTA_AUCTION::get_auction_date( get_the_ID() );
 
-$price           = esc_auction_meta( get_the_ID(), 'price' );
-$price_increment = floatval( esc_auction_meta( get_the_ID(), 'price_increment' ) );
-$last_price      = apply_filters( 'wpr_get_auction_last_price', get_the_ID() );
+$price           = asta_esc_meta( get_the_ID(), 'price' );
+$price_increment = floatval( asta_esc_meta( get_the_ID(), 'price_increment' ) );
+$last_price      = ASTA_AUCTION::get_auction_last_price( get_the_ID() );
 $auction_type    = get_asta_category( get_the_ID() );
 $post_excerpt    = get_post_field( 'post_excerpt', get_the_ID() );
 
-$bids = apply_filters( 'wpr_get_auction_bids', get_post_meta( get_the_ID(), 'auction_bids', true ) );
+$bids = ASTA_AUCTION::get_auction_bids( get_post_meta( get_the_ID(), 'auction_bids', true ) );
+
+
 
 ?>
 
@@ -127,7 +129,7 @@ $bids = apply_filters( 'wpr_get_auction_bids', get_post_meta( get_the_ID(), 'auc
 			</div>
 		</div><!-- .bids-list -->
 
-		<button type="button" class="btn btn-primary bid-now d-inline-flex"><?php echo __( 'Bid now', 'asta-child' ); ?><span class="separator">&nbsp-&nbsp</span><span class="last-price"><?php echo apply_filters( 'wpr_get_auction_last_price', get_the_ID() ) + $price_increment; ?></span></button>
+		<button type="button" class="btn btn-primary bid-now d-inline-flex"><?php echo __( 'Bid now', 'asta-child' ); ?><span class="separator">&nbsp-&nbsp</span><span class="last-price"><?php echo ASTA_AUCTION::get_auction_last_price( get_the_ID() ) + $price_increment; ?></span></button>
 
 		<?php if ( (int) get_post_field( 'post_author', get_the_ID() ) === get_current_user_id() ) : ?>
 			<a href="/edit-auction/?auction_id=<?php echo get_the_ID(); ?>" class="btn btn-primary d-inline-flex edit"><?php echo __( 'Edit', 'asta-child' ); ?></a>

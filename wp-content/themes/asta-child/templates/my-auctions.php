@@ -3,7 +3,7 @@
  * Template Name: My Auctions
  */
 
-redirect_not_logged_user( '/auctions' );
+ASTA_USER::redirect_not_logged_user( '/auctions' );
 get_header();
 
 global $wp_query;

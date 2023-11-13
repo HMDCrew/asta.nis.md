@@ -7,7 +7,7 @@
  * @package Asta
  */
 
-redirect_not_logged_user(
+ASTA_USER::redirect_not_logged_user(
 	site_url( '/login' )
 );
 
@@ -23,7 +23,7 @@ $user = wp_get_current_user();
 
 				<div class="user-picture">
 					<div class="user-image">
-						<img src="<?php echo apply_filters( 'wpr_get_picture_profile', $user->ID ); ?>" alt="Profile Picture">
+						<img src="<?php echo ASTA_USER::get_picture_profile( $user->ID ); ?>" alt="Profile Picture">
 					</div>
 					<input type="file" name="profile-picture" class="profile-picture" />
 				</div>

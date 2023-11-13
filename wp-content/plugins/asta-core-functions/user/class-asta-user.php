@@ -67,6 +67,76 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 				exit;
 			}
 		}
+
+		/**
+		 * This function checks if the current user has any of the specified roles.
+		 *
+		 * @param array roles An array of user roles to check against the current user. If the current user has
+		 * any of the roles specified in this array, the function will return true.
+		 *
+		 * @return boolean value (true or false) depending on whether the current user has any of the
+		 * specified roles in the input array. If the user is not logged in, the function will not return
+		 * anything.
+		 */
+		public static function asta_current_user_in_roles_list( array $roles ) {
+
+			if ( is_user_logged_in() ) {
+
+				$user = wp_get_current_user();
+
+				if ( ! empty( array_intersect( $user->roles, $roles ) ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+		// /**
+		//  * This function redirects unapproved users to a specified page.
+		//  *
+		//  * @param string page The page parameter is a string that represents the URL of the page where the
+		//  * unapproved user will be redirected to.
+		//  * @param WP_User curent_user The  parameter is an optional parameter of type WP_User that
+		//  * allows the function to accept a specific user object as input. If this parameter is not provided,
+		//  * the function will use the currently logged-in user's object obtained through the
+		//  * wp_get_current_user() function.
+		//  */
+		// public function redirect_unapproved_user( string $page, WP_User $curent_user = null ) {
+
+		//  $user = ! empty( $curent_user ) ? $curent_user : wp_get_current_user();
+
+		//  if (
+		//  ! is_user_logged_in() ||
+		//  (
+		//      ! in_array( 'approved', $user->roles, true ) &&
+		//      ! in_array( 'administrator', $user->roles, true )
+		//  )
+		//  ) {
+		//      wp_redirect( $page );
+		//      exit;
+		//  }
+		// }
+
+
+		/**
+		* This function retrieves the profile picture of a user by their ID, and if it doesn't exist, it
+		* returns a default gravatar image.
+		*
+		* @param int user_id The user ID is an integer value that represents the unique identifier of a user
+		* in the WordPress database. It is used to retrieve the user's profile picture from the user meta
+		* data.
+		*
+		* @return string URL of the user's profile picture if it exists in the user meta data, otherwise it
+		* returns the URL of a default Gravatar image.
+		*/
+		public static function get_picture_profile( int $user_id ) {
+
+			$profile_picture = get_user_meta( $user_id, 'profile-picture', true );
+
+			return esc_url( $profile_picture ? $profile_picture : 'https://secure.gravatar.com/avatar/c6c727854f5d1de9a7a74abb38cf947d?s=96&d=mm&r=g' );
+		}
 	}
 
 endif;

@@ -11,7 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
 
-	<?php redirect_auth_user( get_site_url() ); ?>
+	<?php ASTA_USER::redirect_auth_user( get_site_url() ); ?>
 	<?php wp_head(); ?>
 </head>
 <body>
