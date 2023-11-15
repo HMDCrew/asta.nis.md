@@ -19,7 +19,7 @@ $user = wp_get_current_user();
 	<main id="primary" class="site-main">
 		<div class="container">
 
-			<form action="" class="user-profile">
+			<div class="user-profile">
 
 				<div class="user-picture">
 					<div class="user-image">
@@ -93,6 +93,12 @@ $user = wp_get_current_user();
 
 				<div class="row">
 					<div class="col-12">
+						<?php do_action( 'asta_user_credit_cards', array( 'user_id' => $user->ID ) ); ?>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-12">
 						<div class="wrap-input">
 							<textarea class="input description" name="description" placeholder="<?php echo __( 'Description', 'asta-child' ); ?>"><?php echo esc_html( $user->description ); ?></textarea>
 							<span class="focus-input"></span>
@@ -104,8 +110,7 @@ $user = wp_get_current_user();
 				</div>
 
 				<button type="submit" class="btn btn-primary update-profile"><?php echo __( 'Update profile', 'asta-child' ); ?></button>
-			</form>
-
+			</div>
 
 		</div>
 	</main><!-- #main -->

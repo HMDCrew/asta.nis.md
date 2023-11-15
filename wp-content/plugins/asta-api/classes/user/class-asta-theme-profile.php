@@ -1,19 +1,24 @@
 <?php
 
 // Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
+
+use Stripe\StripeClient;
 
 if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
-	class ASTA_THEME_PROFILE {
+	class ASTA_THEME_PROFILE extends SEC {
 
 		private static $instance;
+
 		private $image_ext = array( 'jpg', 'png', 'jpeg' );
+
+		private ?StripeClient $stripe_client = null;
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_PROFILE ) ) {
 				self::$instance = new ASTA_THEME_PROFILE();
+
+				self::$instance->stripe_client = ASTA_STRIPE::client();
 				self::$instance->hooks();
 			}
 
@@ -53,6 +58,17 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 				array(
 					'methods'       => 'POST',
 					'callback'      => array( $this, 'wpr_profile_update_info' ),
+					'login_user_id' => get_current_user_id(),
+				)
+			);
+
+			// Profile add card to user
+			$server->register_route(
+				'rest-api-wordpress',
+				'/api-card-to-user',
+				array(
+					'methods'       => 'POST',
+					'callback'      => array( $this, 'asta_api_card_to_user' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
@@ -140,6 +156,7 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 			$website         = ( ! empty( $params['website'] ) ? preg_replace( '/[^a-zA-Z0-9\@\:\/\%\&\?\#\.\-\_]/i', '', $params['website'] ) : false );
 			$email           = ( ! empty( $params['email'] ) ? preg_replace( '/[^a-zA-Z0-9\@\.]/i', '', $params['email'] ) : false );
 			$description     = ( ! empty( $params['description'] ) ? preg_replace( '/[^a-zA-Z0-9\s\n\t]/i', '', $params['description'] ) : '' );
+			$iban            = ( ! empty( $params['iban'] ) ? strtoupper( preg_replace( '/[^a-zA-Z0-9]/i', '', $params['iban'] ) ) : '' );
 			$password        = ( ! empty( $params['password'] ) ? preg_replace( '/[^a-zA-Z0-9\?\^\$\€\,\.\@\#\!\_\-\[\]\(\)\*]/i', '', $params['password'] ) : '' );
 			$repeat_password = ( ! empty( $params['repeat_password'] ) ? preg_replace( '/[^a-zA-Z0-9\?\^\$\€\,\.\@\#\!\_\-\[\]\(\)\*]/i', '', $params['repeat_password'] ) : '' );
 
@@ -150,6 +167,7 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 				'user_email'  => $email,
 				'description' => $description,
 				'user_url'    => $website,
+				'iban'        => $iban,
 			);
 
 			if ( $password === $repeat_password && 'password' !== $password ) {
@@ -157,6 +175,7 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 			}
 
 			if ( is_wp_error( wp_update_user( $args ) ) ) {
+
 				wp_send_json(
 					array(
 						'status'  => 'error',
@@ -164,11 +183,61 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 					)
 				);
 			} else {
+
+				update_user_meta( $attr['login_user_id'], 'asta_iban', base64_encode( $this->encrypt( $iban ) ) );
+
+				$customer_id = get_user_meta( $attr['login_user_id'], 'asta_customer_id', true );
+
 				wp_send_json(
 					array(
 						'status'  => 'success',
 						'message' => __( 'User info has been updated', 'asta-api' ),
 					)
+				);
+			}
+		}
+
+
+		/**
+		 * The function `asta_api_card_to_user` saves a card token to a user's Stripe customer account.
+		 *
+		 * @param \WP_REST_Request request The  parameter is an instance of the \WP_REST_Request
+		 * class, which represents the REST API request being made.
+		 */
+		public function asta_api_card_to_user( \WP_REST_Request $request ) {
+
+			$attr        = $request->get_attributes();
+			$params      = $request->get_params();
+			$customer_id = get_user_meta( $attr['login_user_id'], 'asta_customer_id', true );
+
+			$token = ( ! empty( $params['token'] ) ? preg_replace( '/[^a-zA-Z0-9\-\_]/i', '', $params['token'] ) : false );
+
+			if ( ! empty( $customer_id ) ) {
+
+				$source = $this->stripe_client->customers->createSource(
+					$customer_id,
+					array(
+						'source' => $token,
+					)
+				);
+
+				// Future
+				// $paymentMethod = $this->stripe_client->paymentMethods->attach($token, [ 'customer' => $customer_id ]);
+				// $this->stripe_client->customers->update($customer_id, [ 'invoice_settings' => ['default_payment_method' => $paymentMethod->id] ]);
+
+				wp_send_json(
+					array(
+						'status'  => ! empty( $source ) ? 'success' : 'error',
+						'message' => ! empty( $source ) ? $source : __( 'Problem to save card', 'asta-api' ),
+					),
+				);
+			} else {
+
+				wp_send_json(
+					array(
+						'status'  => 'error',
+						'message' => __( 'User system error not added to stripe', 'asta-api' ),
+					),
 				);
 			}
 		}

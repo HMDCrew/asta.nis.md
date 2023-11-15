@@ -37,6 +37,8 @@ const entry = {
 };
 const output = {
     path: BUILD_DIR,
+    chunkFilename: 'js/[id].[hash].js',
+    crossOriginLoading: "anonymous",
     filename: 'js/[name].bundle.js',
     clean: true
 };

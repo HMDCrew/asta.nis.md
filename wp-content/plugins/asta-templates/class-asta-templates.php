@@ -105,6 +105,7 @@ if ( ! class_exists( 'ASTA_TEMPLATES' ) ) :
 			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-cart.php';
 			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-order.php';
 			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-gallery.php';
+			require_once ASTA_TEMPLATES_PLUGIN_COMPONENTS . 'class-asta-user-card-payments.php';
 
 			\ASTA_FILTER_BAR::instance();
 			\ASTA_CARD_AUCTION::instance();
@@ -112,6 +113,7 @@ if ( ! class_exists( 'ASTA_TEMPLATES' ) ) :
 			\ASTA_CART::instance();
 			\ASTA_ORDER::instance();
 			\ASTA_GALLERY::instance();
+			\ASTA_USER_CARD_PAYMENTS::instance();
 		}
 	}
 

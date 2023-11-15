@@ -96,7 +96,7 @@ if ( ! class_exists( 'ASTA_API' ) ) :
 
 			// Include class helpers
 			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-wpr-editorjs-gutenberg.php';
-			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-sec.php';
+			require_once ASTA_API_PLUGIN_DIR_PATH . 'inc/class-asta-stripe.php';
 
 			// API cart
 			require_once ASTA_API_PLUGIN_CLASSES . 'cart/class-asta-theme-cart.php';

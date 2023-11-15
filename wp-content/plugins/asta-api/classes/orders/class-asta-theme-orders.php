@@ -124,7 +124,7 @@ if ( ! class_exists( 'ASTA_THEME_ORDERS' ) ) :
 						'status'        => 'success',
 						'message'       => 'payment intent ready',
 						'client_secret' => ! empty( $client_secret ) ? $this->decrypt( base64_decode( $client_secret ) ) : '',
-						'public_key'    => ASTA_THEME_CHACKOUT::get_gateway_key( 'stripe', 'public_key' ),
+						'public_key'    => ASTA_STRIPE::get_gateway_key( 'stripe', 'public_key' ),
 					),
 				);
 			} else {

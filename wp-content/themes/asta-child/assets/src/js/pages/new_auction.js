@@ -43,10 +43,14 @@ const simple_post_req = (partial_url, data, response, error) => {
 }
 
 
-const init = (auction_id, auction_json) => {
+const init = async (auction_id, auction_json) => {
 
 
-    import( /* webpackChunkName: "components/admin/auction/gallery" */ '../components/admin/auction/gallery').then(module => {
+    await import(
+        /* webpackPrefetch: true */
+        /* webpackChunkName: "components/admin/auction/gallery" */
+        '../components/admin/auction/gallery'
+    ).then(module => {
 
         const Gallery = module.Gallery
 
@@ -58,7 +62,11 @@ const init = (auction_id, auction_json) => {
     })
 
     
-    import( /* webpackChunkName: "components/admin/auction/content" */ '../components/admin/auction/content').then(module => {
+    await import(
+        /* webpackPrefetch: true */
+        /* webpackChunkName: "components/admin/auction/content" */
+        '../components/admin/auction/content'
+    ).then(module => {
 
         const Content = module.Content
 

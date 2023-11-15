@@ -62,6 +62,11 @@ if ( ! class_exists( 'ASTA_CORE' ) ) :
 				define( 'ASTA_CORE_PLUGIN_DIR_URL', trailingslashit( plugin_dir_url( ASTA_CORE_PLUGIN_FILE ) ) );
 			}
 
+			// Plugin directory inc
+			if ( ! defined( 'ASTA_CORE_PLUGIN_INC' ) ) {
+				define( 'ASTA_CORE_PLUGIN_INC', trailingslashit( ASTA_CORE_PLUGIN_DIR_PATH . 'inc' ) );
+			}
+
 			// Plugin directory auctions
 			if ( ! defined( 'ASTA_CORE_PLUGIN_AUCTIONS' ) ) {
 				define( 'ASTA_CORE_PLUGIN_AUCTIONS', trailingslashit( ASTA_CORE_PLUGIN_DIR_PATH . 'auctions' ) );
@@ -82,6 +87,8 @@ if ( ! class_exists( 'ASTA_CORE' ) ) :
 		 * Include/Require PHP files
 		 */
 		public function includes() {
+
+			require_once ASTA_CORE_PLUGIN_INC . 'class-sec.php';
 
 			require_once ASTA_CORE_PLUGIN_AUCTIONS . 'class-asta-auction.php';
 

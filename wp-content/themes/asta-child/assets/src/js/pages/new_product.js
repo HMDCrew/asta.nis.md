@@ -40,9 +40,13 @@ const simple_post_req = (partial_url, data, response, error) => {
 }
 
 
-const init = (product_id, product_json) => {
+const init = async (product_id, product_json) => {
 
-    import( /* webpackChunkName: "components/admin/product/gallery" */ '../components/admin/product/gallery').then(module => {
+    await import(
+        /* webpackPrefetch: true */
+        /* webpackChunkName: "components/admin/product/gallery" */
+        '../components/admin/product/gallery.js'
+    ).then(module => {
 
         const Gallery = module.Gallery
 
@@ -54,7 +58,11 @@ const init = (product_id, product_json) => {
     })
 
     
-    import( /* webpackChunkName: "components/admin/product/content" */ '../components/admin/product/content').then(module => {
+    await import(
+        /* webpackPrefetch: true */
+        /* webpackChunkName: "components/admin/product/content" */
+        '../components/admin/product/content.js'
+    ).then(module => {
 
         const Content = module.Content
 

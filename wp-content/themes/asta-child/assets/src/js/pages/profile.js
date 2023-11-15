@@ -5,11 +5,12 @@ import { check_pwd_validity } from '../utils/passwords';
 import { asta_alert } from '../utils/asta_alert'
 
 const profile_form = document.querySelector('.user-profile')
+const { nonce, json_url, stripe_pk } = profile_data
+
 
 if (profile_form) {
 
-    const photo_profile = profile_form.querySelector('.user-profile input[type="file"]');
-    const btn_update_profile = profile_form.querySelector('.update-profile')
+    const photo_profile = profile_form.querySelector('input[type="file"]');
 
     const upload_picture = () => {
 
@@ -24,10 +25,10 @@ if (profile_form) {
             formData.append("file", photo_profile.files[0]);
 
             sendHttpForm({
-                url: profile_data.json_url + 'api-profile-upload-image',
+                url: json_url + 'api-profile-upload-image',
                 data: formData,
                 headers: {
-                    'X-WP-Nonce': profile_data.nonce
+                    'X-WP-Nonce': nonce
                 }
             }).then(res => {
 
@@ -35,7 +36,6 @@ if (profile_form) {
 
                 if ('success' === res.status) {
                     container.querySelector('img').setAttribute('src', res.image)
-                    console.log(res)
                 } else {
                     console.log(res)
                 }
@@ -52,6 +52,8 @@ if (profile_form) {
     }
     photo_profile.addEventListener('change', (ev) => upload_picture(), false);
 
+
+    const btn_update_profile = profile_form.querySelector('.update-profile')
     const pwd = profile_form.querySelector('input[name="password"]');
     const repeat_pwd = profile_form.querySelector('input[name="repeat-password"]');
 
@@ -108,11 +110,11 @@ if (profile_form) {
         }
 
         sendHttpReq({
-            url: profile_data.json_url + 'api-profile-update-info',
+            url: json_url + 'api-profile-update-info',
             data: data,
             method: 'POST',
             headers: {
-                'X-WP-Nonce': profile_data.nonce
+                'X-WP-Nonce': nonce
             }
         }).then(res => {
 
@@ -128,5 +130,61 @@ if (profile_form) {
             console.log(e);
         });
     }
+
     btn_update_profile.addEventListener('click', (ev) => update_profile_info(ev), false);
+
+
+    /**
+     * User Cards
+     */
+    const payment_form = profile_form.querySelector('#payment-form')
+    const pay_submit = payment_form?.querySelector('#submit')
+    const carte_card = profile_form.querySelector('.create-cart')
+    const carte_errors = document.getElementById('card-errors')
+
+    const render_new_card = () => {
+        
+    }
+
+    const hundle_add_card = (stripe, card_element) => {
+
+        stripe.createToken(card_element).then((result) => {
+
+            if (result.error) {
+                carte_errors.textContent = result.error.message;
+            } else {
+                sendHttpReq({
+                    url: json_url + 'api-card-to-user',
+                    method: 'POST',
+                    data: {
+                        token: result.token.id
+                    },
+                    headers: { 'X-WP-Nonce': nonce }
+                }).then(async res => {
+
+                    res = JSON.parse(res)
+
+                    console.log(res);
+
+                }).catch(e => {
+                    console.log(e)
+                })
+            }
+        });
+    }
+
+    const build_card_form = async (pk) => {
+    
+        const stripe = Stripe(pk, { apiVersion: '2020-08-27' })
+    
+        const elements = stripe.elements();
+        const card_element = elements.create('card');
+        card_element.mount('#card-element');
+
+        payment_form.parentNode.classList.remove('d-none')
+
+        pay_submit.addEventListener('click', ev => hundle_add_card(stripe, card_element), false)
+    }
+    
+    carte_card.addEventListener('click', ev => build_card_form(stripe_pk), false)
 }

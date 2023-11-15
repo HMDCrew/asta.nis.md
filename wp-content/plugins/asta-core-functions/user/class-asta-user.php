@@ -9,6 +9,11 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 
 	class ASTA_USER {
 
+		public static ?SEC $sec = null;
+
+		public static function initialize() {
+			self::$sec = self::$sec ?? new SEC();
+		}
 
 		/**
 		 * The function generates a random activation code of a specified length using PHP's random_bytes and
@@ -137,6 +142,16 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 
 			return esc_url( $profile_picture ? $profile_picture : 'https://secure.gravatar.com/avatar/c6c727854f5d1de9a7a74abb38cf947d?s=96&d=mm&r=g' );
 		}
+
+
+		public static function get_user_iban( int $user_id ) {
+
+			$iban = get_user_meta( $user_id, 'asta_iban', true );
+
+			return self::$sec->decrypt( base64_decode( $iban ) );
+		}
 	}
 
 endif;
+
+ASTA_USER::initialize();

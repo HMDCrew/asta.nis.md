@@ -145,13 +145,19 @@ function assets_js_front_end() {
 	}
 
 	if ( is_page_template( 'templates/profile.php' ) ) {
+
+		$keys = ASTA_STRIPE::get_gateway_keys( 'stripe' );
+
+		wp_enqueue_script( 'stripe', 'https://js.stripe.com/v3/', array(), false, true );
+
 		wp_enqueue_script( 'asta-profile', get_stylesheet_directory_uri() . '/assets/dist/js/profile.bundle.js', array(), false, true );
 		wp_localize_script(
 			'asta-profile',
 			'profile_data',
 			array(
-				'json_url' => get_rest_url(),
-				'nonce'    => wp_create_nonce( 'wp_rest' ),
+				'json_url'  => get_rest_url(),
+				'nonce'     => wp_create_nonce( 'wp_rest' ),
+				'stripe_pk' => $keys['public_key'],
 			)
 		);
 	}

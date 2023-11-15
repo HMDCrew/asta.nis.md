@@ -2,7 +2,6 @@
 // Exit if accessed directly
 defined( 'ABSPATH' ) || exit;
 
-use Stripe\StripeClient;
 use Stripe\Exception\ApiErrorException;
 use Stripe\Webhook;
 
@@ -15,24 +14,14 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_CHACKOUT ) ) {
 				self::$instance = new ASTA_THEME_CHACKOUT();
-				self::$instance->set_up_class_variable();
+
+				self::$instance->stripe_client = ASTA_STRIPE::client();
 				self::$instance->hooks();
 			}
 
 			return self::$instance;
 		}
 
-		/**
-		 * It sets up the class variables
-		 */
-		public function set_up_class_variable() {
-			$this->stripe_client = new StripeClient(
-				array(
-					'api_key'        => self::get_gateway_key( 'stripe', 'private_key' ),
-					'stripe_version' => '2020-08-27',
-				)
-			);
-		}
 
 		/**
 		 * Action/filter hooks
@@ -61,6 +50,16 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 
 			$server->register_route(
 				'rest-api-wordpress',
+				'/api-payout',
+				array(
+					'methods'       => 'get',
+					'callback'      => array( $this, 'asta_payout' ),
+					'login_user_id' => get_current_user_id(),
+				)
+			);
+
+			$server->register_route(
+				'rest-api-wordpress',
 				'/api-cart-webhook',
 				array(
 					'methods'       => 'POST',
@@ -70,42 +69,29 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 			);
 		}
 
+		public function asta_payout( \WP_REST_Request $request ) {
 
-		/**
-		 * The function retrieves the public, private, and signature keys for a specified payment gateway
-		 * from the WordPress options table.
-		 *
-		 * @param string gateway The name of the payment gateway for which the keys are being retrieved.
-		 *
-		 * @return array containing the public key, private key, and signature key for a specified payment
-		 * gateway.
-		 */
-		private function get_gateway_keys( string $gateway ) {
-			$opt_encrypt = get_option( 'asta_payments_element' );
-			$opt         = $this->array_option_dec( $opt_encrypt );
+			// $attr   = $request->get_attributes();
+			// $params = $request->get_params();
 
-			$use_case = $opt[ $gateway ]['use_case'];
+			// $payout = $this->stripe_client->payouts->create(
+			// 	array(
+			// 		'amount'   => 5000,
+			// 		'currency' => 'usd',
 
-			return array(
-				'public_key'    => $opt[ $gateway ][ $use_case . '_pub' ],
-				'private_key'   => $opt[ $gateway ][ $use_case . '_priv' ],
-				'signature_key' => ! empty( $opt[ $gateway ][ $use_case . '_signature' ] ) ? $opt[ $gateway ][ $use_case . '_signature' ] : '',
-			);
-		}
+			// 		'amount' => 5000, // L'importo in centesimi
+			// 		'currency' => 'usd', // La valuta
+			// 		'destination' => 'ba_1Example', // L'ID del conto bancario o della carta Stripe
+			// 		'method' => 'instant', // Il metodo di pagamento, può essere "standard" o "instant"
+			// 	)
+			// );
 
-		/**
-		 * This function retrieves a specific key from an array of gateway keys based on the provided gateway
-		 * name.
-		 *
-		 * @param string gateway The name of the payment gateway for which the key is being retrieved.
-		 * @param string key The  parameter is a string that represents the specific key that needs to be
-		 * retrieved from the array of gateway keys.
-		 *
-		 * @return string|array|null value of the specified key from an array of gateway keys for a given gateway.
-		 */
-		public static function get_gateway_key( string $gateway, string $key ) {
-			$gateway_keys = self::$instance->get_gateway_keys( $gateway );
-			return $gateway_keys[ $key ];
+			// wp_send_json(
+			// 	array(
+			// 		'status' => 'success',
+			// 		'payout' => $payout,
+			// 	),
+			// );
 		}
 
 
@@ -319,7 +305,7 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 
 			$attr = $request->get_attributes();
 
-			$keys = $this->get_gateway_keys( 'stripe' );
+			$keys = ASTA_STRIPE::get_gateway_keys( 'stripe' );
 			$cart = ASTA_THEME_CART::get_cart();
 
 			$args = array(
@@ -341,7 +327,7 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 		 */
 		public function asta_cart_webhook( \WP_REST_Request $request ) {
 
-			$keys = $this->get_gateway_keys( 'stripe' );
+			$keys = ASTA_STRIPE::get_gateway_keys( 'stripe' );
 
 			try {
 				$event = Webhook::constructEvent(
