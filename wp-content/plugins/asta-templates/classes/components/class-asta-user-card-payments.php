@@ -19,6 +19,7 @@ if ( ! class_exists( 'ASTA_USER_CARD_PAYMENTS' ) ) :
 			return self::$instance;
 		}
 
+
 		/**
 		 * This function adds meta boxes and enqueues styles for the order page in the WordPress admin panel.
 		 */
@@ -26,15 +27,23 @@ if ( ! class_exists( 'ASTA_USER_CARD_PAYMENTS' ) ) :
 			add_action( 'asta_user_credit_cards', array( $this, 'asta_user_credit_cards' ), 10, 1 );
 		}
 
+
+		/**
+		 * The function `asta_user_credit_cards` retrieves and displays a user's credit cards if they have a
+		 * customer ID or user_id associated with their account.
+		 *
+		 * @param array args The `` parameter is an array that can contain the following keys:
+		 */
 		public function asta_user_credit_cards( array $args = array() ) {
 
 			$defaults = array(
-				'user_id'     => '',
-				'customer_id' => (
+				'user_id'         => '',
+				'customer_id'     => (
 					empty( $args['customer_id'] ) && ! empty( $args['user_id'] )
 					? get_user_meta( $args['user_id'], 'asta_customer_id', true )
 					: ''
 				),
+				'has_placeholder' => true,
 			);
 
 			$args = wp_parse_args( $args, $defaults );

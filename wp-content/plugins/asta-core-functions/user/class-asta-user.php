@@ -1,9 +1,6 @@
 <?php
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) {
-	exit;
-}
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'ASTA_USER' ) ) :
 
@@ -14,6 +11,7 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 		public static function initialize() {
 			self::$sec = self::$sec ?? new SEC();
 		}
+
 
 		/**
 		 * The function generates a random activation code of a specified length using PHP's random_bytes and
@@ -73,6 +71,7 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 			}
 		}
 
+
 		/**
 		 * This function checks if the current user has any of the specified roles.
 		 *
@@ -95,6 +94,17 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 			}
 
 			return false;
+		}
+
+
+		/**
+		 * The function checks if a user is logged in and has the role of "approved".
+		 *
+		 * @return boolean value. It returns true if the user is logged in and has the role of "approved",
+		 * and false otherwise.
+		 */
+		public static function asta_user_is_aproved() {
+			return self::asta_current_user_in_roles_list( array( 'approved', 'administrator' ) );
 		}
 
 
@@ -144,11 +154,16 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 		}
 
 
-		public static function get_user_iban( int $user_id ) {
-
-			$iban = get_user_meta( $user_id, 'asta_iban', true );
-
-			return self::$sec->decrypt( base64_decode( $iban ) );
+		/**
+		 * The function "get_user_customer_id" retrieves the customer ID associated with a given user ID.
+		 *
+		 * @param int user_id The user ID is an integer that represents the unique identifier of a user in
+		 * the system. It is used to retrieve the customer ID associated with the user.
+		 *
+		 * @return string value of the 'asta_customer_id' user meta for the given user ID.
+		 */
+		public static function get_user_customer_id( int $user_id ) {
+			return get_user_meta( $user_id, 'asta_customer_id', true );
 		}
 	}
 

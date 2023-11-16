@@ -48,11 +48,25 @@ get_header();
 				<?php endforeach; ?>
 			<?php endif; ?>
 
+			<?php if ( get_current_user_id() ) : ?>
+
+				<div class="my-cards">
+					<?php
+					do_action(
+						'asta_user_credit_cards',
+						array(
+							'user_id'         => get_current_user_id(),
+							'has_placeholder' => false,
+						)
+					);
+					?>
+				</div>
+
+			<?php endif; ?>
+
 			<form id="payment-form" class="d-none">
 				<div id="payment-element"></div> <!-- Elements will create input elements here -->
-
 				<div id="payment-errors" role="alert"></div> <!-- We'll put the error messages in this element -->
-
 				<button id="submit" class="btn btn-primary"><?php echo __( 'Pay', 'asta-child' ); ?></button>
 			</form>
 

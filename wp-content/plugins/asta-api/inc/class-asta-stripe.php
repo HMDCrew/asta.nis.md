@@ -12,8 +12,18 @@ if ( ! class_exists( 'ASTA_STRIPE' ) ) :
 
 		public static ?SEC $sec = null;
 
+		public static ?StripeClient $stripe_client = null;
+
 		public static function initialize() {
+
 			self::$sec = self::$sec ?? new SEC();
+
+			self::$stripe_client = self::$stripe_client ?? new StripeClient(
+				array(
+					'api_key'        => self::get_gateway_key( 'stripe', 'private_key' ),
+					'stripe_version' => '2020-08-27',
+				)
+			);
 		}
 
 		/**
@@ -63,13 +73,17 @@ if ( ! class_exists( 'ASTA_STRIPE' ) ) :
 		 * @return StripeClient instance of the StripeClient class.
 		 */
 		public static function client() {
+			return self::$stripe_client;
+		}
 
-			return new StripeClient(
-				array(
-					'api_key'        => self::get_gateway_key( 'stripe', 'private_key' ),
-					'stripe_version' => '2020-08-27',
-				)
-			);
+
+		/**
+		 * The function "sec" returns the value of the static variable "sec".
+		 *
+		 * @return SEC value of the static variable .
+		 */
+		public static function sec() {
+			return self::$sec;
 		}
 	}
 

@@ -1,9 +1,9 @@
 <?php
 
 //Begin Really Simple SSL session cookie settings
-@ini_set('session.cookie_httponly', true);
-@ini_set('session.cookie_secure', true);
-@ini_set('session.use_only_cookies', true);
+@ini_set( 'session.cookie_httponly', true );
+@ini_set( 'session.cookie_secure', true );
+@ini_set( 'session.use_only_cookies', true );
 //END Really Simple SSL cookie settings
 
 /**
@@ -55,14 +55,14 @@ define( 'DB_COLLATE', '' );
  *
  * @since 2.6.0
  */
-define('AUTH_KEY', '@K)hpHTXX5cJ#:_~RI~E;1qHhA25g0UB:L&;Q8|7WUjFMt6Yyizwi0hRc*851#3G');
-define('SECURE_AUTH_KEY', 'PgfEY@v6n9!uIH1|Z~*~2_fus|Y!V&!u04gRJF&piB-O6!+&2Ci)Zb12dG~;mK9c');
-define('LOGGED_IN_KEY', 'Ql[0+zhO*M1-+ge&ZF!p01cAs(4-*]!aT!C])&Rf(f2GfHo826/]!0e2+YBsfsd%');
-define('NONCE_KEY', '#62|)+~L7)zTVF;8]pw4;/7L0Nj3FReD1pZ+C%;cSrv9Xt:S;E|cy[]1tvz@2w:]');
-define('AUTH_SALT', 'JY1:4S3__24(dQDA3erKk&QL8b89tNY5!!(qQfof7&J1KNmU!MtJp#442i*k1q~#');
-define('SECURE_AUTH_SALT', 'x[M/rD800~4_URp_fwI)x[-+NzQ3j2-yRr4]527/k6l]B*Q[)0|8F0Tp_q2xGG1T');
-define('LOGGED_IN_SALT', 'x&vp8/J_xrVk!1I6l00Z;Z0x5Z2/xbiR![43[#6CG/5!9pLfK-ErSW12*P/ObJ7_');
-define('NONCE_SALT', 'vL*LqA2V6S|U:/:S1L+t-Q|Fa2sTKvkVh5Duy48(AB~65Nf31LB#3OQS_q[HP:*K');
+define( 'AUTH_KEY', '@K)hpHTXX5cJ#:_~RI~E;1qHhA25g0UB:L&;Q8|7WUjFMt6Yyizwi0hRc*851#3G' );
+define( 'SECURE_AUTH_KEY', 'PgfEY@v6n9!uIH1|Z~*~2_fus|Y!V&!u04gRJF&piB-O6!+&2Ci)Zb12dG~;mK9c' );
+define( 'LOGGED_IN_KEY', 'Ql[0+zhO*M1-+ge&ZF!p01cAs(4-*]!aT!C])&Rf(f2GfHo826/]!0e2+YBsfsd%' );
+define( 'NONCE_KEY', '#62|)+~L7)zTVF;8]pw4;/7L0Nj3FReD1pZ+C%;cSrv9Xt:S;E|cy[]1tvz@2w:]' );
+define( 'AUTH_SALT', 'JY1:4S3__24(dQDA3erKk&QL8b89tNY5!!(qQfof7&J1KNmU!MtJp#442i*k1q~#' );
+define( 'SECURE_AUTH_SALT', 'x[M/rD800~4_URp_fwI)x[-+NzQ3j2-yRr4]527/k6l]B*Q[)0|8F0Tp_q2xGG1T' );
+define( 'LOGGED_IN_SALT', 'x&vp8/J_xrVk!1I6l00Z;Z0x5Z2/xbiR![43[#6CG/5!9pLfK-ErSW12*P/ObJ7_' );
+define( 'NONCE_SALT', 'vL*LqA2V6S|U:/:S1L+t-Q|Fa2sTKvkVh5Duy48(AB~65Nf31LB#3OQS_q[HP:*K' );
 
 /**#@-*/
 
@@ -86,6 +86,10 @@ $table_prefix = 'atwp_';
  *
  * @link https://wordpress.org/documentation/article/debugging-in-wordpress/
  */
+header( 'Cache-Control: no-store, no-cache, must-revalidate, max-age=0' );
+header( 'Cache-Control: post-check=0, pre-check=0', false );
+header( 'Pragma: no-cache' );
+
 define( 'WP_DEBUG', true );
 define( 'SCRIPT_DEBUG', true );
 define( 'WP_DEBUG_LOG', true );

@@ -205,6 +205,11 @@ main#primary {
         border: 1px solid black;
         color: black;
     }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
 }
 
 

@@ -156,7 +156,6 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 			$website         = ( ! empty( $params['website'] ) ? preg_replace( '/[^a-zA-Z0-9\@\:\/\%\&\?\#\.\-\_]/i', '', $params['website'] ) : false );
 			$email           = ( ! empty( $params['email'] ) ? preg_replace( '/[^a-zA-Z0-9\@\.]/i', '', $params['email'] ) : false );
 			$description     = ( ! empty( $params['description'] ) ? preg_replace( '/[^a-zA-Z0-9\s\n\t]/i', '', $params['description'] ) : '' );
-			$iban            = ( ! empty( $params['iban'] ) ? strtoupper( preg_replace( '/[^a-zA-Z0-9]/i', '', $params['iban'] ) ) : '' );
 			$password        = ( ! empty( $params['password'] ) ? preg_replace( '/[^a-zA-Z0-9\?\^\$\€\,\.\@\#\!\_\-\[\]\(\)\*]/i', '', $params['password'] ) : '' );
 			$repeat_password = ( ! empty( $params['repeat_password'] ) ? preg_replace( '/[^a-zA-Z0-9\?\^\$\€\,\.\@\#\!\_\-\[\]\(\)\*]/i', '', $params['repeat_password'] ) : '' );
 
@@ -167,7 +166,6 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 				'user_email'  => $email,
 				'description' => $description,
 				'user_url'    => $website,
-				'iban'        => $iban,
 			);
 
 			if ( $password === $repeat_password && 'password' !== $password ) {
@@ -183,10 +181,6 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 					)
 				);
 			} else {
-
-				update_user_meta( $attr['login_user_id'], 'asta_iban', base64_encode( $this->encrypt( $iban ) ) );
-
-				$customer_id = get_user_meta( $attr['login_user_id'], 'asta_customer_id', true );
 
 				wp_send_json(
 					array(
@@ -206,32 +200,45 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 		 */
 		public function asta_api_card_to_user( \WP_REST_Request $request ) {
 
-			$attr        = $request->get_attributes();
-			$params      = $request->get_params();
-			$customer_id = get_user_meta( $attr['login_user_id'], 'asta_customer_id', true );
+			$attr   = $request->get_attributes();
+			$params = $request->get_params();
 
 			$token = ( ! empty( $params['token'] ) ? preg_replace( '/[^a-zA-Z0-9\-\_]/i', '', $params['token'] ) : false );
 
-			if ( ! empty( $customer_id ) ) {
+			if ( 0 !== $attr['login_user_id'] ) {
 
-				$source = $this->stripe_client->customers->createSource(
-					$customer_id,
-					array(
-						'source' => $token,
-					)
-				);
+				$customer_id = ASTA_USER::get_user_customer_id( $attr['login_user_id'] );
+				if ( ! empty( $customer_id ) ) {
 
-				// Future
-				// $paymentMethod = $this->stripe_client->paymentMethods->attach($token, [ 'customer' => $customer_id ]);
-				// $this->stripe_client->customers->update($customer_id, [ 'invoice_settings' => ['default_payment_method' => $paymentMethod->id] ]);
+					try {
 
-				wp_send_json(
-					array(
-						'status'  => ! empty( $source ) ? 'success' : 'error',
-						'message' => ! empty( $source ) ? $source : __( 'Problem to save card', 'asta-api' ),
-					),
-				);
-			} else {
+						$source = $this->stripe_client->customers->createSource(
+							$customer_id,
+							array(
+								'source' => $token,
+							)
+						);
+
+						// Future
+						// $paymentMethod = $this->stripe_client->paymentMethods->attach($token, [ 'customer' => $customer_id ]);
+						// $this->stripe_client->customers->update($customer_id, [ 'invoice_settings' => ['default_payment_method' => $paymentMethod->id] ]);
+
+						wp_send_json(
+							array(
+								'status'  => ! empty( $source ) ? 'success' : 'error',
+								'message' => ! empty( $source ) ? $source : __( 'Problem to save card', 'asta-api' ),
+							),
+						);
+
+					} catch ( Exception $e ) {
+						wp_send_json(
+							array(
+								'status'  => 'error',
+								'message' => $e->getMessage(),
+							),
+						);
+					}
+				}
 
 				wp_send_json(
 					array(
@@ -240,6 +247,13 @@ if ( ! class_exists( 'ASTA_THEME_PROFILE' ) ) :
 					),
 				);
 			}
+
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => __( 'Utente non identificato', 'asta-api' ),
+				),
+			);
 		}
 	}
 endif;

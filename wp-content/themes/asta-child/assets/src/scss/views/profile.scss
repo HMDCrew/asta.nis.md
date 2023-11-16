@@ -1,3 +1,5 @@
+@use '../base/mixins/payment-cards';
+
 .page-template-profile {
     .user-profile {
 
@@ -67,101 +69,33 @@
             }
         }
 
-        .new-carta {
-            max-width: 300px;
-            margin: 10vh auto;
+        .credit-cards-row {
 
-            #card-element {
-                border: 1px solid lightgrey;
-                padding: 10px;
-                border-radius: 4px;
+            h5 {
+                font-weight: bold;
             }
 
-            button {
-                &#submit {
-                    margin: 5vh auto;
-                    height: 35px;
-                    padding: 0 20px;
-                    font-size: 12px;
-                }
-            }
-        }
+            .new-carta {
+                max-width: 300px;
+                margin: 10vh auto;
 
-        .lista-catre {
-            display: flex;
-            overflow: auto;
-            margin-bottom: 2vh;
-            padding-bottom: 2vh;
-
-            &::-webkit-scrollbar {
-                height: 10px;
-            }
-
-            &::-webkit-scrollbar-thumb {
-                background: #7f7f7f;
-                border-radius: 20px;
-            }
-
-            &::-webkit-scrollbar-track {
-                background: #ddd;
-                border-radius: 20px;
-            }
-
-            .contaier-placeholder,
-            .contaier-carte {
-                display: flex;
-            }
-
-            .card {
-                width: 170px;
-                height: 90px;
-                background: #616161;
-                display: flex;
-                justify-content: center;
-                align-items: flex-end;
-                flex-direction: column;
-                border-radius: 6px;
-                color: white;
-                font-family: 'Space Mono', monospace;
-                padding: 11px;
-                margin-right: 15px;
-                transition: all .3s;
-
-                .card-numbers,
-                .card-type {
-                    margin-bottom: auto;
+                #card-element {
+                    border: 1px solid lightgrey;
+                    padding: 10px;
+                    border-radius: 4px;
                 }
 
-                .card-numbers {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 100%;
-                }
-
-                &.placeholder {
-                    opacity: 0.6;
-
-                    svg {
-                        width: 100%;
-                        height: 100%;
-
-                        path {
-                            stroke: #bcbcbc;
-                        }
-                    }
-
-                    &:hover {
-                        opacity: 1;
-
-                        svg {
-                            path {
-                                stroke: #fff;
-                            }
-                        }
+                button {
+                    &#submit {
+                        margin: 5vh auto;
+                        height: 35px;
+                        padding: 0 20px;
+                        font-size: 12px;
                     }
                 }
             }
+
+            @include payment-cards.payment-card();
         }
     }
 }

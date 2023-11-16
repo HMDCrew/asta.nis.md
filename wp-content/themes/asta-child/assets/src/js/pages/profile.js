@@ -137,13 +137,22 @@ if (profile_form) {
     /**
      * User Cards
      */
-    const payment_form = profile_form.querySelector('#payment-form')
-    const pay_submit = payment_form?.querySelector('#submit')
+    const cards_form = profile_form.querySelector('#cards-form')
+    const add_card = cards_form?.querySelector('#submit')
+    const carte_errors = cards_form.querySelector('#card-errors')
+    const contaier_carte = profile_form.querySelector('.contaier-carte')
     const carte_card = profile_form.querySelector('.create-cart')
-    const carte_errors = document.getElementById('card-errors')
 
-    const render_new_card = () => {
-        
+    const render_new_card = (payment_card) => {
+
+        const card = document.createElement('div')
+        card.classList.add('card')
+
+        card.innerHTML = (
+            `<div class="card-type">${payment_card.brand}</div><div class="card-numbers">**** **** **** ${payment_card.last4}</div>`
+        )
+
+        return card
     }
 
     const hundle_add_card = (stripe, card_element) => {
@@ -164,9 +173,12 @@ if (profile_form) {
 
                     res = JSON.parse(res)
 
-                    console.log(res);
+                    contaier_carte.append(render_new_card(res.message))
+
+                    cards_form.parentNode.classList.add('d-none')
 
                 }).catch(e => {
+                    asta_alert([e])
                     console.log(e)
                 })
             }
@@ -181,9 +193,9 @@ if (profile_form) {
         const card_element = elements.create('card');
         card_element.mount('#card-element');
 
-        payment_form.parentNode.classList.remove('d-none')
+        cards_form.parentNode.classList.remove('d-none')
 
-        pay_submit.addEventListener('click', ev => hundle_add_card(stripe, card_element), false)
+        add_card.addEventListener('click', ev => hundle_add_card(stripe, card_element), false)
     }
     
     carte_card.addEventListener('click', ev => build_card_form(stripe_pk), false)

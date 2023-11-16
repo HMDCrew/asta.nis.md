@@ -75,22 +75,22 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 			// $params = $request->get_params();
 
 			// $payout = $this->stripe_client->payouts->create(
-			// 	array(
-			// 		'amount'   => 5000,
-			// 		'currency' => 'usd',
+			//  array(
+			//      'amount'   => 5000,
+			//      'currency' => 'usd',
 
-			// 		'amount' => 5000, // L'importo in centesimi
-			// 		'currency' => 'usd', // La valuta
-			// 		'destination' => 'ba_1Example', // L'ID del conto bancario o della carta Stripe
-			// 		'method' => 'instant', // Il metodo di pagamento, può essere "standard" o "instant"
-			// 	)
+			//      'amount' => 5000, // L'importo in centesimi
+			//      'currency' => 'usd', // La valuta
+			//      'destination' => 'ba_1Example', // L'ID del conto bancario o della carta Stripe
+			//      'method' => 'instant', // Il metodo di pagamento, può essere "standard" o "instant"
+			//  )
 			// );
 
 			// wp_send_json(
-			// 	array(
-			// 		'status' => 'success',
-			// 		'payout' => $payout,
-			// 	),
+			//  array(
+			//      'status' => 'success',
+			//      'payout' => $payout,
+			//  ),
 			// );
 		}
 
@@ -181,6 +181,7 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 			return wp_insert_post( $args );
 		}
 
+
 		/**
 		 * This PHP function returns an array of auction titles based on the auction IDs in a given cart
 		 * array.
@@ -211,6 +212,74 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 
 
 		/**
+		 * The function "build_intent_args" takes in a total amount, an array of cart titles, a user ID, and
+		 * additional arguments, and returns an array of intent arguments for a payment.
+		 *
+		 * @param float total The total amount of the cart items.
+		 * @param array cart_titles An array containing the titles of the items in the user's cart.
+		 * @param int user_id The user_id parameter is an integer that represents the ID of the user for whom
+		 * the intent is being built.
+		 * @param array args An array of additional arguments that can be passed to the function.
+		 *
+		 * @return array called .
+		 */
+		private function build_intent_args( float $total, array $cart_titles, int $user_id, array $args ) {
+
+			$intent_args = array(
+				'amount'      => $total * 100,
+				'currency'    => 'usd',
+				'description' => implode( ', ', $cart_titles ),
+			);
+
+			if ( ! empty( $args['card'] ) ) {
+				$intent_args['customer']       = ASTA_USER::get_user_customer_id( $user_id );
+				$intent_args['payment_method'] = $args['card'];
+			}
+
+			return $intent_args;
+		}
+
+
+		/**
+		 * The function handles the response from a Stripe payment intent and returns an array with relevant
+		 * information about the payment status.
+		 *
+		 * @param \Stripe\PaymentIntent payment_intent The payment_intent parameter is an object of type
+		 * \Stripe\PaymentIntent. It represents a payment intent in the Stripe API. It contains information
+		 * about the payment, such as the amount, currency, and status.
+		 * @param array args The `args` parameter is an array that contains additional arguments or options
+		 * that can be passed to the `hundle_payment_intent_response` function. In this case, it is used to
+		 * retrieve the value of the `public_key` argument, which is an optional parameter. If the
+		 * `public_key`
+		 *
+		 * @return array with different key-value pairs depending on the status of the payment intent. If
+		 * the payment intent status is not "succeeded", it returns an array with the following keys:
+		 * "requires_action" (set to true), "client_secret", "public_key" (if provided in the  array),
+		 * "payment_intent", "intent_status", and "message". If the
+		 */
+		private function hundle_payment_intent_response( \Stripe\PaymentIntent $payment_intent, array $args ) {
+			return (
+				'succeeded' !== $payment_intent->status
+				? array(
+					'requires_action' => true,
+					'client_secret'   => $payment_intent->client_secret,
+					'public_key'      => $args['public_key'] ?? '',
+					'payment_intent'  => $payment_intent->id,
+					'intent_status'   => $payment_intent->status,
+					'message'         => 'payment intent ready',
+				)
+				: array(
+					'requires_action' => false,
+					'public_key'      => $args['public_key'] ?? '',
+					'payment_intent'  => $payment_intent->id,
+					'intent_status'   => $payment_intent->status,
+					'message'         => 'payment completed',
+				)
+			);
+		}
+
+
+		/**
 		 * The function `create_payment_intent` creates a payment intent using the Stripe API and returns the
 		 * client secret, public key, and order ID.
 		 *
@@ -226,19 +295,14 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 
 			try {
 
-				$payment_intent = $this->stripe_client->paymentIntents->create( // phpcs:ignore
-					array(
-						'automatic_payment_methods' => array( 'enabled' => true ),
-						'amount'                    => $total * 100,
-						'currency'                  => 'usd',
-						'description'               => implode( ', ', $cart_titles ),
-					)
+				$payment_intent = $this->stripe_client->paymentIntents->create(
+					$this->build_intent_args( $total, $cart_titles, $user_id, $args )
 				);
 
 				$order_id  = $this->build_order( $user_id, $payment_intent, $args['cart'] );
 				$user_info = $user_id ? get_userdata( $user_id ) : '';
 
-				$this->stripe_client->paymentIntents->update( // phpcs:ignore
+				$this->stripe_client->paymentIntents->update(
 					$payment_intent->id,
 					array(
 						'metadata' => array( 'order_id' => $order_id ),
@@ -265,16 +329,15 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 					update_user_meta( $user_id, 'last_intent_pay', $order_id );
 				}
 
-				return array(
-					'status'        => 'success',
-					'message'       => 'payment intent ready',
-					'client_secret' => $payment_intent->client_secret,
-					'public_key'    => $args['public_key'],
-					'order_id'      => $order_id,
+				return array_merge(
+					array(
+						'status'   => 'success',
+						'order_id' => $order_id,
+					),
+					$this->hundle_payment_intent_response( $payment_intent, $args )
 				);
 			} catch ( ApiErrorException $e ) {
 				http_response_code( 400 );
-				error_log( print_r( $e->getError()->message, true ) );
 
 				return array(
 					'status'      => 'error',
@@ -282,7 +345,6 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 					'invok_nexts' => false,
 				);
 			} catch ( Exception $e ) {
-				error_log( print_r( $e, true ) );
 				http_response_code( 500 );
 
 				return array(
@@ -303,7 +365,9 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 		 */
 		public function asta_cart_chackout( \WP_REST_Request $request ) {
 
-			$attr = $request->get_attributes();
+			$attr   = $request->get_attributes();
+			$params = $request->get_params();
+			$card   = ( ! empty( $params['card'] ) ? preg_replace( '/[^a-zA-Z0-9\/\=\+]/i', '', $params['card'] ) : '' );
 
 			$keys = ASTA_STRIPE::get_gateway_keys( 'stripe' );
 			$cart = ASTA_THEME_CART::get_cart();
@@ -312,6 +376,10 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 				'cart'       => $cart,
 				'public_key' => $keys['public_key'],
 			);
+
+			if ( ! empty( $card ) ) {
+				$args['card'] = ASTA_STRIPE::sec()->decrypt( base64_decode( $card ) );
+			}
 
 			wp_send_json( $this->create_payment_intent( $attr['login_user_id'], $args ) );
 		}
