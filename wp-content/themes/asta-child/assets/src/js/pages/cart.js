@@ -8,10 +8,13 @@ const chackout = document.querySelector('.chackout-btn')
 const payment_form = document.querySelector('#payment-form')
 const pay_submit = payment_form?.querySelector('#submit')
 const my_cards = document.querySelector('.my-cards')
-
+const cart = document.querySelector('.cart-menu')
 
 const plus_qty_btns = document.querySelectorAll('.plus_qty')
 const minus_qty_btns = document.querySelectorAll('.minus_qty')
+
+const remove_item_btns = document.querySelectorAll('.remove')
+
 
 let timeout_id;
 const handle_qty = (btn, qty_fn) => {
@@ -44,7 +47,9 @@ const handle_qty = (btn, qty_fn) => {
             const price = price_info.querySelector('span')
             price.textContent = res.cart_product.price
 
+            container_qty.textContent = res.cart_product.product.qty
             constainer.classList.remove('loading')
+
         }).catch(e => {
             console.log(e);
             constainer.classList.remove('loading')
@@ -53,9 +58,53 @@ const handle_qty = (btn, qty_fn) => {
     }, 1000);
 }
 
-plus_qty_btns.forEach(btn => btn.addEventListener('click', ev => handle_qty(btn, (qty) => qty + 1), false))
-minus_qty_btns.forEach(btn => btn.addEventListener('click', ev => handle_qty(btn, (qty) => qty - 1), false))
 
+plus_qty_btns.forEach(async btn => btn.addEventListener('click', ev => handle_qty(btn, (qty) => qty + 1), false))
+minus_qty_btns.forEach(async btn => btn.addEventListener('click', ev => handle_qty(btn, (qty) => qty - 1), false))
+
+
+const hundle_remove_item = (btn) => {
+
+    const constainer = btn.closest('.cart-item')
+    const product_id = constainer.getAttribute('post_id')
+
+    constainer.classList.add('loading')
+    clearTimeout(timeout_id);
+    timeout_id = setTimeout(() => {
+
+        sendHttpReq({
+            url: json_url + 'api-remove-cart-product',
+            data: {
+                product_id,
+            },
+            headers: { 'X-WP-Nonce': nonce },
+            method: 'POST'
+        }).then(res => {
+
+            res = JSON.parse(res)
+
+            const n_products = cart.querySelector('.n_products')
+            n_products.classList.remove('hide')
+            const products_now = parseInt(n_products.textContent) - 1
+            n_products.textContent = products_now
+
+            if (0 === products_now) {
+                location.reload()
+            }
+
+            if ('success' === res.status) {
+                constainer.remove()
+            }
+
+        }).catch(e => {
+            console.log(e);
+            constainer.classList.remove('loading')
+        });
+
+    }, 1000);
+}
+
+remove_item_btns.forEach(async btn => btn.addEventListener('click', ev => hundle_remove_item(btn), false))
 
 /**
  * The function `auth_3d_method` is used to handle the authentication process for a 3D secure payment
@@ -101,7 +150,7 @@ const auth_3d_method = async (stripe, client_secret) => {
  * to create and manage the payment form elements, such as the card number input, expiration date
  * input, and CVC input.
  */
-const on_submit2 = async (e, stripe, elements) => {
+const on_submit = async (e, stripe, elements) => {
 
     e.preventDefault()
 
@@ -138,7 +187,7 @@ const build_chackout = async (stripe, client_secret) => {
     const payment_element = elements.create('payment')
     payment_element.mount('#payment-element')
 
-    payment_form.addEventListener('submit', e => on_submit2(e, stripe, elements))
+    payment_form.addEventListener('submit', e => on_submit(e, stripe, elements))
 }
 
 
@@ -198,19 +247,29 @@ const chackout_process = (e) => {
     })
 }
 
-chackout && chackout.addEventListener('click', ev => chackout_process(ev), false)
 
+chackout && chackout.addEventListener('click', ev => chackout_process(ev), false)
 
 
 if (my_cards) {
 
     const cards = my_cards.querySelectorAll('.contaier-carte .card')
 
+    /**
+     * The function `hundle_active_card` adds the class 'active' to a given card element and removes
+     * the class from any previously active card.
+     * @param card - The `card` parameter is the card element that needs to be activated.
+     */
     const hundle_active_card = (card) => {
-        const last_actived = my_cards.querySelector('.contaier-carte .card.active')
-        last_actived && last_actived.classList.remove('active')
 
-        card.classList.add('active')
+        const last_actived = my_cards.querySelector('.contaier-carte .card.active')
+
+        if (card === last_actived) {
+            card.classList.remove('active')
+        } else {
+            last_actived && last_actived.classList.remove('active')
+            card.classList.add('active')
+        }
     }
 
     cards.forEach(async card => card.addEventListener('click', ev => hundle_active_card(card), false))

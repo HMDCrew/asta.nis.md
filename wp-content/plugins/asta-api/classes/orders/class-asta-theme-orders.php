@@ -295,14 +295,24 @@ if ( ! class_exists( 'ASTA_THEME_ORDERS' ) ) :
 		 * user with the specified user ID, sorted by post date in ascending order.
 		 */
 		public static function get_user_orders( int $user_id ) {
-			return get_posts(
+			$orders = new WP_Query(
 				array(
-					'post_type' => 'orders',
-					'author'    => $user_id,
-					'orderby'   => 'post_date',
-					'order'     => 'DESC',
+					'post_type'      => 'orders',
+					'author'         => $user_id,
+					'orderby'        => 'post_date',
+					'order'          => 'DESC',
+					'posts_per_page' => -1,
+					'meta_query'     => array(
+						array(
+							'key'     => 'payment_status',
+							'compare' => '!=',
+							'value'   => 'pending',
+						),
+					),
 				)
 			);
+
+			return $orders->posts;
 		}
 	}
 

@@ -55,6 +55,17 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 					'login_user_id' => get_current_user_id(),
 				)
 			);
+
+			// Product remove product
+			$server->register_route(
+				'rest-api-wordpress',
+				'/api-remove-cart-product',
+				array(
+					'methods'       => 'POST',
+					'callback'      => array( $this, 'asta_remove_product' ),
+					'login_user_id' => get_current_user_id(),
+				)
+			);
 		}
 
 
@@ -82,6 +93,8 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 					? json_decode( $products_cart, true )
 					: array()
 				);
+
+				! empty( $products_cart ) ? sort( $products_cart ) : array();
 
 				$key = array_search( $product_id, array_column( $products_cart, 'product_id' ), true );
 
@@ -120,9 +133,11 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 			);
 		}
 
+
 		public static function clean_zero_qty( array $porduct_cart ) {
 			return array_filter( $porduct_cart, fn( $item ) => $item['qty'] > 0 );
 		}
+
 
 		/**
 		 * The function `get_cart()` retrieves the user's cart information, including products and auctions,
@@ -180,6 +195,9 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 
 			if ( ! empty( $product_id ) ) {
 
+				$product_qty = (int) get_post_meta( $product_id, 'qty', true );
+				$qty         = $product_qty >= $qty ? $qty : $product_qty;
+
 				$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^a-zA-Z0-9\%\,\[\]\{\}\:\"\'\_\-]/i', '', $_COOKIE['asta_cart'] ) : '';
 				$products_cart = (
 					! empty( $products_cart )
@@ -204,6 +222,53 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 								'product' => $products_cart[ $key ],
 								'price'   => $price * $qty,
 							),
+						)
+					);
+				}
+
+				wp_send_json(
+					array(
+						'status'  => 'error',
+						'message' => __( 'product is not in cart', 'asta-api' ),
+					)
+				);
+			}
+
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => __( 'missing product id', 'asta-api' ),
+				)
+			);
+		}
+
+		public function asta_remove_product( \WP_REST_Request $request ) {
+
+			$params     = $request->get_params();
+			$product_id = ( ! empty( $params['product_id'] ) ? (int) preg_replace( '/[^0-9]/i', '', $params['product_id'] ) : '' );
+
+			if ( ! empty( $product_id ) ) {
+
+				$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^a-zA-Z0-9\%\,\[\]\{\}\:\"\'\_\-]/i', '', $_COOKIE['asta_cart'] ) : '';
+				$products_cart = (
+					! empty( $products_cart )
+					? json_decode( $products_cart, true )
+					: array()
+				);
+
+				! empty( $products_cart ) ? sort( $products_cart ) : array();
+
+				$key = array_search( $product_id, array_column( $products_cart, 'product_id' ), true );
+
+				if ( false !== $key ) {
+
+					unset( $products_cart[ $key ] );
+					setcookie( 'asta_cart', json_encode( $products_cart ), time() + 3600 * 24 * 30 * 12, '/' );
+
+					wp_send_json(
+						array(
+							'status'  => 'success',
+							'message' => __( 'product has been removed', 'asta-api' ),
 						)
 					);
 				}

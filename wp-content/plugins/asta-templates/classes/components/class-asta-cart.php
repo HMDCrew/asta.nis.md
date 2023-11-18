@@ -72,6 +72,7 @@ if ( ! class_exists( 'ASTA_CART' ) ) :
 				'post_id'      => $post_id,
 				'price'        => 0,
 				'auction_date' => '',
+				'max_qty'      => '',
 				'qty'          => '',
 				'qty_label'    => __( 'amount', 'asta-template' ),
 				'url'          => esc_url( get_permalink( $post_id ) ),

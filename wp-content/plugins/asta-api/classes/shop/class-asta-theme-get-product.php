@@ -68,12 +68,12 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 		private function prepare_args( int $number_posts, int $page, string $search, string $price_range, $type, $user_id ) {
 
 			$args = array(
-				'post_type'   => 'shop',
-				'post_status' => 'publish',
-				'numberposts' => $number_posts,
-				'paged'       => $page,
-				'orderby'     => 'modified',
-				'order'       => 'DESC',
+				'post_type'      => 'shop',
+				'post_status'    => 'publish',
+				'posts_per_page' => $number_posts,
+				'paged'          => $page,
+				'orderby'        => 'modified',
+				'order'          => 'DESC',
 			);
 
 			if ( ! empty( $search ) ) {
@@ -91,15 +91,25 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 			}
 
 			if ( ! empty( $price_range ) ) {
-				$args['meta_query'][] = array(
-					'key'     => 'price',
-					'type'    => 'DECIMAL',
-					'compare' => 'BETWEEN',
-					'value'   => explode( ',', $price_range ),
-				);
+
+				$price_range = explode( ',', $price_range );
+
+				if ( 'false' !== $price_range[0] || 'false' !== $price_range[1] ) {
+					$args['meta_query'][] = array(
+						'key'     => 'price',
+						'type'    => 'DECIMAL',
+						'compare' => 'BETWEEN',
+						'value'   => $price_range,
+					);
+				}
 			}
 
 			if ( ! empty( $user_id ) ) {
+
+				unset( $args['post_status'] );
+				unset( $args['meta_key'] );
+				unset( $args['orderby'] );
+
 				$args['author'] = $user_id;
 			}
 
@@ -218,7 +228,7 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 				'message' => __( 'there isn\'t auctions', 'asta-api' ),
 			);
 
-			$auctions = get_posts(
+			$products = new WP_Query(
 				$this->prepare_args(
 					(int) $number_posts,
 					$page,
@@ -229,15 +239,15 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 				)
 			);
 
-			if ( ! empty( $auctions ) ) {
+			if ( ! empty( $products->posts ) ) {
 
 				$response['status']  = 'success';
 				$response['message'] = $this->card_requirements(
-					$this->clean_get_posts( $auctions ),
+					$this->clean_get_posts( $products->posts ),
 					$attr['login_user_id']
 				);
 
-				$response['is_lasts'] = count( $auctions ) < $number_posts;
+				$response['is_lasts'] = count( $products->posts ) < $number_posts;
 			}
 
 			wp_send_json( $response );

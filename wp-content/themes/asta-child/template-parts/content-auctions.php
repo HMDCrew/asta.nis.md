@@ -19,9 +19,6 @@ $auction_type    = get_asta_category( get_the_ID() );
 $post_excerpt    = get_post_field( 'post_excerpt', get_the_ID() );
 
 $bids = ASTA_AUCTION::get_auction_bids( get_post_meta( get_the_ID(), 'auction_bids', true ) );
-
-
-
 ?>
 
 <div class="auction-title"><?php echo get_the_title( get_the_ID() ); ?></div>

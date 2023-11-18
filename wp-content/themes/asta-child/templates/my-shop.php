@@ -1,16 +1,16 @@
 <?php
 /**
- * Template Name: My Auctions
+ * Template Name: My Shop
  */
 
-ASTA_USER::redirect_not_logged_user( '/auctions' );
+ASTA_USER::redirect_not_logged_user( '/shop' );
 get_header();
 
 global $wp_query;
 
 $wp_query = new WP_Query(
 	array(
-		'post_type'      => 'auctions',
+		'post_type'      => 'shop',
 		'author'         => get_current_user_id(),
 		'posts_per_page' => preg_replace( '/[^0-9]/i', '', $wp_query->query_vars['posts_per_page'] ),
 		'paged'          => preg_replace( '/[^0-9]/i', '', $wp_query->query['page'] ),
@@ -22,9 +22,22 @@ $wp_query = new WP_Query(
 	<main id="primary" class="site-main">
 		<div class="container">
 
-			<?php do_action( 'asta_filter_bar', array( 'post_type' => 'auctions' ) ); ?>
+			<?php
+			do_action(
+				'asta_filter_bar',
+				array(
+					'post_type'  => 'shop',
+					'visibility' => array(
+						'search'   => true,
+						'category' => true,
+						'date'     => false,
+						'price'    => true,
+					),
+				),
+			);
+			?>
 
-			<div class="list-content list-auction">
+			<div class="list-content list-products">
 				<?php if ( have_posts() ) : ?>
 
 					<?php
@@ -37,7 +50,7 @@ $wp_query = new WP_Query(
 						 * If you want to override this in a child theme, then include a file
 						 * called content-___.php (where ___ is the Post Type name) and that will be used instead.
 						 */
-						do_action( 'asta_card_auction', array() );
+						do_action( 'asta_card_shop', array() );
 
 					endwhile;
 

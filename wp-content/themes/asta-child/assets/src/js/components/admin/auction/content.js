@@ -97,7 +97,7 @@ export class Content {
                         asta_alert([res.message], 'success')
 
                         if (!document.body.classList.contains('page-template-edit-auction')) {
-                            window.location.replace(`/edit-auction/?auction_id=${auction_id}`)
+                            window.location.replace(`/edit-auction/?auction_id=${this.auction_id}`)
                         }
                     } else {
                         asta_alert([res.message])

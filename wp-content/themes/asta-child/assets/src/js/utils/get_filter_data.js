@@ -12,7 +12,19 @@ const filter_bar = document.querySelector('.filter-bar')
  */
 const get_price_object = (dom_element) => {
 
-    if ('' !== dom_element.value1.toString() && '' !== dom_element.value2.toString()) {
+    // console.log(dom_element.getAttribute('min'))
+    // console.log(dom_element.getAttribute('max'))
+    // console.log(dom_element.value1)
+    // console.log(dom_element.value2)
+
+    if (
+        '' !== dom_element.value1.toString() &&
+        '' !== dom_element.value2.toString() &&
+        (
+            dom_element.value1.toString() !== dom_element.getAttribute('min') ||
+            dom_element.value2.toString() !== dom_element.getAttribute('max')
+        )
+    ) {
         return [dom_element.value1, dom_element.value2]
     }
 

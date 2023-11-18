@@ -423,7 +423,7 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 				$order_id = $event?->data?->object?->metadata?->order_id;
 
 				if ( $order_id ) {
-					ASTA_THEME_ORDERS::set_order_status( $order_id, 'pending' );
+					ASTA_THEME_ORDERS::set_order_status( $order_id, 'unpaid' );
 				}
 
 				error_log(

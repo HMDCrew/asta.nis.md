@@ -376,6 +376,7 @@ if ( ! class_exists( 'ASTA_THEME_EDIT_PRODUCT' ) ) :
 			$product_id      = ( ! empty( $params['product_id'] ) ? preg_replace( '/[^0-9]/i', '', $params['product_id'] ) : '' );
 			$product_title   = ( ! empty( $params['product_title'] ) ? preg_replace( '/[^a-zA-Z0-9\s\@\!\?\,\.\-\_]/i', '', $params['product_title'] ) : '' );
 			$price           = ( ! empty( $params['price'] ) ? preg_replace( '/[^0-9]/i', '', $params['price'] ) : '' );
+			$qty             = ( ! empty( $params['qty'] ) ? preg_replace( '/[^0-9]/i', '', $params['qty'] ) : '' );
 			$category_id     = ( ! empty( $params['category_id'] ) ? preg_replace( '/[^0-9]/i', '', $params['category_id'] ) : '' );
 			$aditional_info  = ( ! empty( $params['aditional_info'] ) ? preg_replace( '/[^a-zA-Z0-9\s\@\!\?\,\.\-\_\n\t\#\:\/\&]/i', '', $params['aditional_info'] ) : '' );
 			$product_content = (
@@ -397,6 +398,7 @@ if ( ! class_exists( 'ASTA_THEME_EDIT_PRODUCT' ) ) :
 					$product_meta = array(
 						'price'          => $price,
 						'product_editor' => $product_content,
+						'qty'            => $qty,
 					);
 
 					$translations = new WPR_EditorJS_Gutenberg( $product_content );

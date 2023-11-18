@@ -204,7 +204,7 @@ function assets_js_front_end() {
 		);
 	}
 
-	if ( is_archive() && 'shop' === get_queried_object()->name ) {
+	if ( is_page_template( 'templates/my-shop.php' ) || ( is_archive() && 'shop' === get_queried_object()->name ) ) {
 		wp_enqueue_script( 'asta-archive-shop', get_stylesheet_directory_uri() . '/assets/dist/js/archive_shop.bundle.js', array(), false, true );
 		wp_localize_script(
 			'asta-archive-shop',
@@ -317,15 +317,12 @@ function assets_css_front_end() {
 		wp_enqueue_style( 'new-product', get_stylesheet_directory_uri() . '/assets/dist/css/new_product.bundle.css' );
 	}
 
-	if ( is_page_template( 'templates/my-auctions.php' ) || is_archive() ) {
+	if ( is_page_template( 'templates/my-auctions.php' ) || ( is_archive() && 'auctions' === get_queried_object()->name ) ) {
+		wp_enqueue_style( 'asta-archive-auctions', get_stylesheet_directory_uri() . '/assets/dist/css/archive_auctions.bundle.css' );
+	}
 
-		if ( 'auctions' === get_queried_object()->name ) {
-			wp_enqueue_style( 'asta-archive-auctions', get_stylesheet_directory_uri() . '/assets/dist/css/archive_auctions.bundle.css' );
-		}
-
-		if ( 'shop' === get_queried_object()->name ) {
-			wp_enqueue_style( 'asta-archive-shop', get_stylesheet_directory_uri() . '/assets/dist/css/archive_shop.bundle.css' );
-		}
+	if ( is_page_template( 'templates/my-shop.php' ) || ( is_archive() && 'shop' === get_queried_object()->name ) ) {
+		wp_enqueue_style( 'asta-archive-shop', get_stylesheet_directory_uri() . '/assets/dist/css/archive_shop.bundle.css' );
 	}
 
 	if ( is_single() && 'auctions' === get_post_type( get_the_ID() ) ) {

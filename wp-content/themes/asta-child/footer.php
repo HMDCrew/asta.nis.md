@@ -17,10 +17,13 @@ $user = wp_get_current_user();
 		<div class="wpr-admin-menu">
 
 			<div class="options">
-				<a href="/new-auction" class="add-auction option"><?php echo __( 'New auction', 'asta-child' ); ?></a>
-				<a href="/new-product" class="add-product option"><?php echo __( 'New product', 'asta-child' ); ?></a>
-				<a href="/my-auctions" class="auctions option"><?php echo __( 'My auctions', 'asta-child' ); ?></a>
-				<a href="/my-orders" class="auctions option"><?php echo __( 'My orders', 'asta-child' ); ?></a>
+				<a href="/new-auction" class="add-auction option"><?php echo __( 'New Auction', 'asta-child' ); ?></a>
+				<a href="/new-product" class="add-product option"><?php echo __( 'New Product', 'asta-child' ); ?></a>
+				<hr />
+				<a href="/my-auctions" class="my-auctions option"><?php echo __( 'My Auctions', 'asta-child' ); ?></a>
+				<a href="/my-products" class="my-products option"><?php echo __( 'My Products', 'asta-child' ); ?></a>
+				<hr />
+				<a href="/my-orders" class="orders option"><?php echo __( 'My orders', 'asta-child' ); ?></a>
 				<?php do_action( 'wpr_admin_menu' ); ?>
 			</div>
 

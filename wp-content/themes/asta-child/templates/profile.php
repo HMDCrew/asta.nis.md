@@ -28,6 +28,10 @@ $user = wp_get_current_user();
 					<input type="file" name="profile-picture" class="profile-picture" />
 				</div>
 
+				<div class="row balance">
+					<div class="total_balance"></div>
+				</div>
+
 				<div class="row">
 					<div class="col-6">
 						<div class="wrap-input">
