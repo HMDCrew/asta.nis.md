@@ -450,3 +450,76 @@ if ( ! function_exists( 'get_asta_categories' ) ) {
 		return is_array( $terms ) ? $terms : array();
 	}
 }
+
+
+/**
+ * The function "string_to_hide" takes a string as input and replaces each character with a specified
+ * replacement character, returning the modified string.
+ *
+ * @param string content The "content" parameter is a string that represents the content that you want
+ * to hide or replace with a specific character.
+ * @param string replacer The replacer parameter is a string that will be used to replace each
+ * character in the content string. By default, it is set to '*'.
+ *
+ * @return string consisting of the same number of characters as the input string, with each
+ * character replaced by the specified replacer character (default is '*').
+ */
+function string_to_hide( string $content, string $replacer = '*' ) {
+	return implode( ' ', preg_replace( '/(\w)/i', $replacer, explode( ' ', $content ) ) );
+}
+
+
+/**
+ * The `partial_hider` function takes a string of letters and hides a portion of it based on the
+ * specified start and end positions, replacing the hidden portion with a specified character.
+ *
+ * @param string letters The "letters" parameter is a string that represents the input letters that you
+ * want to partially hide.
+ * @param int show_start The number of characters from the start of the string that should be shown.
+ * Default is 0, which means no characters will be shown from the start.
+ * @param int show_end The `show_end` parameter determines how many characters from the end of the
+ * string should be shown.
+ * @param string replacer The replacer parameter is a string that will be used to replace the hidden
+ * characters in the output string. By default, it is set to '*'.
+ *
+ * @return string modified version of the input string. The modified string has certain parts hidden or
+ * replaced with asterisks based on the provided parameters.
+ */
+function partial_hider( string $letters, int $show_start = 0, int $show_end = 0, string $replacer = '●' ) {
+
+	$letters     = str_split( $letters );
+	$part_one    = array();
+	$middle_part = array();
+	$end_part    = array();
+
+	if ( 0 !== $show_start ) {
+		$part_one = implode( '', array_slice( $letters, 0, $show_start ) );
+		$end_part = implode( '', array_slice( $letters, $show_start ) );
+	}
+
+	if ( 0 !== $show_start && 0 !== $show_end ) {
+		$middle_part = implode( '', array_slice( $letters, $show_start, $show_end * -1 ) );
+	}
+
+	if ( 0 !== $show_end ) {
+		$part_one = empty( $part_one ) ? implode( '', array_slice( $letters, 0, $show_end * -1 ) ) : $part_one;
+		$end_part = implode( '', array_slice( $letters, $show_end * -1 ) );
+	}
+
+	return (
+		0 !== $show_start && 0 !== $show_end
+		? $part_one . string_to_hide( $middle_part, $replacer ) . $end_part
+		: (
+			0 !== $show_start
+			? $part_one . string_to_hide( $end_part, $replacer )
+			: (
+				0 !== $show_end
+				? string_to_hide( $part_one, $replacer ) . $end_part
+				: string_to_hide(
+					implode( '', $letters ),
+					$replacer
+				)
+			)
+		)
+	);
+}

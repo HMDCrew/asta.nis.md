@@ -4,7 +4,7 @@ function wpr_prevent_access() {
 
 	$roles = array( 'pending', 'approved' );
 
-	if ( ASTA_USER::asta_current_user_in_roles_list( $roles ) ) {
+	if ( ASTA_USER::asta_current_user_in_roles_list( is_user_logged_in(), $roles ) ) {
 
 		add_filter( 'show_admin_bar', '__return_false' );
 

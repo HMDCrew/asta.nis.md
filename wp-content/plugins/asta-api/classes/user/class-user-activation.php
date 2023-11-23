@@ -39,6 +39,15 @@ if ( ! class_exists( 'User_Activation' ) ) :
 						)
 					);
 
+					$account = ASTA_STRIPE::client()->accounts->create(
+						array(
+							'type'    => 'express',
+							'country' => 'US',
+							'email'   => $user->user_email,
+						)
+					);
+
+					update_user_meta( $user->ID, 'asta_stripe_account_id', $account->id );
 					update_user_meta( $user->ID, 'asta_customer_id', $customer->id );
 					$user->remove_role( 'pending' );
 					$user->add_role( 'approved' );

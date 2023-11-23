@@ -104,6 +104,12 @@ if ( ! class_exists( 'ASTA_THEME_GET_PRODUCT' ) ) :
 				}
 			}
 
+			$args['meta_query'][] = array(
+				'key'     => 'qty',
+				'compare' => '>',
+				'value'   => 0,
+			);
+
 			if ( ! empty( $user_id ) ) {
 
 				unset( $args['post_status'] );

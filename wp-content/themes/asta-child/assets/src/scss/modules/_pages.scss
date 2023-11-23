@@ -52,6 +52,9 @@ main#primary {
             animation: anim-shadow 0.5s ease-in-out forwards;
         }
 
+        &.error {
+            border-color: red;
+        }
     }
 
     &.select::after {
@@ -212,6 +215,23 @@ main#primary {
     }
 }
 
+.btn-primary-outer {
+    color: #000;
+    border: 1px solid black;
+    background: white;
+
+    &:hover {
+        background: black;
+        border: 1px solid black;
+        color: white;
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: .5;
+    }
+}
+
 
 input[type=checkbox] {
     appearance: none;
@@ -303,6 +323,47 @@ input[type=checkbox] {
     }
 }
 
+.asta-modal-overlay {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: #000000ab;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .3s;
+
+    .asta-modal {
+        $action_height: calc(4em + 5vh);
+        $content_height: calc(100% - $action_height);
+
+        width: calc(11em + 50vw);
+        background: white;
+        height: 90vh;
+        overflow: auto;
+        transition: all .3s;
+        animation: scale-up-ver-center 0.4s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+
+        .asta-modal-content {
+            height: $content_height;
+        }
+
+        .asta-modal-actions {
+            height: $action_height;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            box-shadow: 0 0 27px -16px rgb(0, 0, 0);
+
+            .btn-primary {
+                margin-top: 0;
+            }
+        }
+    }
+}
+
 .loading:after {
     content: '';
     width: 12px;
@@ -364,5 +425,29 @@ input[type=checkbox] {
         -webkit-transform: translateX(0);
         transform: translateX(0);
         opacity: 1;
+    }
+}
+
+@-webkit-keyframes scale-up-ver-center {
+    0% {
+        -webkit-transform: scaleY(0.4);
+        transform: scaleY(0.4);
+    }
+
+    100% {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1);
+    }
+}
+
+@keyframes scale-up-ver-center {
+    0% {
+        -webkit-transform: scaleY(0.4);
+        transform: scaleY(0.4);
+    }
+
+    100% {
+        -webkit-transform: scaleY(1);
+        transform: scaleY(1);
     }
 }

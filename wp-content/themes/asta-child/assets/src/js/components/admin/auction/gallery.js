@@ -86,7 +86,7 @@ export class Gallery {
 
             let formData = new FormData();
             formData.append("file", image.files[0]);
-            formData.append("auction_id", auction_id);
+            formData.append("auction_id", this.auction_id);
 
             sendHttpForm({
                 url: this.json_url + 'api-auction-upload-image',

@@ -89,6 +89,7 @@ if ( ! class_exists( 'ASTA_CORE' ) ) :
 		public function includes() {
 
 			require_once ASTA_CORE_PLUGIN_INC . 'class-sec.php';
+			require_once ASTA_CORE_PLUGIN_INC . 'class-encryption.php';
 
 			require_once ASTA_CORE_PLUGIN_AUCTIONS . 'class-asta-auction.php';
 

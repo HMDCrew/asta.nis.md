@@ -314,6 +314,60 @@ if ( ! class_exists( 'ASTA_THEME_ORDERS' ) ) :
 
 			return $orders->posts;
 		}
+
+
+		/**
+		 * The function updates the user balance by adding the total price of products and auctions to the
+		 * existing balance.
+		 *
+		 * @param array order_details An array containing details about the order, including the products and
+		 * auctions in the cart.
+		 */
+		public static function update_users_payouts( array $order_details ) {
+
+			if ( ! empty( $order_details['cart']['products_cart'] ) ) {
+				foreach ( $order_details['cart']['products_cart'] as $product ) {
+
+					$product_price = (float) self::get_meta( $product['product_id'], 'price' );
+					$product_total = $product_price * $product['qty'];
+
+					$author_id    = get_post_field( 'post_author', $product['product_id'] );
+					$user_balance = ASTA_USER::get_user_balance( $author_id );
+
+					ASTA_USER::update_user_balance( $author_id, ( $user_balance + $product_total ) );
+				}
+			}
+
+			if ( ! empty( $order_details['cart']['auctions_cart'] ) ) {
+				foreach ( $order_details['cart']['auctions_cart'] as $auction ) {
+
+					$author_id    = get_post_field( 'post_author', $auction['auction_id'] );
+					$user_balance = ASTA_USER::get_user_balance( $author_id );
+
+					ASTA_USER::update_user_balance( $author_id, $user_balance + $auction['now_price'] );
+				}
+			}
+		}
+
+		/**
+		 * The function "get_order_cart" retrieves the cart details for a given order ID in PHP.
+		 *
+		 * @param int order_id The order ID is an integer value that represents a specific order in the
+		 * system. It is used to retrieve the cart details associated with that order.
+		 *
+		 * @return array the value of the 'cart' key from the 'details' meta data of the given order ID. If the
+		 * 'cart' key is not found or is empty, it will return an empty array.
+		 */
+		public static function get_order_cart( int $order_id ) {
+
+			$details = get_post_meta( $order_id, 'details', true );
+
+			return (
+				! empty( $details['cart'] )
+				? $details['cart']
+				: array()
+			);
+		}
 	}
 
 endif;

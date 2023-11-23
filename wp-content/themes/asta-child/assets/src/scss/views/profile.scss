@@ -32,6 +32,10 @@
                     border: 5px solid;
                     object-fit: cover;
                     transition: all .3s;
+
+                    &.error {
+                        border-color: red;
+                    }
                 }
             }
 
@@ -59,6 +63,36 @@
             }
         }
 
+        .balance {
+            display: flex;
+            justify-content: center;
+
+            .total_balance {
+                display: flex;
+                justify-content: center;
+                font-weight: 500;
+                font-size: 18px;
+                margin-bottom: 11vh;
+                flex-direction: column;
+                align-items: center;
+
+                .balance-container {
+                    display: flex;
+                }
+
+                .money-looked {
+                    margin-top: auto;
+                    font-size: 12px;
+                    margin-left: 5px;
+                }
+
+                svg {
+                    width: 10px;
+                    margin-right: 5px;
+                }
+            }
+        }
+
         .col-6 {
             transition: all .3s;
         }
@@ -66,6 +100,24 @@
         @media screen and (max-width: 768px) {
             .col-6 {
                 width: 100%;
+            }
+        }
+
+        .container-iban {
+            display: flex;
+            align-items: center;
+
+            .save-btn {
+                margin-top: 0;
+                margin-right: 20px;
+                margin-bottom: 4vh;
+
+                &.loading {
+                    &::after {
+                        margin-left: 6px;
+                        margin-top: -2px;
+                    }
+                }
             }
         }
 
@@ -96,6 +148,42 @@
             }
 
             @include payment-cards.payment-card();
+        }
+    }
+
+    .vendor-container {
+        background: #1f1f1f;
+        border-radius: 40px;
+        padding: 10px;
+        margin-bottom: 11vh;
+
+        .vendor {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 450px;
+            width: 100%;
+            margin: auto;
+            text-align: center;
+            margin-top: 11vh;
+            margin-bottom: 11vh;
+
+            svg {
+                fill: white;
+                max-width: calc(5.3em + 5vw);
+                height: auto;
+                margin-bottom: 5vh;
+            }
+
+            h3 {
+                font-weight: 500;
+                margin-bottom: 2vh;
+                color: white;
+            }
+
+            p {
+                color: white;
+            }
         }
     }
 }

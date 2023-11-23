@@ -138,6 +138,16 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 			return array_filter( $porduct_cart, fn( $item ) => $item['qty'] > 0 );
 		}
 
+		private static function validate_cart( array $cart ) {
+
+			foreach ( $cart['products_cart'] as $key => $cart_item ) {
+				if ( empty( $cart_item['product_id'] ) || empty( $cart_item['qty'] ) ) {
+					unset( $cart['products_cart'][ $key ] );
+				}
+			}
+
+			return $cart;
+		}
 
 		/**
 		 * The function `get_cart()` retrieves the user's cart information, including products and auctions,
@@ -158,7 +168,7 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 
 			$products_cart = ! empty( $_COOKIE['asta_cart'] ) ? preg_replace( '/[^a-zA-Z0-9\%\,\[\]\{\}\:\"\'\_\-]/i', '', $_COOKIE['asta_cart'] ) : '';
 
-			return array(
+			$cart = array(
 				'products_cart' => (
 					! empty( $products_cart )
 					? self::clean_zero_qty( json_decode( $products_cart, true ) )
@@ -170,6 +180,8 @@ if ( ! class_exists( 'ASTA_THEME_CART' ) ) :
 					: array()
 				),
 			);
+
+			return self::validate_cart( $cart );
 		}
 
 

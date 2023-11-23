@@ -82,9 +82,9 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 		 * specified roles in the input array. If the user is not logged in, the function will not return
 		 * anything.
 		 */
-		public static function asta_current_user_in_roles_list( array $roles ) {
+		public static function asta_current_user_in_roles_list( int $user_id, array $roles ) {
 
-			if ( is_user_logged_in() ) {
+			if ( $user_id ) {
 
 				$user = wp_get_current_user();
 
@@ -104,7 +104,7 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 		 * and false otherwise.
 		 */
 		public static function asta_user_is_aproved() {
-			return self::asta_current_user_in_roles_list( array( 'approved', 'administrator' ) );
+			return self::asta_current_user_in_roles_list( is_user_logged_in(), array( 'approved', 'administrator' ) );
 		}
 
 
@@ -150,7 +150,14 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 
 			$profile_picture = get_user_meta( $user_id, 'profile-picture', true );
 
-			return esc_url( $profile_picture ? $profile_picture : 'https://secure.gravatar.com/avatar/c6c727854f5d1de9a7a74abb38cf947d?s=96&d=mm&r=g' );
+			return array(
+				'is_placeholder' => ( $profile_picture ? false : true ),
+				'url'            => esc_url(
+					$profile_picture
+					? $profile_picture
+					: 'https://secure.gravatar.com/avatar/c6c727854f5d1de9a7a74abb38cf947d?s=96&d=mm&r=g'
+				),
+			);
 		}
 
 
@@ -164,6 +171,165 @@ if ( ! class_exists( 'ASTA_USER' ) ) :
 		 */
 		public static function get_user_customer_id( int $user_id ) {
 			return get_user_meta( $user_id, 'asta_customer_id', true );
+		}
+
+
+		/**
+		 * The function "get_user_balance" retrieves the balance of a user by their user ID.
+		 *
+		 * @param int user_id The user_id parameter is an integer that represents the unique identifier of a
+		 * user. It is used to retrieve the user's balance from the user_meta table.
+		 *
+		 * @return float the user's balance as a float. If the user's balance is not set or is empty, it will
+		 * return 0.
+		 */
+		public static function get_user_balance( int $user_id ) {
+
+			$user_balance = get_user_meta( $user_id, 'user_balance', true );
+
+			return (float) (
+				! empty( $user_balance )
+				? self::$sec->decrypt(
+					base64_decode( $user_balance )
+				)
+				: 0
+			);
+		}
+
+
+		/**
+		 * The function updates the user's balance by encrypting and encoding it before storing it in the
+		 * user meta data.
+		 *
+		 * @param int user_id The user_id parameter is an integer that represents the unique identifier of
+		 * the user whose balance needs to be updated.
+		 * @param float balance The "balance" parameter is an integer that represents the new balance value for
+		 * a user.
+		 *
+		 * @return bool|int the result of the `update_user_meta` function.
+		 */
+		public static function update_user_balance( int $user_id, float $balance ) {
+			return update_user_meta(
+				$user_id,
+				'user_balance',
+				base64_encode(
+					ASTA_STRIPE::sec()->encrypt(
+						(string) $balance
+					)
+				)
+			);
+		}
+
+
+		/**
+		 * The function retrieves the user's looked balance by decrypting and decoding the stored value.
+		 *
+		 * @param int user_id The user_id parameter is an integer that represents the ID of the user for whom
+		 * we want to retrieve the looked_user_balance.
+		 *
+		 * @return float the user's looked balance as a float. If the user has a balance stored in the
+		 * 'looked_user_balance' meta field, it will be decrypted and returned. If the user does not have a
+		 * balance stored, it will return 0.
+		 */
+		public static function get_user_looked_balance( int $user_id ) {
+
+			$user_balance = get_user_meta( $user_id, 'looked_user_balance', true );
+
+			return (float) (
+				! empty( $user_balance )
+				? self::$sec->decrypt(
+					base64_decode( $user_balance )
+				)
+				: 0
+			);
+		}
+
+
+		/**
+		 * The function updates the looked_user_balance meta field for a user with the encrypted and base64
+		 * encoded value of the balance.
+		 *
+		 * @param int user_id The user_id parameter is an integer that represents the unique identifier of
+		 * the user whose balance needs to be updated.
+		 * @param float balance The balance parameter is a floating-point number representing the updated
+		 * balance of a user.
+		 *
+		 * @return float the result of the `update_user_meta` function.
+		 */
+		public static function update_user_looked_balance( int $user_id, float $balance ) {
+			return update_user_meta(
+				$user_id,
+				'looked_user_balance',
+				base64_encode(
+					ASTA_STRIPE::sec()->encrypt(
+						(string) $balance
+					)
+				)
+			);
+		}
+
+
+		/**
+		 * The function `get_user_iban` retrieves and decrypts the user's IBAN (International Bank Account
+		 * Number) from the user meta data.
+		 *
+		 * @param int user_id The user_id parameter is an integer that represents the ID of the user for whom
+		 * we want to retrieve the IBAN (International Bank Account Number).
+		 *
+		 * @return array user's IBAN (International Bank Account Number) as a decoded JSON object. If the
+		 * user's IBAN is empty, it will return 0.
+		 */
+		public static function get_user_iban( int $user_id ) {
+
+			$user_iban = get_user_meta( $user_id, 'user_iban', true );
+
+			return (
+				! empty( $user_iban )
+				? json_decode(
+					self::$sec->decrypt(
+						base64_decode( $user_iban )
+					),
+					true
+				)
+				: 0
+			);
+		}
+
+
+		/**
+		 * The function updates the user's IBAN information by encrypting and encoding it before storing it
+		 * in the user meta.
+		 *
+		 * @param int user_id The user ID is an integer that represents the unique identifier of the user
+		 * whose IBAN (International Bank Account Number) is being updated.
+		 * @param array iban The "iban" parameter is an array that contains the user's IBAN (International
+		 * Bank Account Number) information.
+		 *
+		 * @return bool|int the result of the `update_user_meta` function.
+		 */
+		public static function update_user_user_iban( int $user_id, array $iban ) {
+			return update_user_meta(
+				$user_id,
+				'user_iban',
+				base64_encode(
+					ASTA_STRIPE::sec()->encrypt(
+						json_encode( $iban )
+					)
+				)
+			);
+		}
+
+
+		/**
+		 * The function "get_user_stripe_id" retrieves the Stripe account ID associated with a user.
+		 *
+		 * @param int user_id The user ID is an integer that represents the unique identifier of a user in
+		 * the system. It is used to retrieve the user's Stripe account ID from the user meta data.
+		 *
+		 * @return string|false value of the 'asta_stripe_account_id' user meta for the given user ID.
+		 */
+		public static function get_user_stripe_id( int $user_id ) {
+			return get_user_meta( $user_id, 'asta_stripe_account_id', true );
 		}
 	}
 

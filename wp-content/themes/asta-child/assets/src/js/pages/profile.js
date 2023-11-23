@@ -1,202 +1,45 @@
 import '../../scss/views/profile.scss'
 import { sendHttpReq } from '../utils/api/http'
-import { sendHttpForm } from '../utils/api/form'
-import { check_pwd_validity } from '../utils/passwords';
 import { asta_alert } from '../utils/asta_alert'
 
 const profile_form = document.querySelector('.user-profile')
-const { nonce, json_url, stripe_pk } = profile_data
 
 
-if (profile_form) {
+import( /* webpackChunkName: "components/profile/vendor-banner" */ '../components/profile/vendor-banner').then(module => {
 
-    const photo_profile = profile_form.querySelector('input[type="file"]');
+    const ProfileVendorBanner = module.ProfileVendorBanner
 
-    const upload_picture = () => {
-
-        if (photo_profile.files.length > 0) {
-
-            const container = photo_profile.parentNode;
-
-            // loading
-            container.classList.add('loading')
-
-            let formData = new FormData();
-            formData.append("file", photo_profile.files[0]);
-
-            sendHttpForm({
-                url: json_url + 'api-profile-upload-image',
-                data: formData,
-                headers: {
-                    'X-WP-Nonce': nonce
-                }
-            }).then(res => {
-
-                res = JSON.parse(res)
-
-                if ('success' === res.status) {
-                    container.querySelector('img').setAttribute('src', res.image)
-                } else {
-                    console.log(res)
-                }
-
-                // end loading 
-                container.classList.remove('loading')
-
-            }).catch(e => {
-                console.log(e);
-                // end loading
-                container.classList.remove('loading')
-            });
-        }
-    }
-    photo_profile.addEventListener('change', (ev) => upload_picture(), false);
+    new ProfileVendorBanner(profile_form, sendHttpReq, asta_alert, profile_data)
+})
 
 
-    const btn_update_profile = profile_form.querySelector('.update-profile')
-    const pwd = profile_form.querySelector('input[name="password"]');
-    const repeat_pwd = profile_form.querySelector('input[name="repeat-password"]');
+import( /* webpackChunkName: "components/profile/upload_foto_profile" */ '../components/profile/upload_foto_profile').then(module => {
 
-    /**
-     * The function checks the validity of two password inputs and adds appropriate CSS classes based
-     * on their match.
-     */
-    const check_pwd = () => {
+    const ProfilePicture = module.ProfilePicture
 
-        if (
-            'password' !== repeat_pwd.value && 'password' !== pwd.value &&
-            check_pwd_validity(pwd.value, repeat_pwd.value)
-        ) {
-            pwd.classList.remove('error')
-            repeat_pwd.classList.remove('error')
-            pwd.classList.add('success')
-            repeat_pwd.classList.add('success')
-        } else {
-            pwd.classList.remove('success')
-            repeat_pwd.classList.remove('success')
-            pwd.classList.add('error')
-            repeat_pwd.classList.add('error')
-        }
-    }
-
-    pwd.addEventListener('keyup', (ev) => check_pwd(), false)
-    repeat_pwd.addEventListener('keyup', (ev) => check_pwd(), false)
-
-    const update_profile_info = (event) => {
-        event.preventDefault();
-
-        const first_name = profile_form.querySelector('input[name="first-name"]');
-        const last_name = profile_form.querySelector('input[name="last-name"]');
-        const website = profile_form.querySelector('input[name="website"]');
-        const email = profile_form.querySelector('input[name="email"]');
-        const password = profile_form.querySelector('input[name="password"]');
-        const repeat_password = profile_form.querySelector('input[name="repeat-password"]');
-        const description = profile_form.querySelector('textarea[name="description"]');
-
-        let data = {
-            first_name: first_name.value,
-            last_name: last_name.value,
-            website: website.value,
-            email: email.value,
-            description: description.value,
-        };
-
-        if (
-            'password' !== repeat_pwd.value && 'password' !== pwd.value &&
-            check_pwd_validity(password.value, repeat_password.value)
-        ) {
-            data['password'] = password.value;
-            data['repeat_password'] = repeat_password.value;
-        }
-
-        sendHttpReq({
-            url: json_url + 'api-profile-update-info',
-            data: data,
-            method: 'POST',
-            headers: {
-                'X-WP-Nonce': nonce
-            }
-        }).then(res => {
-
-            res = JSON.parse(res)
-
-            if ('success' === res.status) {
-                asta_alert([res.message], 'success')
-            } else {
-                asta_alert([res.message])
-            }
-
-        }).catch(e => {
-            console.log(e);
-        });
-    }
-
-    btn_update_profile.addEventListener('click', (ev) => update_profile_info(ev), false);
+    new ProfilePicture(profile_form, profile_data)
+})
 
 
-    /**
-     * User Cards
-     */
-    const cards_form = profile_form.querySelector('#cards-form')
-    const add_card = cards_form?.querySelector('#submit')
-    const carte_errors = cards_form.querySelector('#card-errors')
-    const contaier_carte = profile_form.querySelector('.contaier-carte')
-    const carte_card = profile_form.querySelector('.create-cart')
+import( /* webpackChunkName: "components/profile/profile-details" */ '../components/profile/profile-details').then(module => {
 
-    const render_new_card = (payment_card) => {
+    const ProfileDetails = module.ProfileDetails
 
-        const card = document.createElement('div')
-        card.classList.add('card')
+    new ProfileDetails(profile_form, sendHttpReq, asta_alert, profile_data)
+})
 
-        card.innerHTML = (
-            `<div class="card-type">${payment_card.brand}</div><div class="card-numbers">**** **** **** ${payment_card.last4}</div>`
-        )
 
-        return card
-    }
+import( /* webpackChunkName: "components/profile/credit-cards" */ '../components/profile/credit-cards').then(module => {
 
-    const hundle_add_card = (stripe, card_element) => {
+    const ProfilePaymentCards = module.ProfilePaymentCards
 
-        stripe.createToken(card_element).then((result) => {
+    new ProfilePaymentCards(profile_form, sendHttpReq, asta_alert, profile_data)
+})
 
-            if (result.error) {
-                carte_errors.textContent = result.error.message;
-            } else {
-                sendHttpReq({
-                    url: json_url + 'api-card-to-user',
-                    method: 'POST',
-                    data: {
-                        token: result.token.id
-                    },
-                    headers: { 'X-WP-Nonce': nonce }
-                }).then(async res => {
 
-                    res = JSON.parse(res)
+import( /* webpackChunkName: "components/profile/profile-iban" */ '../components/profile/profile-iban').then(module => {
 
-                    contaier_carte.append(render_new_card(res.message))
+    const ProfileIban = module.ProfileIban
 
-                    cards_form.parentNode.classList.add('d-none')
-
-                }).catch(e => {
-                    asta_alert([e])
-                    console.log(e)
-                })
-            }
-        });
-    }
-
-    const build_card_form = async (pk) => {
-    
-        const stripe = Stripe(pk, { apiVersion: '2020-08-27' })
-    
-        const elements = stripe.elements();
-        const card_element = elements.create('card');
-        card_element.mount('#card-element');
-
-        cards_form.parentNode.classList.remove('d-none')
-
-        add_card.addEventListener('click', ev => hundle_add_card(stripe, card_element), false)
-    }
-    
-    carte_card.addEventListener('click', ev => build_card_form(stripe_pk), false)
-}
+    new ProfileIban(profile_form, sendHttpReq, asta_alert, profile_data)
+})

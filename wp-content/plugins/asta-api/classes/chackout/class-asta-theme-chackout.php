@@ -3,19 +3,17 @@
 defined( 'ABSPATH' ) || exit;
 
 use Stripe\Exception\ApiErrorException;
-use Stripe\Webhook;
 
 if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 	class ASTA_THEME_CHACKOUT extends SEC {
 
 		private static $instance;
-		public $stripe_client;
+
 
 		public static function instance() {
 			if ( ! isset( self::$instance ) && ! ( self::$instance instanceof ASTA_THEME_CHACKOUT ) ) {
 				self::$instance = new ASTA_THEME_CHACKOUT();
 
-				self::$instance->stripe_client = ASTA_STRIPE::client();
 				self::$instance->hooks();
 			}
 
@@ -60,41 +58,243 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 
 			$server->register_route(
 				'rest-api-wordpress',
-				'/api-cart-webhook',
+				'/api-save-iban',
 				array(
 					'methods'       => 'POST',
-					'callback'      => array( $this, 'asta_cart_webhook' ),
+					'callback'      => array( $this, 'asta_save_iban' ),
+					'login_user_id' => get_current_user_id(),
+				)
+			);
+
+			$server->register_route(
+				'rest-api-wordpress',
+				'/api-get-iban',
+				array(
+					'methods'       => 'POST',
+					'callback'      => array( $this, 'asta_get_iban' ),
+					'login_user_id' => get_current_user_id(),
+				)
+			);
+
+			$server->register_route(
+				'rest-api-wordpress',
+				'/api-get-asta-key',
+				array(
+					'methods'       => 'POST',
+					'callback'      => array( $this, 'asta_key' ),
 					'login_user_id' => get_current_user_id(),
 				)
 			);
 		}
 
-		public function asta_payout( \WP_REST_Request $request ) {
 
-			// $attr   = $request->get_attributes();
-			// $params = $request->get_params();
-
-			// $payout = $this->stripe_client->payouts->create(
-			//  array(
-			//      'amount'   => 5000,
-			//      'currency' => 'usd',
-
-			//      'amount' => 5000, // L'importo in centesimi
-			//      'currency' => 'usd', // La valuta
-			//      'destination' => 'ba_1Example', // L'ID del conto bancario o della carta Stripe
-			//      'method' => 'instant', // Il metodo di pagamento, può essere "standard" o "instant"
-			//  )
-			// );
-
-			// wp_send_json(
-			//  array(
-			//      'status' => 'success',
-			//      'payout' => $payout,
-			//  ),
-			// );
+		/**
+		 * The function generates a random string of hexadecimal characters.
+		 *
+		 * @param int length The length parameter specifies the number of random bytes to generate. By default,
+		 * it is set to 16, which means that the function will generate a string of 32 hexadecimal characters
+		 * (since each byte is represented by two hexadecimal characters).
+		 *
+		 * @return string a hexadecimal string of random bytes.
+		 */
+		public function generate_random_bytes_hex( int $length = 16 ) {
+			return bin2hex( openssl_random_pseudo_bytes( $length ) );
 		}
 
 
+		/**
+		 * The function generates a secret key and initialization vector, sets a cookie with a base64 encoded
+		 * key, and sends a JSON response with the base64 encoded key and IV.
+		 *
+		 * @param \WP_REST_Request request The  parameter is an instance of the \WP_REST_Request
+		 * class, which represents the REST API request being made. It contains information about the request
+		 * such as the HTTP method, headers, and query parameters.
+		 */
+		public function asta_key( \WP_REST_Request $request ) {
+
+			$secret_key = 'la_mia_chiave_secreta';
+			$iv         = openssl_random_pseudo_bytes( openssl_cipher_iv_length( 'aes-256-cbc' ) );
+			$key        = hash( 'sha256', $secret_key, true );
+
+			$key_nat    = $this->generate_random_bytes_hex();
+			$cookie_key = base64_encode( $key_nat );
+
+			setcookie(
+				'lommer_key',
+				$cookie_key,
+				array(
+					'expires' => time() + 60 * 60 * 0.5,
+					'path'    => '/',
+					'secure'  => true,
+				)
+			);
+
+			wp_send_json(
+				array(
+					'status' => 'success',
+					'key'    => base64_encode( $key ),
+					'iv'     => base64_encode( $iv ),
+				),
+			);
+		}
+
+
+		/**
+		 * The function `asta_save_iban` saves an IBAN (International Bank Account Number) for a user and
+		 * sends a JSON response indicating success.
+		 *
+		 * @param \WP_REST_Request request \WP_REST_Request object that represents the REST request made to
+		 * the server.
+		 */
+		public function asta_save_iban( \WP_REST_Request $request ) {
+
+			$attr   = $request->get_attributes();
+			$params = $request->get_params();
+
+			ASTA_USER::update_user_user_iban(
+				$attr['login_user_id'],
+				json_decode(
+					Encryption::decrypt(
+						$params['text'],
+						base64_decode(
+							$_COOKIE['lommer_key']
+						)
+					),
+					true
+				)
+			);
+
+			setcookie(
+				'lommer_key',
+				$this->generate_random_bytes_hex(),
+				array(
+					'expires' => -1,
+					'path'    => '/',
+					'secure'  => true,
+				)
+			);
+
+			wp_send_json(
+				array(
+					'status'  => 'success',
+					'message' => __( 'IBAN saved successfully', 'asta-api' ),
+				)
+			);
+		}
+
+
+		/**
+		 * The function `asta_get_iban` retrieves the IBAN (International Bank Account Number) of a user,
+		 * encrypts it using a key stored in a cookie, and sends it as a JSON response.
+		 *
+		 * @param \WP_REST_Request request The  parameter is an instance of the \WP_REST_Request
+		 * class, which represents the REST API request being made. It contains information about the
+		 * request, such as the HTTP method, headers, and query parameters.
+		 */
+		public function asta_get_iban( \WP_REST_Request $request ) {
+
+			$attr = $request->get_attributes();
+
+			$iban = Encryption::encrypt(
+				json_encode(
+					ASTA_USER::get_user_iban( $attr['login_user_id'] )
+				),
+				base64_decode(
+					$_COOKIE['lommer_key']
+				)
+			);
+
+			setcookie(
+				'lommer_key',
+				$this->generate_random_bytes_hex(),
+				array(
+					'expires' => -1,
+					'path'    => '/',
+					'secure'  => true,
+				)
+			);
+
+			wp_send_json(
+				array(
+					'status'  => 'success',
+					'message' => $iban,
+				)
+			);
+		}
+
+
+		public function asta_payout( \WP_REST_Request $request ) {
+
+			$attr = $request->get_attributes();
+			// $params = $request->get_params();
+
+			$user_stripe_id = ASTA_USER::get_user_stripe_id( $attr['login_user_id'] );
+
+			if ( $user_stripe_id ) {
+
+				// $transfer = ASTA_STRIPE::client()->transfers->create(
+				//  array(
+				//      'amount'      => 100000,
+				//      'currency'    => 'usd',
+				//      'destination' => $user_stripe_id,
+				//  )
+				// );
+
+				try {
+					$payout = ASTA_STRIPE::client()->payouts->create(
+						array(
+							'amount'   => 100000, // L'importo in centesimi
+							'currency' => 'usd',
+						),
+						array(
+							'stripe_account' => $user_stripe_id, // L'ID dell'account collegato
+						)
+					);
+
+					error_log( print_r( $payout, true ) );
+
+					wp_send_json(
+						array(
+							'status'   => ! empty( $payout ) ? 'success' : 'error',
+							'transfer' => ! empty( $payout ) ? $payout : '',
+						),
+					);
+
+				} catch ( \Exception $e ) {
+					error_log( print_r( $e, true ) );
+					wp_send_json(
+						array(
+							'status'   => 'error',
+							'transfer' => $e->getMessage(),
+						),
+					);
+				}
+			}
+
+			// $payout = ASTA_STRIPE::client()->payouts->create(
+			//  array(
+			//      'amount'      => 5000,
+			//      'currency'    => 'usd',
+			//      'destination' => 'ba_1Example', // L'ID del conto bancario o della carta Stripe
+			//      'method'      => 'instant', // Il metodo di pagamento, può essere "standard" o "instant"
+			//  )
+			// );
+
+			wp_send_json(
+				array(
+					'status'   => ! empty( $payout ) ? 'success' : 'error',
+					'transfer' => ! empty( $payout ) ? $payout : '',
+				),
+			);
+		}
+
+
+		/**
+		 * The function "clean_cart" clears the shopping cart by deleting the cart cookie and user meta data.
+		 *
+		 * @param int order_id The order ID is an integer that represents the unique identifier for the
+		 * order. It is used to identify which order's cart needs to be cleaned.
+		 */
 		public static function clean_cart( int $order_id ) {
 
 			$user_id = get_current_user_id();
@@ -295,14 +495,14 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 
 			try {
 
-				$payment_intent = $this->stripe_client->paymentIntents->create(
+				$payment_intent = ASTA_STRIPE::client()->paymentIntents->create(
 					$this->build_intent_args( $total, $cart_titles, $user_id, $args )
 				);
 
 				$order_id  = $this->build_order( $user_id, $payment_intent, $args['cart'] );
 				$user_info = $user_id ? get_userdata( $user_id ) : '';
 
-				$this->stripe_client->paymentIntents->update(
+				ASTA_STRIPE::client()->paymentIntents->update(
 					$payment_intent->id,
 					array(
 						'metadata' => array( 'order_id' => $order_id ),
@@ -382,64 +582,6 @@ if ( ! class_exists( 'ASTA_THEME_CHACKOUT' ) ) :
 			}
 
 			wp_send_json( $this->create_payment_intent( $attr['login_user_id'], $args ) );
-		}
-
-
-		/**
-		 * This function handles a webhook for Stripe payments and logs whether the payment was successful or
-		 * failed.
-		 *
-		 * @param \WP_REST_Request request  is an object of the \WP_REST_Request class, which is used
-		 * to handle REST API requests in WordPress. It contains information about the request, such as the
-		 * request method, headers, and body.
-		 */
-		public function asta_cart_webhook( \WP_REST_Request $request ) {
-
-			$keys = ASTA_STRIPE::get_gateway_keys( 'stripe' );
-
-			try {
-				$event = Webhook::constructEvent(
-					$request->get_body(),
-					$request->get_header( 'stripe_signature' ),
-					$keys['signature_key']
-				);
-			} catch ( Exception $e ) {
-
-				http_response_code( 403 );
-
-				error_log( 'error: ' . print_r( $e->getMessage(), true ) );
-
-				wp_send_json(
-					array( 'error' => $e->getMessage() ),
-				);
-			}
-
-			if ( 'payment_intent.succeeded' === $event->type ) {
-
-				wp_send_json( array( 'status' => 'success' ) );
-
-			} elseif ( 'payment_intent.payment_failed' === $event->type ) {
-
-				$order_id = $event?->data?->object?->metadata?->order_id;
-
-				if ( $order_id ) {
-					ASTA_THEME_ORDERS::set_order_status( $order_id, 'unpaid' );
-				}
-
-				error_log(
-					print_r(
-						array(
-							'payment_status' => 'Payment failed!',
-							'event'          => $event,
-						),
-						true
-					)
-				);
-			}
-
-			wp_send_json(
-				array( 'status' => 'success' ),
-			);
 		}
 	}
 

@@ -14,7 +14,7 @@ $orders = ASTA_THEME_ORDERS::get_user_orders( get_current_user_id() );
 <main id="primary" class="site-main">
 	<div class="container">
 
-		<div class="title"><?php echo __( 'My Orders', 'asta-child' ); ?></div>
+		<h1 class="title"><?php echo __( 'My Orders', 'asta-child' ); ?></h1>
 
 		<?php if ( ! empty( $orders ) ) : ?>
 

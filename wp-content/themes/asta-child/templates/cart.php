@@ -5,8 +5,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// $details = get_post_meta( 255, 'details', true );
-// update_user_meta( get_current_user_id(), 'user_cart', $details['cart'] );
+// ASTA_THEME_SOLD_PROCESS::instance()->auction_status_for_cart( 194 );
 
 $cart = ASTA_THEME_CART::get_cart();
 

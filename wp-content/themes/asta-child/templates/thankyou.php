@@ -5,18 +5,19 @@
 
 ! empty( $_GET['payment_intent'] ) || wp_redirect( get_site_url() ) && exit;
 
-$payment_intent = ASTA_THEME_CHACKOUT::instance()->stripe_client->paymentIntents->retrieve( // phpcs:ignore
+$payment_intent = ASTA_STRIPE::client()->paymentIntents->retrieve( // phpcs:ignore
 	preg_replace( '/[^a-zA-Z0-9\_\-]/i', '', $_GET['payment_intent'] ),
 );
 
 $order = ASTA_THEME_ORDERS::get_order( $payment_intent->id );
 ! empty( $order ) || wp_redirect( get_site_url() ) && exit;
 
-$order_details = ASTA_THEME_ORDERS::get_meta( $order->ID, 'details' );
-$paid_status   = reset( $payment_intent->charges->data )->paid;
+$thank_you_visited = ASTA_THEME_ORDERS::get_meta( $order->ID, 'thank_you_visited' );
+$order_details     = ASTA_THEME_ORDERS::get_meta( $order->ID, 'details' );
+$payment_status    = ASTA_THEME_ORDERS::get_meta( $order->ID, 'payment_status' );
+$paid_status       = reset( $payment_intent->charges->data )->paid;
 
 get_header();
-
 ?>
 
 <main id="primary" class="site-main">
@@ -26,13 +27,18 @@ get_header();
 
 			<h2><?php echo __( 'Thank you for participating in purchases on the platform!', 'asta-child' ); ?></h2>
 
-			<?php if ( $paid_status ) : ?>
+			<?php if ( ( $paid_status && 'visited' !== $thank_you_visited ) || 'unpaid' !== $payment_status ) : ?>
 
 				<?php
-				ASTA_THEME_ORDERS::set_order_status( $order->ID, 'paid' );
-				ASTA_THEME_ORDERS::set_meta( $order->ID, 'oreder_link', preg_replace( '/[^a-zA-Z0-9\@\:\/\%\&\?\#\.\-\_\=]/i', '', $_SERVER['REQUEST_URI'] ) );
-				ASTA_THEME_ORDERS::crons_after_payment_order_status( $order->ID );
-				ASTA_THEME_CHACKOUT::clean_cart( $order->ID );
+				if ( 'visited' !== $thank_you_visited ) {
+					// update products qty
+					ASTA_THEME_ORDERS::set_meta( $order->ID, 'thank_you_visited', 'visited' );
+					ASTA_THEME_ORDERS::set_order_status( $order->ID, 'paid' );
+					ASTA_THEME_ORDERS::set_meta( $order->ID, 'oreder_link', preg_replace( '/[^a-zA-Z0-9\@\:\/\%\&\?\#\.\-\_\=]/i', '', $_SERVER['REQUEST_URI'] ) );
+					ASTA_THEME_ORDERS::update_users_payouts( $order_details );
+					ASTA_THEME_ORDERS::crons_after_payment_order_status( $order->ID );
+					ASTA_THEME_CHACKOUT::clean_cart( $order->ID );
+				}
 				?>
 
 				<p><?php echo __( 'We are pleased to inform you that we have received your payment. We would like to express our gratitude for your support and for making our site a success.', 'asta-child' ); ?></p>
@@ -69,6 +75,12 @@ get_header();
 
 				<?php foreach ( $order_details['cart']['products_cart'] as $cart_item ) : ?>
 					<?php
+
+					if ( 'visited' !== $thank_you_visited ) {
+						$qty = (int) get_post_meta( $cart_item['product_id'], 'qty', true );
+						update_post_meta( $cart_item['product_id'], 'qty', ( $qty - $cart_item['qty'] ) );
+					}
+
 					do_action(
 						'asta_cart_item',
 						array(
